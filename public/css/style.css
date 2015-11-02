@@ -1,0 +1,104 @@
+@import url(https://fonts.googleapis.com/css?family=Open+Sans:400,300);
+
+body {
+	font-family: 'Open Sans', sans-serif !important;
+	font-weight: 300 !important;
+	height: auto;
+}
+
+h1,h2,h3,h4,h5,h6 {
+	font-family: 'Open Sans', sans-serif !important;
+	font-weight: 300 !important;
+	color: #8b8b8b;	
+}
+
+.navbar {
+	margin-top: 10px;
+}
+
+.housing-main-menu {
+	padding: 25px 0 12px 15px;
+}
+
+.housing-main-menu li a {
+	color: #8b8b8b;
+}
+
+.housing-main-menu li a:hover, .housing-main-menu li a.current {
+	color: #AB2D4E;
+}
+
+.housing-add-button {
+	margin: 15px 15px 6px 0;
+	float: right;
+}
+
+.housing-logout-button {
+	margin: 15px 0 6px;
+	background: none;
+	border: 2px solid #DDDDDD;
+	border-radius: 5px;
+	padding: 8px 16px;
+	float: right;
+}
+
+.housing-logout-button i {
+	font-size: 18px;
+	color: #DDDDDD;
+}
+
+.content {
+	margin-top: 30px;
+}
+
+table {
+
+	width: 100%;
+}
+
+.header-description a {
+	display: block;
+	margin: 22px 0;
+	line-height: 12pt;
+	float: right;
+	padding: 0;
+}
+
+.create-user-form {
+	margin-top: 20px;
+}
+
+.sort-click {
+	cursor: pointer;
+}
+
+.page-links {
+	float: right;
+}
+
+.pagination-link {
+	margin-right: 5px;
+}
+
+.center-icon {
+	text-align: center;
+	cursor: pointer;
+}
+
+.login-form {
+	margin-top: 50px;
+}
+
+.login-image {
+	width: 60%;
+	margin: 0 auto 40px;
+}
+
+form label {
+	margin-bottom: 5px;
+}
+
+.error {
+	color: red;
+	margin 5px 0;
+}

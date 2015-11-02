@@ -1,0 +1,31 @@
+extends ../layout
+
+block content
+    div(class="large-9 columns")
+        h3 Manage Users
+    div(class="large-3 columns")
+        p(class="header-description") 
+            a(href="/users/create", class="add-user") Add User 
+
+    div(class="large-12 columns")   
+        table(class="user-accounts")
+            thead
+                tr
+                    th
+                    th(class='sort-click') Last Name
+                    th(class='sort-click') First Name
+                    th(class='sort-click') Email
+                    th(class='sort-click') Position
+                    th(class='sort-click') Building
+            tbody
+                each user in users
+                    tr
+                        td(user="#{user.id}")
+                            i(class='fa fa-pencil-square-o')
+                        td= user.lastname
+                        td= user.firstname
+                        td= user.email
+                        td= user.position
+                        td= user.building
+
+        div(class="page-links")

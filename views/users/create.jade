@@ -1,0 +1,26 @@
+extends ../layout
+
+block content
+    div(class="large-12 columns")
+        h3 Add User
+
+    div(class="large-6 columns")
+        if error
+            p(class="error")= error   
+        form(class="create-user-form", action="/users/create", method="post")
+            label(for="firstName") First Name
+            input(type="text", name="firstName")
+            label(for="lastName") Last Name
+            input(type="text", name="lastName")
+            label(for="email") Email
+            input(type="email", name="email")
+            label(for="position") Positon
+            select(name="position")
+                each position in positions
+                    option(value=position.id)= position.name
+            label(for="building") Building        
+            select(name="building")
+                each building in buildings
+                    option(value=building.id)= building.name
+            input(type="submit", value="Add User", class="small radius button")
+    div(class="large-6 columns")            

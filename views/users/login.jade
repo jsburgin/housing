@@ -1,0 +1,12 @@
+extends ../empty-layout
+
+block content
+    div(class="large-5 large-centered columns")   
+        form(class="login-form", action="/login", method="post")
+            div(class="login-image")
+                img(src="/img/logo.png", alt="UA Housing")
+            label(for="email") Email
+            input(type="email", name="email")
+            label(for="password") Password
+            input(type="password", name="password")
+            input(type="submit", class="button", value="Login")
