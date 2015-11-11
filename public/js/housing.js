@@ -11,4 +11,37 @@ $(function() {
 		event.preventDefault();
 	});
 
+	$('.notification-time').each(function(index) {
+		var notificationDate = new Date(parseInt($(this).html()));
+		$(this).html(getPrettyTime(notificationDate));
+	})
 });
+
+function getPrettyTime(dateObj) {
+
+	var month   = dateObj.getMonth() + 1,
+		day	    = dateObj.getDate().toString(),
+		year    = dateObj.getFullYear().toString(),
+		hour    = dateObj.getHours(),
+		minutes = dateObj.getMinutes().toString(),
+		clock   = 'A.M.';
+
+	if (hour >= 12) {
+		clock = 'P.M.';
+	}
+
+	if (hour > 12) {
+		hour -= 12;
+	} else if (hour == 0) {
+		hour = 12;	
+	}
+
+	month = month.toString();
+	hour  = hour.toString();
+
+	if (minutes.length == 1) {
+		minutes = '0' + minutes;
+	}
+
+	return month + '/' + day + '/' + year + ' ' + hour + ':' + minutes + ' ' + clock;	
+}

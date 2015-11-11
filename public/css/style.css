@@ -115,3 +115,11 @@ form label {
 	margin-left: 15px;
 	float: left;
 }
+
+textarea {
+	text-indent: 0 !important;
+}
+
+.create-push-form textarea {
+	min-height: 100px;
+}

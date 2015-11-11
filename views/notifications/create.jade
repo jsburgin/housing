@@ -1,0 +1,16 @@
+extends ../layout
+
+block content
+    div(class="large-12 columns")
+        h3 Send Push Notification
+
+    div(class="large-8 columns")
+        if error
+            p(class="error")= error   
+        form(class="create-user-form create-push-form", action="/notifications/create", method="post")
+            label(for="subject") Subject
+            input(type="text", name="subject")
+            label(for="message") Message
+            textarea(name="message")
+            input(type="submit", value="Send Notification", class="small radius button")
+    div(class="large-4 columns")            

@@ -39,7 +39,33 @@ exports.retrieve = function(documentParams, collectionString, next) {
 
 		collection.find(documentParams).toArray(function(err, results) {
 			db.close();
-			return next(err, results);
+			if (err) {
+				return next(err);
+			}
+
+			next(null, results);
+		});
+	});
+};
+
+exports.retrieveSorted = function(documentParams, collectionString, sortBy, next) {
+	getInstance(function(err, db) {
+		if (err) {
+			return next(err);
+		}
+
+		var collection = db.collection(collectionString);
+
+		var sortObj = {};
+		sortObj[sortBy.name] = sortBy.order;
+
+		collection.find(documentParams).sort(sortObj).toArray(function(err, results) {
+			db.close();
+			if (err) {
+				return next(err);
+			}
+
+			next(null, results);
 		});
 	});
 };

@@ -42,6 +42,38 @@ router.get('/add/building', restrict, function(req, res, next) {
 
 
 	res.render('admin/add-building', vm);
-})
+});
+
+router.post('/add/building', restrict, function(req, res, next) {
+
+	req.body.name = req.body.name.toLowerCase().replace( /\b\w/g, function(c) {
+		return c.toUpperCase();
+	});
+
+	async.waterfall([
+		function(cb) {
+			Building.get({ name: req.body.name }, cb);	
+		},
+		function(building, cb) {
+			if (building) {
+				req.session.createError = 'A building with that name already exists';
+				return res.redirect('/admin/add/building');
+			}
+
+			cb(null);
+		},
+		function(cb) {
+			Building.add(req.body, cb);
+		}
+	], function(err) {
+		if (err) {
+			req.session.createError = 'Unable to add building.';
+			return res.redirect('/add/building');
+		}
+
+		res.redirect('/admin');
+	});
+
+});
 
 module.exports = router;
