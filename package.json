@@ -6,6 +6,7 @@
     "start": "node ./bin/www"
   },
   "dependencies": {
+    "apn": "^1.7.5",
     "async": "^1.5.0",
     "bcrypt": "^0.8.5",
     "body-parser": "~1.13.2",
@@ -16,6 +17,7 @@
     "express-session": "^1.12.1",
     "jade": "~1.11.0",
     "knex": "^0.8.6",
+    "mongodb": "^2.0.47",
     "morgan": "~1.6.1",
     "nodemailer": "^1.8.0",
     "passport": "^0.3.0",

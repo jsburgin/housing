@@ -102,3 +102,16 @@ form label {
 	color: red;
 	margin 5px 0;
 }
+
+.create-user-form .button {
+	float: left;
+}
+
+.remove-user-form {
+	float: left;
+}
+
+.remove-user-form .button {
+	margin-left: 15px;
+	float: left;
+}

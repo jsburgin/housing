@@ -1,4 +1,5 @@
 var nodemailer = require('nodemailer');
+var mongo = require('../mongo');
 
 var transporter = nodemailer.createTransport({
 	service: 'Gmail',
@@ -16,9 +17,25 @@ exports.sendMail = function(email, next) {
 		html: email.html
 	};
 
-	console.log(mailOptions);
-
 	transporter.sendMail(mailOptions, function(err, info) {
+		console.log('mail sent...');
+		info.body = mailOptions;
+		logMail(info);
+
 		return next(err);
 	});
 };
+
+function logMail(email) {
+	mongo.insert(email, 'emails', function(err, result) {
+		if (err) {
+			console.error(err);
+		}
+	});
+}
+
+exports.getEmailLog = function(next) {
+	mongo.retrieve({}, 'emails', function(err, results) {
+		return next(err, results);
+	});
+}

@@ -58,11 +58,11 @@ router.get('/create', restrict, function(req, res, next) {
 router.post('/create', restrict, function(req, res, next) {
     async.waterfall([
         function(cb) {
-            User.emailUsed(req.body.email.toLowerCase(), cb);
+            User.get({ email: req.body.email.toLowerCase() }, cb);
         },
-        function(emailUsed, cb) {
+        function(user, cb) {
 
-            if (emailUsed) {
+            if (user) {
                 req.session.createError = 'There is already an account associated with that email address.';
                 req.session.cachedUser = req.body;
                 return res.redirect('/users/create');
@@ -73,19 +73,103 @@ router.post('/create', restrict, function(req, res, next) {
                 lastName: req.body.lastName,
                 email: req.body.email,
                 positionid: parseInt(req.body.position),
-                buildingid: parseInt(req.body.building)
+                buildingid: parseInt(req.body.building),
+                room: parseInt(req.body.room)
             };
 
             User.add(newUser, cb);
         }
     ], function(err) {
         if (err) {
-            req.session.createError = 'There was an error creating the new user';
+            req.session.createError = 'There was an error creating the new user.';
             res.redirect('/users/create');
         }
 
         res.redirect('/users');
     });
+});
+
+router.get('/edit/:id', restrict, function(req, res, next) {
+	var id = req.param('id');
+
+	if (!id) {
+		return res.redirect('/users');
+	}
+
+	async.parallel([
+		function(cb) {
+			User.get({ id: id }, function(err, user) {
+				if (!user || err) {
+					return cb(err || 'Unable to find user.');
+				}
+
+				cb(null, user);
+			});
+		},
+		function(cb) {
+			Building.getAll(cb);
+		},
+		function(cb) {
+			Position.getAll(cb);
+		}
+	], function(err, results) {
+		if (err) {
+			console.error(err);
+			return res.redirect('/users');
+		}
+
+		var vm = {
+			title: 'Edit User',
+			user: results[0],
+			buildings: results[1],
+			positions: results[2]
+		};
+
+		if (req.session.editError) {
+			vm.error = req.session.editError;
+			delete req.session.editError;
+		}
+
+		res.render('users/edit', vm);
+	});
+});
+
+router.post('/edit', restrict, function(req, res, next) {
+	var updates = req.body;
+
+
+	// refactor postion, building, and room number into integers
+	updates.positionid = parseInt(updates.position);
+	delete updates.position;
+
+	updates.buildingid = parseInt(updates.building);
+	delete updates.building;
+
+	updates.room = parseInt(updates.room);
+
+	User.update(updates.id, updates, function(err) {
+		if (err) {
+			console.error(err);
+		}
+
+		res.redirect('/users');
+	});
+});
+
+router.post('/remove', restrict, function(req, res, next) {
+	if (!req.body.id) {
+		return res.redirect('/');
+	} else {
+		req.body.id = parseInt(req.body.id);
+	}
+
+	User.remove(req.body, function(err) {
+		if (err) {
+			next(err);
+		}
+
+		res.redirect('/users');
+	});
 });
 
 module.exports = router;

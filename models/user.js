@@ -1,27 +1,11 @@
 var db = require('../db');
 var async = require('async');
 var bcrypt = require('bcrypt');
+require('dotenv').load();
 
 var postOffice = require('../postoffice');
 
-// only use for getting non admins
-exports.getAll = function(next) {
-	db.select('person.*', 'building.name as building', 'position.name as position').from('person')
-		.join('position', 'person.positionid', '=', 'position.id')
-		.join('building', 'person.buildingid', '=', 'building.id')
-		.where({isadmin: 0})
-		.orderBy('lastname')
-		.asCallback(function(err, rows) {
-			if (err) {
-				return next(err);
-			}
-
-			next(null, rows);
-		});
-};
-
-// only use for getting non admins
-exports.getOne = function(userData, next) {
+function get(userData, next) {
 
 	if (userData['id']) {
 		userData['person.id'] = userData['id'];
@@ -46,67 +30,20 @@ exports.getOne = function(userData, next) {
 		});
 };
 
+exports.get = get;
 
-// only use for getting admins
-exports.getAdmin = function(userData, next) {
-	userData.isadmin = 1;
+exports.getAll = function(next) {
+	db.select('person.*', 'building.name as building', 'position.name as position').from('person')
+		.join('position', 'person.positionid', '=', 'position.id')
+		.join('building', 'person.buildingid', '=', 'building.id')
+		.orderBy('lastname')
+		.asCallback(function(err, rows) {
+			if (err) {
+				return next(err);
+			}
 
-	db.select().from('person')
-	.where(userData)
-	.asCallback(function(err, rows) {
-		if (err) {
-			return next(err);
-		}
-
-		if (rows.length > 0) {
-			return next(null, rows[0]);
-		}
-
-		next(null, null);
-	});
-};
-
-exports.emailUsed = function(email, next) {
-	db.select().from('person')
-	.where({ email: email })
-	.asCallback(function(err, users) {
-		if (err) {
-			return next(err);
-		}
-
-		if (users.length > 0) {
-			return next(null, true);
-		}
-
-		next(null, false);
-	});
-};
-
-exports.addAdmin = function(userData, next) {
-
-	var userObj = {
-		firstname: userData.firstName,
-		lastname: userData.lastName,
-		email: userData.email.toLowerCase(),
-		isadmin: 1
-	};
-
-	async.waterfall([
-		function(cb) {
-			// hash the password before storing it
-			bcrypt.hash(userData.password, 10, cb);
-		},
-		function(hash, cb) {
-			userObj.password = hash;
-			cb(null);
-		}
-	], function(err) {
-		if (err) {
-			return next(err);
-		}
-		insertUser(userObj, next);
-	});
-
+			next(null, rows);
+		});
 };
 
 function add(userData, next) {
@@ -115,21 +52,19 @@ function add(userData, next) {
 		firstname: userData.firstName,
 		lastname: userData.lastName,
 		email: userData.email.toLowerCase(),
-		isadmin: 0,
 		positionid: userData.positionid,
 		buildingid: userData.buildingid,
+		room: userData.room,
 		accesscode: genAccessCode()
 	};
 	
 	async.waterfall([
 		function(cb) {
-			// query db and check to see if access code already exists
-			db.select('person.accesscode').from('person')
-				.where({accesscode: userObj.accesscode})
-				.asCallback(cb);
+			// see if access code already exists
+			get({ accesscode: userObj.accesscode }, cb);
 		},
-		function(results, cb) {
-			if (results.length == 0) {
+		function(user, cb) {
+			if (!user) {
 				// no matching access code found, continue
 				cb(null);
 			} else {
@@ -140,18 +75,34 @@ function add(userData, next) {
 		},
 		function(cb) {
 			// add user to db
-			insertUser(userObj, cb);
+			db('person').insert(userObj)
+				.asCallback(function(err, results) {
+					if (err) {
+						return cb(err);
+					}
+
+					cb(null);
+				});
 		},
 		function(cb) {
 			// send email to new user
-			var email = {
-				to: userObj.email,
-				subject: 'Your UA Housing Acecss Code',
-				html: 'To setup up the UA Housing App, please use the code below:<br />' 
-					+ userObj.accesscode
-			};
+			/*if (process.env.MAIL_ENABLED.toLowerCase() == 'true') {
+				var email = {
+					to: userObj.email,
+					subject: 'Your UA Housing Access Code',
+					html: 'To setup up the UA Housing Application, please use the code below:<br />' 
+						+ userObj.accesscode
+				};
+				postOffice.sendMail(email, function(err) {
+					if (err) {
+						console.error(err);
+					}
+				});	
+			}*/
 
-			postOffice.sendMail(email, cb);
+
+			// immediately call callback to avoid long page load time on add user
+			cb(null);
 		}
 	], function(err) {
 		if (err) {
@@ -164,8 +115,20 @@ function add(userData, next) {
 
 exports.add = add;
 
-function insertUser(userData, next) {
-	db('person').insert(userData)
+
+exports.update = function(id, updates, next) {
+	db('person')
+		.where({ id: id })
+		.update(updates)
+		.asCallback(function(err, results) {
+			return next(err);
+		});
+};
+
+exports.remove = function(userData, next) {
+	db('person')
+		.where(userData)
+		.del()
 		.asCallback(function(err, results) {
 			if (err) {
 				return next(err);
@@ -175,7 +138,6 @@ function insertUser(userData, next) {
 		});
 }
 
-
 function genAccessCode() {
 	var accesscode = '';
 
@@ -184,8 +146,8 @@ function genAccessCode() {
         "u", "v", "w", "x", "y", "z", "0", "1", "2", "3", "4", "5", "6", 
         "7", "8", "9"];
 
-    for (var i = 0; i < 4; i++) {
-    	var index = Math.floor(Math.random() * 36);
+    for (var i = 0; i < 6; i++) {
+    	var index = Math.floor(Math.random() * choices.length);
 
     	accesscode += choices[index];
     }

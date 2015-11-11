@@ -17,15 +17,18 @@ block content
                     th(class='sort-click') Email
                     th(class='sort-click') Position
                     th(class='sort-click') Building
+                    th(class='sort-click') Room Number
             tbody
                 each user in users
                     tr
                         td(user="#{user.id}")
-                            i(class='fa fa-pencil-square-o')
+                            a(href="/users/edit/#{user.id}")
+                                i(class='fa fa-pencil-square-o')
                         td= user.lastname
                         td= user.firstname
                         td= user.email
                         td= user.position
                         td= user.building
+                        td= user.room
 
         div(class="page-links")

@@ -3,7 +3,7 @@ var passportLocal = require('passport-local');
 var bcrypt = require('bcrypt');
 var async = require('async');
 
-var User = require('../models/user');
+var Admin = require('../models/admin');
 
 module.exports = function() {
 	passport.use(new passportLocal.Strategy({ usernameField: 'email' }, function(email, password, next) {
@@ -12,7 +12,7 @@ module.exports = function() {
 
 		async.waterfall([
 			function(cb) {
-				User.getAdmin({ email: email }, cb);
+				Admin.get({ email: email }, cb);
 			},
 			function(user, cb) {
 
@@ -47,7 +47,7 @@ module.exports = function() {
 	});
 
 	passport.deserializeUser(function(email, next) {
-		User.getAdmin({ email: email }, function(err, user) {
+		Admin.get({ email: email }, function(err, user) {
 			if (err) {
 				return next(err);
 			}

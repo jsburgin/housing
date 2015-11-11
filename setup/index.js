@@ -77,7 +77,7 @@ function setup(next) {
 }
 
 function createAdmin(next) {
-    var User = require('../models/user');
+    var Admin = require('../models/admin');
 
     async.waterfall([
         function(cb) {
@@ -104,7 +104,7 @@ function createAdmin(next) {
             prompt.get(schema, cb);
         },
         function(results, cb) {
-            User.addAdmin(results, cb);
+            Admin.add(results, cb);
         }
     ], next);
 }
