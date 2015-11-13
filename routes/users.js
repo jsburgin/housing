@@ -7,6 +7,8 @@ var Position = require('../models/position');
 var User = require('../models/user');
 var restrict = require('../auth/restrict');
 
+var activeLink = 'Users';
+
 router.get('/', restrict, function(req, res, next) {
     User.getAll(function(err, users) {
         if (err) {
@@ -15,7 +17,8 @@ router.get('/', restrict, function(req, res, next) {
 
         var vm = {
             title: 'Manage Users',
-            users: users
+            users: users,
+            activeLink: activeLink
         };
 
         res.render('users/index', vm);
@@ -38,7 +41,8 @@ router.get('/create', restrict, function(req, res, next) {
         var vm = {
             title: 'Add User',
             buildings: results[0],
-            positions: results[1]
+            positions: results[1],
+            activeLink: activeLink
         };
 
         if (req.session.createError) {
@@ -90,7 +94,7 @@ router.post('/create', restrict, function(req, res, next) {
 });
 
 router.get('/edit/:id', restrict, function(req, res, next) {
-	var id = req.param('id');
+	var id = req.params.id;
 
 	if (!id) {
 		return res.redirect('/users');
@@ -122,7 +126,8 @@ router.get('/edit/:id', restrict, function(req, res, next) {
 			title: 'Edit User',
 			user: results[0],
 			buildings: results[1],
-			positions: results[2]
+			positions: results[2],
+			activeLink: activeLink
 		};
 
 		if (req.session.editError) {

@@ -14,7 +14,18 @@ $(function() {
 	$('.notification-time').each(function(index) {
 		var notificationDate = new Date(parseInt($(this).html()));
 		$(this).html(getPrettyTime(notificationDate));
-	})
+	});
+
+	var activeLink = $('.hidden-active-link').attr('active-link');
+
+	if (activeLink) {
+		$('.housing-main-menu li a').each(function(index) {
+			if ($(this).html().toLowerCase() == activeLink.toLowerCase()) {
+				$(this).addClass('active-link');
+			}
+		});
+	}
+
 });
 
 function getPrettyTime(dateObj) {

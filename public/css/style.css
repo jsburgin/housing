@@ -123,3 +123,34 @@ textarea {
 .create-push-form textarea {
 	min-height: 100px;
 }
+
+.checkbox-field {
+	float: left;
+	margin-bottom: 10px;
+}
+
+.checkbox-field input {
+	float: left;
+	margin-top: 5px;
+}
+
+.checkbox-field label {
+	float: left;
+	margin-left: 10px;
+}
+
+.post-checkbox-button {
+	clear: both;
+}
+
+a.active-link {
+	color: #AB2D4E !important;
+}
+
+.hidden-active-link {
+	display: none;
+}
+
+.center-links {
+	text-align: center;
+}

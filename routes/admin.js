@@ -7,6 +7,8 @@ var restrict = require('../auth/restrict');
 var Building = require('../models/building');
 var Position = require('../models/position');
 
+var activeLink = 'Admin';
+
 router.get('/', restrict, function(req, res, next) {
 	async.parallel([
 		function(cb) {
@@ -23,7 +25,8 @@ router.get('/', restrict, function(req, res, next) {
 		var vm = {
 			title: 'Admin Panel',
 			buildings: results[0],
-			positions: results[1]
+			positions: results[1],
+			activeLink: activeLink
 		};
 
 		res.render('admin/index', vm);	
@@ -32,7 +35,8 @@ router.get('/', restrict, function(req, res, next) {
 
 router.get('/add/building', restrict, function(req, res, next) {
 	var vm = {
-		title: 'Add Building'
+		title: 'Add Building',
+		activeLink: activeLink
 	};
 
 	if (req.session.createError) {

@@ -12,5 +12,8 @@ block content
             input(type="text", name="subject")
             label(for="message") Message
             textarea(name="message")
-            input(type="submit", value="Send Notification", class="small radius button")
+            div(class="checkbox-field")
+                input(type="checkbox", name="toemail")
+                label(for="toemail") Send as email too?
+            input(type="submit", value="Send Notification", class="small radius button post-checkbox-button")
     div(class="large-4 columns")            

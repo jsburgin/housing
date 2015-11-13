@@ -1,15 +1,15 @@
 extends ../layout
 
 block content
-	div(class="large-12 columns")
-		h3 Add Building
+    div(class="large-12 columns")
+        h3 Add Building
 
-	div(class="large-6 columns")
-		if error
-			p(class="error")= error
-		form(class="create-user-form", action="/admin/add/building/", method="post")
-			label(for="building") Building Name
-			input(type="text", name="name")
-			input(type="submit", value="Add Building", class="button small radius")
-	div(class="large-6 columns")
-				
+    div(class="large-6 columns")
+        if error
+            p(class="error")= error
+        form(class="create-user-form", action="/admin/add/building/", method="post")
+            label(for="building") Building Name
+            input(type="text", name="name")
+            input(type="submit", value="Add Building", class="button small radius")
+    div(class="large-6 columns")    
+                

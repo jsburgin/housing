@@ -21,7 +21,7 @@ block content
             tbody
                 each user in users
                     tr
-                        td(user="#{user.id}")
+                        td(class="center-links" user="#{user.id}")
                             a(href="/users/edit/#{user.id}")
                                 i(class='fa fa-pencil-square-o')
                         td= user.lastname
@@ -32,3 +32,4 @@ block content
                         td= user.room
 
         div(class="page-links")
+        

@@ -15,15 +15,14 @@ html(class="no-js", lang="en")
                     a(href="/")
                         img(src="/img/logo.png")
             div(class="large-6 columns")
+                -var menu = { 'Calendar': '/', 'Notifications': '/notifications', 'Users': '/users', 'Admin': '/admin' }
                 ul(class="inline-list housing-main-menu")
-                    li
-                        a(href="/") Calendar
-                    li
-                        a(href="/notifications") Notifications
-                    li
-                        a(href="/users") Users
-                    li
-                        a(href="/admin") Admin
+                    each val, key in menu
+                        li
+                            if activeLink == key
+                                a(class="active-link", href=val)= key
+                            else
+                                a(href=val)= key    
             div(class="button-div")
                 a(class="housing-logout-button radius small", href="/logout")
                     i(class="fa fa-sign-out")

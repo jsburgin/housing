@@ -5,10 +5,13 @@ var passport = require('passport');
 var restrict = require('../auth/restrict');
 var Notification = require('../models/notification');
 
+var activeLink = 'Notifications';
+
 router.get('/', restrict, function(req, res, next) {
 	Notification.getAll({ abbr: true },function(err, notifications) {
 		var vm = {
-			title: 'Manage Push Notifications'
+			title: 'Manage Push Notifications',
+			activeLink: activeLink
 		};
 
 		if (err) {
@@ -27,7 +30,8 @@ router.get('/', restrict, function(req, res, next) {
 
 router.get('/create', restrict, function(req, res, next) {
 	var vm = {
-		title: 'Send Push Notification'
+		title: 'Send Push Notification',
+		activeLink: activeLink
 	};
 
 	if (req.session.createError) {

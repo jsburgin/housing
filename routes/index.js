@@ -4,8 +4,10 @@ var passport = require('passport');
 
 var restrict = require('../auth/restrict');
 
+var activeLink = 'Calendar';
+
 router.get('/', restrict, function(req, res, next) {
-    res.render('index', { title: 'Housing' });
+    res.render('index', { title: 'Housing', activeLink: activeLink });
 });
 
 router.post('/login', passport.authenticate('local', {failureRedirect: '/'}), function(req, res, next) {
