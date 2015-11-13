@@ -11,48 +11,51 @@ $(function() {
 		event.preventDefault();
 	});
 
-	$('.notification-time').each(function(index) {
-		var notificationDate = new Date(parseInt($(this).html()));
-		$(this).html(getPrettyTime(notificationDate));
-	});
-
-	var activeLink = $('.hidden-active-link').attr('active-link');
-
-	if (activeLink) {
-		$('.housing-main-menu li a').each(function(index) {
-			if ($(this).html().toLowerCase() == activeLink.toLowerCase()) {
-				$(this).addClass('active-link');
-			}
-		});
-	}
-
 });
 
-function getPrettyTime(dateObj) {
+function HousingManager(settings) {
+	var pageType;
+	var socket = io();
 
-	var month   = dateObj.getMonth() + 1,
-		day	    = dateObj.getDate().toString(),
-		year    = dateObj.getFullYear().toString(),
-		hour    = dateObj.getHours(),
-		minutes = dateObj.getMinutes().toString(),
-		clock   = 'A.M.';
-
-	if (hour >= 12) {
-		clock = 'P.M.';
+	if (settings.page) {
+		pageType = settings.page;
 	}
 
-	if (hour > 12) {
-		hour -= 12;
-	} else if (hour == 0) {
-		hour = 12;	
+
+	if (pageType == 'Notifications' ) {
+		socket.emit('notificationEngine', true);
 	}
 
-	month = month.toString();
-	hour  = hour.toString();
+	socket.on('notificationGraphData', function(data) {
 
-	if (minutes.length == 1) {
-		minutes = '0' + minutes;
-	}
+		console.log(data);
 
-	return month + '/' + day + '/' + year + ' ' + hour + ':' + minutes + ' ' + clock;	
+		
+		var chart = c3.generate({
+			bindto: '#notification-chart',
+			data: {
+				x: 'x',
+				columns: [
+					data.x,
+					data.y
+				]
+			},
+			axis: {
+				x: {
+					type: 'timeseries',
+					tick: {
+						format: '%m/%d/%Y'
+					}
+				}
+			},
+			tooltip: {
+				show: true
+			},
+			color: {
+				pattern: ['#AB2D4E']
+			},
+		});
+
+		$('#notification-chart').prepend('<h3>Notification Frequency</h3>');
+	});
 }

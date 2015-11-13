@@ -154,3 +154,12 @@ a.active-link {
 .center-links {
 	text-align: center;
 }
+
+.c3-line-Notifications  {
+	stroke: #AB2D4E !important;
+
+}
+
+.c3-circle-Notifications {
+	fill: #AB2D4E !important;
+}

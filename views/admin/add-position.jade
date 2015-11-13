@@ -1,0 +1,14 @@
+extends ../layout
+
+block content
+    div(class="large-12 columns")
+        h3 Add Position
+
+    div(class="large-6 columns")
+        if error
+            p(class="error")= error
+        form(class="create-user-form", action="/admin/add/position/", method="post")
+            label(for="building") Position Name
+            input(type="text", name="name")
+            input(type="submit", value="Add Position", class="button small radius")
+    div(class="large-6 columns")

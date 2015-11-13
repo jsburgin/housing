@@ -69,3 +69,21 @@ exports.retrieveSorted = function(documentParams, collectionString, sortBy, next
 		});
 	});
 };
+
+exports.aggregate = function(stages, collectionString, next) {
+	getInstance(function(err, db) {
+		if (err) {
+			return next(err);
+		}
+
+		var collection = db.collection(collectionString);
+
+		collection.aggregate(stages).toArray(function(err, results) {
+			if (err) {
+				return next(err);
+			}
+
+			next(null, results);
+		});
+	});
+};

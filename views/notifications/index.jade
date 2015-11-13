@@ -1,5 +1,8 @@
 extends ../layout
 
+block stylesheets
+    link(rel="stylesheet", href="/css/c3.css")
+
 block content
     div(class="large-9 columns")
         h3 Manage Push Notifications
@@ -19,6 +22,15 @@ block content
                     tr
                         td= push.subject
                         td= push.message
-                        td(class="notification-time")= push.time
+                        td(class="notification-time")= push.prettyTime
 
         div(class="page-links")
+    div(class="large-12 columns")
+        div(id="notification-chart")
+
+
+block scripts
+    script(src="http://d3js.org/d3.v3.min.js")
+    script(src="/js/c3.min.js")
+    script.
+        var hm = new HousingManager({ page: "#{activeLink}" });

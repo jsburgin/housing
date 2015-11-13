@@ -29,7 +29,7 @@ router.get('/', restrict, function(req, res, next) {
 			activeLink: activeLink
 		};
 
-		res.render('admin/index', vm);	
+		res.render('admin/index', vm);  
 	});
 });
 
@@ -50,13 +50,11 @@ router.get('/add/building', restrict, function(req, res, next) {
 
 router.post('/add/building', restrict, function(req, res, next) {
 
-	req.body.name = req.body.name.toLowerCase().replace( /\b\w/g, function(c) {
-		return c.toUpperCase();
-	});
+	req.body.name = capitalize(req.body.name);
 
 	async.waterfall([
 		function(cb) {
-			Building.get({ name: req.body.name }, cb);	
+			Building.get({ name: req.body.name }, cb);  
 		},
 		function(building, cb) {
 			if (building) {
@@ -80,4 +78,52 @@ router.post('/add/building', restrict, function(req, res, next) {
 
 });
 
+router.get('/add/position', restrict, function(req, res, next) {
+	var vm = {
+		title: 'Add Position',
+		activeLink: activeLink
+	};
+
+	if (req.session.createError) {
+		vm.error = req.session.createError;
+		delete req.session.createError;
+	}
+
+	res.render('admin/add-position', vm);
+});
+
+router.post('/add/position', restrict, function(req, res, next) {
+	req.body.name = req.body.name.toUpperCase();
+
+	async.waterfall([
+		function(cb) {
+			Position.get({ name: req.body.name }, cb);
+		},
+		function(position, cb) {
+			if (position) {
+				req.session.createError = 'There is already a postion with that name.';
+				return res.redirect('/admin/add/position');
+			}
+
+			cb(null);
+		},
+		function(cb) {
+			Position.add(req.body, cb);
+		}
+	], function(err) {
+		if (err) {
+			req.session.createError = 'Unable to add position.'
+			return res.redirect('/admin/add/position');
+		}
+
+		res.redirect('/admin');
+	});
+});
+
 module.exports = router;
+
+function capitalize(toCap) {
+	return toCap.toLowerCase().replace( /\b\w/g, function(c) {
+		return c.toUpperCase();
+	});
+}

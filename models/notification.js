@@ -1,4 +1,5 @@
 var async = require('async');
+var dateFormat = require('dateformat');
 
 var mongo = require('../mongo');
 var postOffice = require('../postoffice');
@@ -39,8 +40,16 @@ exports.add = function(notificationData, next) {
 
 	delete notificationData.toemail;
 
-	notificationData.time = Date.now();
+	// date possibly pre-defined in setup -> addNotification
+	if (notificationData.sentTime) {
+		notificationData.time = notificationData.sentTime;
+	} else {
+		notificationData.time = new Date();	
+	}
 
+	notificationData.prettyTime = dateFormat(notificationData.time, "mm/dd/yyyy h:MM TT");
+
+	
 	mongo.insert(notificationData, 'notifications', function(err) {
 		if (err) {
 			return next(err);

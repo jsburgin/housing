@@ -9,6 +9,9 @@ if (process.argv.length > 2) {
             case 'createadmin':
                 run.push(createAdmin);
                 break;
+            case 'addnotification':
+                run.push(addNotification);
+                break;  
         }
     }   
 } else {
@@ -105,6 +108,37 @@ function createAdmin(next) {
         },
         function(results, cb) {
             Admin.add(results, cb);
+        }
+    ], next);
+}
+
+function addNotification(next) {
+    var Notification = require('../models/notification');
+
+    async.waterfall([
+        function(cb) {
+            prompt.start();
+
+            var schema = {
+                properties: {
+                    subject: {
+                        message: 'Subject'
+                    },
+                    message: {
+                        message: 'Message'
+                    },
+                    sentTime: {
+                        message: 'Sent On'
+                    }   
+                }
+            }
+
+            prompt.get(schema, cb);
+        },
+        function(results, cb) {
+            results.toemail = 'off';
+            results.sent = new Date(results.sent);
+            Notification.add(results, cb);
         }
     ], next);
 }
