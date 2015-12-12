@@ -1,9 +1,12 @@
 var express = require('express');
 var router = express.Router();
 var passport = require('passport');
+var async = require('async');
 
 var restrict = require('../auth/restrict');
 var Notification = require('../models/notification');
+var Building = require('../models/building');
+var Position = require('../models/position');
 
 var activeLink = 'Notifications';
 
@@ -39,7 +42,24 @@ router.get('/create', restrict, function(req, res, next) {
 		delete req.session.createError;
 	}
 
-	res.render('notifications/create', vm);
+	async.parallel([
+		function(cb) {
+			Building.getAll(cb);
+		},
+		function(cb) {
+			Position.getAll(cb);
+		}
+	], function(err, results) {
+		if (err) {
+			return res.redirect('/notifications');
+		}
+
+		vm.buildings = results[0];
+		vm.positions = results[1];
+
+		res.render('notifications/create', vm);	
+	});
+
 });
 
 router.post('/create', restrict, function(req, res, next) {

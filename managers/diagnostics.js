@@ -13,7 +13,6 @@ exports.notificationDiagnostics = function(socket, next) {
 	});
 
 	socket.on('disconnect', function() {
-		console.log('done with notification data');
 		return next(null);	
 	});
 };

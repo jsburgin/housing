@@ -1,11 +1,31 @@
-var diagnostics = require('../diagnostics');
+var diagnostics = require('../managers/diagnostics');
+var calendar = require('../managers/calendar');
+var notification = require('../managers/notification');
 
 module.exports = function(io) {
 	io.on('connection', function(socket) {
 			
-
+		// received event from notification page, outsource to diagnostics
 		socket.on('notificationEngine', function(run) {
 			diagnostics.notificationDiagnostics(socket, function(err) {
+				if (err) {
+					console.log(err);
+				}
+			});
+		});
+
+		// received event from calendar page, outsource to calendar socket manager
+		socket.on('calendarEngine', function(run) {
+			calendar.calendarSocketManager(socket, function(err) {
+				if (err) {
+					console.log(err);
+				}
+			});
+		});
+
+		// received event from notification creation page, outsource for notification creation
+		socket.on('notificationCreation', function(run) {
+			notification.listen(socket, function(err) {
 				if (err) {
 					console.log(err);
 				}

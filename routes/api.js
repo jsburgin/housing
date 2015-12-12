@@ -16,7 +16,16 @@ router.get('/events', function(req, res, next) {
 });
 
 router.get('/events/?:id', function(req, res, next) {
-	res.send('hello world');
+	var id = req.param('id');
+	if (id) {
+		Event.getForUser(parseInt(id), function(err, events) {
+			if (err) {
+				return res.send('Unable to fetch events.');
+			}
+
+			return res.json(events);
+		});
+	}
 });
 
 router.get('/emails', function(req, res, next) {

@@ -33,4 +33,7 @@ block scripts
     script(src="http://d3js.org/d3.v3.min.js")
     script(src="/js/c3.min.js")
     script.
-        var hm = new HousingManager({ page: "#{activeLink}" });
+        $(document).ready(function() {
+            var hm = new HousingManager({ page: "#{activeLink}" });
+        });
+        

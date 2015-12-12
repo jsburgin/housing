@@ -3,6 +3,7 @@ var dateFormat = require('dateformat');
 
 var mongo = require('../mongo');
 var postOffice = require('../postoffice');
+var User = require('./user');
 
 exports.getAll = function(options, next) {
 	mongo.retrieveSorted({}, 'notifications', { name: 'time', order: -1 }, function(err, notifications) {
@@ -20,25 +21,36 @@ exports.add = function(notificationData, next) {
 		return next('Must include subject and message for notification model.');
 	}
 
-	if (notificationData.toemail == 'on') {
+	if (notificationData.toEmail) {
 
-		// would generate user list here
-		var sendData = [{ to: 'jsburgin@crimson.ua.edu' }];
+		async.waterfall([
+			function(cb) {
+				User.getAllByPositionAndBuilding(notificationData.positions, notificationData.buildings, cb);
+			},
+			function(users, cb) {
+				var sendData = [];
 
-		for (var i = 0; i < sendData.length; i++) {
-			sendData[i].subject = notificationData.subject;
-			sendData[i].html = notificationData.message;
-		}
+				for (var i = 0; i < users.length; i++) {
+					sendData.push({
+						to: users[i].email,
+						subject: notificationData.subject,
+						html: notificationData.message
+					});
+				}
 
-		async.map(sendData, postOffice.sendMail, function(err) {
+				cb(null, sendData);
+
+			},
+			function(sendData, cb) {
+				async.map(sendData, postOffice.sendMail, cb);
+			}
+		], function(err) {
 			if (err) {
-				console.errror(err);
+				console.error(err);
 			}
 		});
 
 	}
-
-	delete notificationData.toemail;
 
 	// date possibly pre-defined in setup -> addNotification
 	if (notificationData.sentTime) {

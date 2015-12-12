@@ -7,13 +7,32 @@ block content
     div(class="large-8 columns")
         if error
             p(class="error")= error   
-        form(class="create-user-form create-push-form", action="/notifications/create", method="post")
+        form(class="create-user-form create-push-form notification-form", action="/notifications/create", method="post")
             label(for="subject") Subject
-            input(type="text", name="subject")
+            input(type="text", name="subject", class="notification-subject")
             label(for="message") Message
-            textarea(name="message")
-            div(class="checkbox-field")
-                input(type="checkbox", name="toemail")
+            textarea(name="message", class="notification-message")
+            div(class="checkbox-collection")
+                h6 Positions
+                each position in positions
+                    div(class="checkbox-selection")
+                        input(type="checkbox", class="position-checkbox", value="#{position.id}")
+                        label(for="toemail")= position.name
+            div(class="checkbox-collection")
+                h6 Buildings
+                each building in buildings
+                    div(class="checkbox-selection")
+                        input(type="checkbox", class="building-checkbox", value="#{building.id}")
+                        label(for="toemail")= building.name
+            div(class="checkbox-collection")
+                h6 Email
+                input(type="checkbox", name="toemail", class="email-checkbox")
                 label(for="toemail") Send as email too?
             input(type="submit", value="Send Notification", class="small radius button post-checkbox-button")
-    div(class="large-4 columns")            
+    div(class="large-4 columns")
+
+block scripts
+    script.
+        $(document).ready(function() {
+            var hm = new HousingManager({ page: 'NotificationCreation'});
+        });

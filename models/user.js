@@ -138,6 +138,19 @@ exports.remove = function(userData, next) {
 		});
 }
 
+exports.getAllByPositionAndBuilding = function(positions, buildings, next) {
+	db('person')
+	.whereIn('positionid', positions)
+	.whereIn('buildingid', buildings)
+	.asCallback(function(err, results) {
+		if (err) {
+			return next(err);
+		}
+
+		next(null, results);
+	});
+};
+
 function genAccessCode() {
 	var accesscode = '';
 

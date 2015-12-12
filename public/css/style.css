@@ -163,3 +163,21 @@ a.active-link {
 .c3-circle-Notifications {
 	fill: #AB2D4E !important;
 }
+
+.fc-day {
+	cursor: pointer;
+}
+
+.fc-day-number {
+	cursor: pointer;
+}
+
+.checkbox-collection {
+	clear: both;
+	margin-bottom: 10px;
+	overflow: auto;
+}
+
+.checkbox-selection {
+	float: left;
+}
