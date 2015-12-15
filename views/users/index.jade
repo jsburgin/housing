@@ -18,6 +18,7 @@ block content
                     th(class='sort-click') Position
                     th(class='sort-click') Building
                     th(class='sort-click') Room Number
+                    th(class='sort-click') Group
             tbody
                 each user in users
                     tr
@@ -30,6 +31,13 @@ block content
                         td= user.position
                         td= user.building
                         td= user.room
+                        td= user.group
 
         div(class="page-links")
-        
+ 
+ block scripts
+    script(src="http://cdn.datatables.net/1.10.10/js/jquery.dataTables.js")
+    script.
+        $(document).ready(function() {
+            var hm = new HousingManager({ page: "Users" });
+        });

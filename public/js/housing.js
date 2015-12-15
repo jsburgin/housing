@@ -34,6 +34,9 @@ function HousingManager(settings) {
             socket.emit('notificationCreation', true);
 			notificationCreator();
 			break;
+		case 'Users':
+			loadDataTables('.user-accounts');
+			break;
 	}
 
 	// socket.io events //
@@ -126,4 +129,7 @@ function HousingManager(settings) {
 		});
 	}
 
+	function loadDataTables(tableContainer) {
+		$(tableContainer).DataTable();
+	}
 }

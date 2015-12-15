@@ -1,3 +1,4 @@
+var colors = require('colors');
 module.exports = function() {
 	var rollTide = [" ____            ___    ___       ______        __",
 				"/\\  _`\\         /\\_ \\  /\\_ \\     /\\__  _\\__    /\\ \\",

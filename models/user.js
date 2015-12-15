@@ -3,6 +3,7 @@ var async = require('async');
 var bcrypt = require('bcrypt');
 require('dotenv').load();
 
+var Group = require('./group');
 var postOffice = require('../postoffice');
 
 function get(userData, next) {
@@ -12,9 +13,11 @@ function get(userData, next) {
 		delete userData['id'];
 	}
 
-	db.select('person.*', 'building.name as building', 'position.name as position').from('person')
+	db.select('person.*', 'building.name as building', 'position.name as position', 'staffgroup.name as group', 'staffgroup.id as groupid').from('person')
 		.join('position', 'person.positionid', '=', 'position.id')
 		.join('building', 'person.buildingid', '=', 'building.id')
+		.leftOuterJoin('staffgroupperson', 'person.id', '=', 'staffgroupperson.personid')
+		.leftOuterJoin('staffgroup', 'staffgroupperson.groupid', '=', 'staffgroup.id')
 		.where(userData)
 		.asCallback(function(err, rows) {
 			if (err) {
@@ -33,9 +36,11 @@ function get(userData, next) {
 exports.get = get;
 
 exports.getAll = function(next) {
-	db.select('person.*', 'building.name as building', 'position.name as position').from('person')
+	db.select('person.*', 'building.name as building', 'position.name as position', 'staffgroup.name as group').from('person')
 		.join('position', 'person.positionid', '=', 'position.id')
 		.join('building', 'person.buildingid', '=', 'building.id')
+		.leftOuterJoin('staffgroupperson', 'person.id', '=', 'staffgroupperson.personid')
+		.leftOuterJoin('staffgroup', 'staffgroupperson.groupid', '=', 'staffgroup.id')
 		.orderBy('lastname')
 		.asCallback(function(err, rows) {
 			if (err) {
@@ -75,14 +80,29 @@ function add(userData, next) {
 		},
 		function(cb) {
 			// add user to db
-			db('person').insert(userObj)
+			db('person')
+				.returning('id')
+				.insert(userObj)
 				.asCallback(function(err, results) {
 					if (err) {
 						return cb(err);
 					}
 
-					cb(null);
+					cb(null, results);
 				});
+		},
+		function(results, cb) {
+			// attach user to an necessary groups
+			// -1 means 'None' was selected
+			if (userData.group != -1) {
+				Group.addUser({ personid: results[0], groupid: userData.group }, function(err) {
+					if (err) {
+						return cb(err);
+					}
+
+					cb(null);		
+				});
+			}
 		},
 		function(cb) {
 			// send email to new user
@@ -117,12 +137,32 @@ exports.add = add;
 
 
 exports.update = function(id, updates, next) {
-	db('person')
-		.where({ id: id })
-		.update(updates)
-		.asCallback(function(err, results) {
+	var group = updates.group;
+	delete updates.group;
+
+	async.parallel([
+		function(cb) {
+			db('person')
+				.where({ id: id })
+				.update(updates)
+				.asCallback(function(err, results) {
+					if (err) {
+						return cb(err);
+					}
+					cb(null);
+				});	
+		},
+		function(cb) {
+			Group.updateUser({ personid: id, groupid: group }, cb);
+		}
+	], function(err) {
+		if (err) {
 			return next(err);
-		});
+		}
+
+		next(null);
+	});
+
 };
 
 exports.remove = function(userData, next) {

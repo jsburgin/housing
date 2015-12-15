@@ -28,7 +28,14 @@ block content
                     if user.buildingid == building.id
                         option(value=building.id, selected="selected")= building.name
                     else
-                        option(value=building.id)= building.name    
+                        option(value=building.id)= building.name
+            label(for="group") Group
+            select(name="group")
+                each group in groups
+                    if (user.groupid == group.id)
+                        option(value=group.id, selected="selected")= group.name
+                    else
+                        option(value=group.id)= group.name
             label(for="room") Room Number
             input(type="number", name="room", value="#{user.room}")
             input(type="submit", value="Update User", class="small radius button")

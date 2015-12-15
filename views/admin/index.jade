@@ -38,7 +38,26 @@ block content
                         td
                             i(class='fa fa-pencil-square-o')
                         td= position.name                        
-    
+
+    div(class="large-9 columns")
+        h3 Manage Groups
+    div(class="large-3 columns")
+        p(class="header-description") 
+            a(href="/admin/add/group", class="add-user") Add Group 
+
+    div(class="large-12 columns")   
+        table(class="user-accounts")
+            thead
+                tr
+                    th
+                    th Name
+            tbody
+                each group in groups
+                    tr
+                        td
+                            i(class='fa fa-pencil-square-o')
+                        td= group.name                        
+
     div(class="large-12 columns")
         h3 Semester Rollover
         p Perform a semester rollover to update users' experience levels.

@@ -6,6 +6,7 @@ var async = require('async');
 var restrict = require('../auth/restrict');
 var Building = require('../models/building');
 var Position = require('../models/position');
+var Group = require('../models/group');
 
 var activeLink = 'Admin';
 
@@ -16,6 +17,9 @@ router.get('/', restrict, function(req, res, next) {
 		},
 		function(cb) {
 			Position.getAll(cb);
+		},
+		function(cb) {
+			Group.getAll(cb);
 		}
 	], function(err, results) {
 		if (err) {
@@ -26,6 +30,7 @@ router.get('/', restrict, function(req, res, next) {
 			title: 'Admin Panel',
 			buildings: results[0],
 			positions: results[1],
+			groups: results[2],
 			activeLink: activeLink
 		};
 
@@ -127,3 +132,36 @@ function capitalize(toCap) {
 		return c.toUpperCase();
 	});
 }
+
+router.get('/add/group', restrict, function(req, res, next) {
+	var vm = {
+		title: 'Add Group',
+		activeLink: activeLink
+	};
+
+	if (req.session.createError) {
+		vm.error = req.session.createError;
+		delete req.session.createError;
+	}
+
+	return res.render('admin/add-group', vm);
+});
+
+router.post('/add/group', restrict, function(req, res, next) {
+	async.waterfall([
+		function(cb) {
+			if (req.body.name.toLowerCase() == 'none') {
+				req.session.createError = 'Cannot create group with name of "None".';
+				return res.redirect('/admin/add/group');
+			}
+			Group.add(req.body, cb);
+		}
+	], function(err, results) {
+		if (err) {
+			req.session.createError = 'Unable to create group. Please try again later.';
+			return res.redirect('/admin/add/group');
+		}
+
+		return res.redirect('/admin');
+	});
+});

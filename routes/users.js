@@ -5,6 +5,7 @@ var async = require('async');
 var Building = require('../models/building');
 var Position = require('../models/position');
 var User = require('../models/user');
+var Group = require('../models/group');
 var restrict = require('../auth/restrict');
 
 var activeLink = 'Users';
@@ -32,6 +33,9 @@ router.get('/create', restrict, function(req, res, next) {
         },
         function(cb) {
             Position.getAll(cb);
+        },
+        function(cb) {
+        	Group.getAll(cb);
         }
     ], function(err, results) {
         if (err) {
@@ -42,6 +46,7 @@ router.get('/create', restrict, function(req, res, next) {
             title: 'Add User',
             buildings: results[0],
             positions: results[1],
+            groups: results[2],
             activeLink: activeLink
         };
 
@@ -78,7 +83,8 @@ router.post('/create', restrict, function(req, res, next) {
                 email: req.body.email,
                 positionid: parseInt(req.body.position),
                 buildingid: parseInt(req.body.building),
-                room: parseInt(req.body.room)
+                room: parseInt(req.body.room),
+                group: parseInt(req.body.group)
             };
 
             User.add(newUser, cb);
@@ -88,7 +94,7 @@ router.post('/create', restrict, function(req, res, next) {
             req.session.createError = 'There was an error creating the new user.';
             res.redirect('/users/create');
         }
-
+        
         res.redirect('/users');
     });
 });
@@ -115,6 +121,8 @@ router.get('/edit/:id', restrict, function(req, res, next) {
 		},
 		function(cb) {
 			Position.getAll(cb);
+		}, function(cb) {
+			Group.getAll(cb);
 		}
 	], function(err, results) {
 		if (err) {
@@ -127,6 +135,7 @@ router.get('/edit/:id', restrict, function(req, res, next) {
 			user: results[0],
 			buildings: results[1],
 			positions: results[2],
+			groups: results[3],
 			activeLink: activeLink
 		};
 
@@ -150,6 +159,7 @@ router.post('/edit', restrict, function(req, res, next) {
 	updates.buildingid = parseInt(updates.building);
 	delete updates.building;
 
+	updates.group = parseInt(updates.group);
 	updates.room = parseInt(updates.room);
 
 	User.update(updates.id, updates, function(err) {
