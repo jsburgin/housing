@@ -44,7 +44,7 @@ exports.get = function(groupData, next) {
 		});
 };
 
-exports.addUser = function(groupData, next) {
+function addUser(groupData, next) {
 	db('staffgroupperson').insert(groupData)
 		.asCallback(function(err, results) {
 			if (err) {
@@ -55,7 +55,10 @@ exports.addUser = function(groupData, next) {
 		});
 };
 
+exports.addUser = addUser;
+
 exports.updateUser = function (groupData, next) {
+	// -1 means 'None' was selected
 	if (groupData.groupid == -1) {
 		db('staffgroupperson')
 			.where('personid', '=', groupData.personid)
@@ -67,6 +70,23 @@ exports.updateUser = function (groupData, next) {
 				next(null);
 			});
 	} else {
+		db('staffgroupperson').select()
+			.where('personid', '=', groupData.personid)
+			.asCallback(function(err, result) {
+				if (err) {
+					return next(err);
+				}
+
+				// if group entry already found, update it
+				if (result.length > 0) {
+					updateGroup();
+				} else {
+					addUser(groupData, next);
+				}
+			});
+	}
+
+	function updateGroup() {
 		db('staffgroupperson')
 			.where('personid', '=', groupData.personid)
 			.update({ groupid: groupData.groupid })
