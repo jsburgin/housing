@@ -27,7 +27,11 @@ exports.sendMail = function(email, next) {
 };
 
 function logMail(email) {
-	mongo.insert(email, 'emails', function(err, result) {
+	var insertObject = {
+		data: email,
+		collection: 'emails'
+	}
+	mongo.insert(insertObject, function(err, result) {
 		if (err) {
 			console.error(err);
 		}

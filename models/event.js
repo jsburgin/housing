@@ -4,27 +4,17 @@ var mongo = require('../mongo');
 var User = require('./user');
 
 exports.add = function(eventObject, next) {
-	async.waterfall([
-		function(cb) {
-			if (eventObject.title && eventObject.description) {
-				return cb(null);
-			}
+	var events = [];
 
-			cb('Required fields for event are missing.');
-		},
-		function(cb) {
-			mongo.insert(eventObject, 'events', cb);
-		},
-		function(results, cb) {
-			cb(null);
-		}
-	], function(err) {
-		if (err) {
-			return next(err);
-		}
+	for (var i = 0; i < eventObject.instances.length; i++) {
+		var currentInstance = eventObject.instances[i];
+		currentInstance.title = eventObject.title;
+		currentInstance.description = eventObject.description;
+		currentInstance.date = eventObject.date;
+		events.push({ data: currentInstance, collection: 'events' });
+	}
 
-		next(null);
-	});
+	async.map(events, mongo.insert, next);
 };
 
 exports.getForUser = function(userId, next) {
@@ -34,9 +24,16 @@ exports.getForUser = function(userId, next) {
 		},
 		function(user, cb) {
 			var query = {
-				positions: { $in: [user.positionid] },
-				buildings: { $in: [user.buildingid] }
-			}
+				$and: [
+					{ positions: { $in: [user.positionid] } },
+					{
+						$or: [
+							{ buildings: { $in: [user.buildingid] } },
+							{ groups: { $in: [user.groupid] } }
+						]	
+					}
+				]
+			};
 			mongo.retrieve(query, 'events', cb);
 		}
 	], function(err, results) {

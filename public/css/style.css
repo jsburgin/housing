@@ -172,12 +172,22 @@ a.active-link {
 	cursor: pointer;
 }
 
-.checkbox-collection {
+.checkbox-collection, .event-checkbox-collection {
 	clear: both;
 	margin-bottom: 10px;
 	overflow: auto;
 }
 
+.event-checkbox-collection {
+	margin-bottom: 0px;
+}
+
 .checkbox-selection {
 	float: left;
+}
+
+.filter-instance {
+	padding: 10px 10px 0 10px;
+	background: #f5f5f5;
+	border: 1px solid #CCCCCC;
 }

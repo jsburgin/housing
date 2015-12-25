@@ -61,8 +61,12 @@ exports.add = function(notificationData, next) {
 
 	notificationData.prettyTime = dateFormat(notificationData.time, "mm/dd/yyyy h:MM TT");
 
+	var insertObject = {
+		data: notificationData,
+		collection: 'notifications'
+	};
 	
-	mongo.insert(notificationData, 'notifications', function(err) {
+	mongo.insert(insertObject, function(err) {
 		if (err) {
 			return next(err);
 		}

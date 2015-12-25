@@ -13,7 +13,10 @@ function getInstance(next) {
 	});
 }
 
-exports.insert = function(documentObject, collectionString, next) {
+exports.insert = function(insertObject, next) {
+
+	var documentObject = insertObject.data;
+	var collectionString = insertObject.collection;
 
 	getInstance(function(err, db) {
 		if (err) {

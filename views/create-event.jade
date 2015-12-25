@@ -1,0 +1,21 @@
+extends layout
+
+block content
+    div(class="small-10 columns")
+        form(class="event-creation-form")
+            label(for="name") Name
+            input(type="text", name="name", class="event-name-input")
+            label(for="date") Date
+            input(type="date", name="date", class="event-date-input")
+            label(for="description") Description
+            textarea(name="description", class="event-description-input")
+            div(class="radius small button add-building-instance") Set For Buildings
+            div(class="radius small button add-group-instance") Set For Groups
+            div(class="instance-block")
+            input(type="submit", value="Add Event", class="button small radius")
+
+block scripts
+    script.
+        $(document).ready(function() {
+            new HousingManager({ page: "eventCreation" });
+        });
