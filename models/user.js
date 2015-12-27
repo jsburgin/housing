@@ -60,6 +60,7 @@ function add(userData, next) {
 		positionid: userData.positionid,
 		buildingid: userData.buildingid,
 		room: userData.room,
+		experience: userData.experience,
 		accesscode: genAccessCode()
 	};
 	
@@ -99,9 +100,10 @@ function add(userData, next) {
 					if (err) {
 						return cb(err);
 					}
-
 					cb(null);		
 				});
+			} else {
+				cb(null);
 			}
 		},
 		function(cb) {

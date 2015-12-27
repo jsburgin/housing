@@ -11,7 +11,7 @@ block content
             a(href="/notifications/create", class="add-user") Send Push Notification 
 
     div(class="large-12 columns")   
-        table(class="user-accounts")
+        table(class="user-accounts hide-table")
             thead
                 tr
                     th(class='sort-click') Subject
@@ -32,6 +32,7 @@ block content
 block scripts
     script(src="http://d3js.org/d3.v3.min.js")
     script(src="/js/c3.min.js")
+    script(src="https://cdn.datatables.net/s/zf/dt-1.10.10,r-2.0.0/datatables.min.js")
     script.
         $(document).ready(function() {
             var hm = new HousingManager({ page: "#{activeLink}" });

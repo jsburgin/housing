@@ -84,7 +84,8 @@ router.post('/create', restrict, function(req, res, next) {
                 positionid: parseInt(req.body.position),
                 buildingid: parseInt(req.body.building),
                 room: parseInt(req.body.room),
-                group: parseInt(req.body.group)
+                group: parseInt(req.body.group),
+                experience: parseInt(req.body.experience)
             };
 
             User.add(newUser, cb);
@@ -92,7 +93,7 @@ router.post('/create', restrict, function(req, res, next) {
     ], function(err) {
         if (err) {
             req.session.createError = 'There was an error creating the new user.';
-            res.redirect('/users/create');
+            return res.redirect('/users/create');
         }
         
         res.redirect('/users');

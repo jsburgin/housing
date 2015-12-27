@@ -178,8 +178,15 @@ a.active-link {
 	overflow: auto;
 }
 
-.event-checkbox-collection {
-	margin-bottom: 0px;
+.toggle-all {
+	float: left;
+	display: block;
+}
+
+.event-instance-header {
+	float: left;
+	margin-right: 10px;
+	display: block;
 }
 
 .checkbox-selection {
@@ -190,4 +197,12 @@ a.active-link {
 	padding: 10px 10px 0 10px;
 	background: #f5f5f5;
 	border: 1px solid #CCCCCC;
+}
+
+.hide-table {
+	visibility: hidden;
+}
+
+.dataTables_paginate a {
+	margin-right: 5px;
 }

@@ -51,6 +51,25 @@ exports.retrieve = function(documentParams, collectionString, next) {
 	});
 };
 
+exports.eventRetrieve = function(documentParams, collectionString, next) {
+	getInstance(function(err, db) {
+		if (err) {
+			return next(err);
+		}
+
+		var collection = db.collection(collectionString);
+
+		collection.find(documentParams, { buildings: 0, groups: 0, positions: 0, _id: 0, experience: 0 }).toArray(function(err, results) {
+			db.close();
+			if (err) {
+				return next(err);
+			}
+
+			next(null, results);
+		});
+	});
+};
+
 exports.retrieveSorted = function(documentParams, collectionString, sortBy, next) {
 	getInstance(function(err, db) {
 		if (err) {

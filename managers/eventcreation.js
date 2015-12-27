@@ -36,6 +36,8 @@ exports.listen = function(socket, next) {
 			if (err) {
 				console.log(err);
 			}
+
+			socket.emit('eventCreated', true);
 		});
 
 	});

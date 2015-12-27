@@ -25,6 +25,7 @@ function HousingManager(settings) {
 	switch(pageType) {
 		case 'Notifications':
 			socket.emit('notificationEngine', true);
+			loadDataTables('.user-accounts', 'notifications');
 			break;
 		case 'Calendar':
 			socket.emit('calendarEngine', true);
@@ -35,7 +36,7 @@ function HousingManager(settings) {
 			notificationCreator();
 			break;
 		case 'Users':
-			loadDataTables('.user-accounts');
+			loadDataTables('.user-accounts', 'users');
 			break;
 		case 'eventCreation':
 			socket.emit('eventCreation', true);
@@ -137,8 +138,17 @@ function HousingManager(settings) {
 		});
 	}
 
-	function loadDataTables(tableContainer) {
-		$(tableContainer).DataTable();
+	function loadDataTables(tableContainer, dataType) {
+		$(tableContainer).DataTable({
+			responsive: true,
+			"oLanguage": {
+     	 		"sLengthMenu": "Show _MENU_",
+     	 		"sZeroRecords": "No " + dataType + " found.",
+     	 		"sInfo": "Showing _START_ to _END_ of _TOTAL_ total " + dataType + ".",
+     	 		"sInfoFiltered": "",
+    		}
+		});
+		$('.hide-table').css('visibility', 'visible');
 	}
 
 	function eventCreation(positions, buildings, groups) {
@@ -152,7 +162,7 @@ function HousingManager(settings) {
 		function generateSelector(selectorType) {
 			var selector = '';
 			selector += '<div class="event-checkbox-collection ' + selectorType + '-selection">';
-
+			selector += '<a class="toggle-all" href="#">Toggle All</a>';
 			var tempCollectionList;
 			switch(selectorType) {
 				case 'position':
@@ -170,7 +180,7 @@ function HousingManager(settings) {
 
 			for (var i = 0; i < tempCollectionList.length; i++) {
 				selector += '<div class="checkbox-selection">';
-				selector += '<input type="checkbox" class="' + selectorType + '-checkbox" value="' + tempCollectionList[i].id + '" />';
+				selector += '<input type="checkbox" class="checkbox ' + selectorType + '-checkbox" value="' + tempCollectionList[i].id + '" />';
 				selector += '<label>' + tempCollectionList[i].name + '</label>';
 				selector += '</div>';
 			}
@@ -180,18 +190,43 @@ function HousingManager(settings) {
 
 		function addInstanceBlock(dataType) {
 			$('.instance-block').append('<div class="filter-instance ' + dataType + '-instance instance-' + instanceCount + '" instance-id="' + instanceCount + '"">');
-			$('.instance-' + instanceCount).append('<h6>Positions</h6>');
+			$('.instance-' + instanceCount).append('<h6 class="event-instance-header">For Positions:</h6>');
 			$('.instance-' + instanceCount).append(generateSelector('position'));
 			if (dataType == 'building') {
-				$('.instance-' + instanceCount).append('<h6>Buildings</h6>');
+				$('.instance-' + instanceCount).append('<h6 class="event-instance-header">in Buildings:</h6>');
 				$('.instance-' + instanceCount).append(generateSelector('building'));	
 			} else {
-				$('.instance-' + instanceCount).append('<h6>Groups</h6>');
+				$('.instance-' + instanceCount).append('<h6 class="event-instance-header">in Groups:</h6>');
 				$('.instance-' + instanceCount).append(generateSelector('group'));
 			}
+			$('.instance-' + instanceCount).append('<h6>containing:</h6><input type="radio" name="experience" value="2" checked="checked" /><label>New and Returning Staff</label>');
+			$('.instance-' + instanceCount).append('<input type="radio" class="new-staff-input" name="experience" value="0" /><label>New Staff Only</label>');
+			$('.instance-' + instanceCount).append('<input type="radio" class="returning-staff-input" name="experience" value="1" /><label>Returning Staff Only</label>');
 			$('.instance-' + instanceCount).append('<label>Location:</label><input type="text" name="location", class="event-location-input">');
 			$('.instance-' + instanceCount).append('<label>Start Time:</label><input type="time" name="starttime", class="start-time">');
 			$('.instance-' + instanceCount).append('<label>End Time:</label><input type="time" name="endtime", class="end-time">');
+
+
+			$('.toggle-all').click(function() {
+				var checkedCount = 0;
+				var unCheckedCount = 0;
+				$(this).parent('.event-checkbox-collection').find('.checkbox').each(function(index, checkbox) {
+					if (checkbox.checked) {
+						checkedCount++;
+					} else {
+						unCheckedCount++;
+					}
+				});
+
+				$(this).parent('.event-checkbox-collection').find('.checkbox').each(function(index, checkbox) {
+					if (checkedCount > unCheckedCount) {
+						checkbox.checked = false;
+					} else {
+						checkbox.checked = true;
+					}
+				});
+
+			});
 
 			++instanceCount;	
 		}
@@ -212,6 +247,11 @@ function HousingManager(settings) {
 				socket.emit('newEvent', eventData);
 				// redirect here
 			});
+
+			socket.on('eventCreated', function() {
+				return window.location.replace('/');
+			});
+
 			event.preventDefault();
 		});
 
@@ -228,10 +268,18 @@ function HousingManager(settings) {
 					startTime: $(filter).find('.start-time').val(),
 					endTime: $(filter).find('.end-time').val(),
 					location: $(filter).find('.event-location-input').val(),
+					experience: $(filter).find(),
 					positions: [],
 					buildings: [],
-					groups: []
+					groups: [],
+					experience: 2
 				};
+
+				if ($(filter).find('.new-staff-input').is(':checked')) {
+					newInstance.experience = 0;
+				} else if ($(filter).find('.returning-staff-input').is(':checked')) {
+					newInstance.experience = 1;
+				}
 				
 				$.each($(filter).find('.position-checkbox'), function(index, checkbox) {
 					if (checkbox.checked) {
@@ -258,7 +306,7 @@ function HousingManager(settings) {
 				eventData.instances.push(newInstance);
 			});
 
-
+			
 			next(eventData);
 		}
 	}

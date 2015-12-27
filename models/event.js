@@ -23,6 +23,11 @@ exports.getForUser = function(userId, next) {
 			User.get({id: userId}, cb);	
 		},
 		function(user, cb) {
+
+			if(!user) {
+				return cb('No user with that ID exists.');
+			}
+			
 			var query = {
 				$and: [
 					{ positions: { $in: [user.positionid] } },
@@ -31,10 +36,16 @@ exports.getForUser = function(userId, next) {
 							{ buildings: { $in: [user.buildingid] } },
 							{ groups: { $in: [user.groupid] } }
 						]	
+					},
+					{
+						$or: [
+							{ experience: user.experience },
+							{ experience: 2 }
+						]
 					}
 				]
 			};
-			mongo.retrieve(query, 'events', cb);
+			mongo.eventRetrieve(query, 'events', cb);
 		}
 	], function(err, results) {
 		if (err) {

@@ -1,62 +1,64 @@
 extends ../layout
 
 block content
-    div(class="large-9 columns")
-        h3 Manage Buildings
-    div(class="large-3 columns")
-        p(class="header-description") 
-            a(href="/admin/add/building", class="add-user") Add Building 
+    div(class="large-6 columns")
+        div(class="large-9 columns")
+            h3 Manage Buildings
+        div(class="large-3 columns")
+            p(class="header-description") 
+                a(href="/admin/add/building", class="add-user") Add Building 
 
-    div(class="large-12 columns")   
-        table(class="user-accounts")
-            thead
-                tr
-                    th
-                    th Name
-            tbody
-                each building in buildings
+        div(class="large-12 columns")   
+            table(class="user-accounts")
+                thead
                     tr
-                        td
-                            i(class='fa fa-pencil-square-o')
-                        td= building.name
+                        th
+                        th Name
+                tbody
+                    each building in buildings
+                        tr
+                            td
+                                i(class='fa fa-pencil-square-o')
+                            td= building.name
+    
+    div(class="large-6 columns")
+        div(class="large-9 columns")
+            h3 Manage Positions
+        div(class="large-3 columns")
+            p(class="header-description") 
+                a(href="/admin/add/position", class="add-user") Add Position 
 
-    div(class="large-9 columns")
-        h3 Manage Positions
-    div(class="large-3 columns")
-        p(class="header-description") 
-            a(href="/admin/add/position", class="add-user") Add Position 
-
-    div(class="large-12 columns")   
-        table(class="user-accounts")
-            thead
-                tr
-                    th
-                    th Name
-            tbody
-                each position in positions
+        div(class="large-12 columns")   
+            table(class="user-accounts")
+                thead
                     tr
-                        td
-                            i(class='fa fa-pencil-square-o')
-                        td= position.name                        
+                        th
+                        th Name
+                tbody
+                    each position in positions
+                        tr
+                            td
+                                i(class='fa fa-pencil-square-o')
+                            td= position.name                        
+    div(class="large-6 columns")
+        div(class="large-9 columns")
+            h3 Manage Groups
+        div(class="large-3 columns")
+            p(class="header-description") 
+                a(href="/admin/add/group", class="add-user") Add Group 
 
-    div(class="large-9 columns")
-        h3 Manage Groups
-    div(class="large-3 columns")
-        p(class="header-description") 
-            a(href="/admin/add/group", class="add-user") Add Group 
-
-    div(class="large-12 columns")   
-        table(class="user-accounts")
-            thead
-                tr
-                    th
-                    th Name
-            tbody
-                each group in groups
+        div(class="large-12 columns")   
+            table(class="user-accounts")
+                thead
                     tr
-                        td
-                            i(class='fa fa-pencil-square-o')
-                        td= group.name                        
+                        th
+                        th Name
+                tbody
+                    each group in groups
+                        tr
+                            td
+                                i(class='fa fa-pencil-square-o')
+                            td= group.name                        
 
     div(class="large-12 columns")
         h3 Semester Rollover
