@@ -1,6 +1,5 @@
 var db = require('../db');
 var async = require('async');
-var bcrypt = require('bcrypt');
 require('dotenv').load();
 
 var Group = require('./group');

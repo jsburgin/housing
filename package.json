@@ -8,7 +8,7 @@
   "dependencies": {
     "apn": "^1.7.5",
     "async": "^1.5.0",
-    "bcrypt": "^0.8.5",
+    "bcrypt-nodejs": "0.0.3",
     "body-parser": "~1.13.2",
     "colors": "^1.1.2",
     "connect-pg-simple": "^3.0.2",

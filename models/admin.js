@@ -1,5 +1,5 @@
 var async = require('async');
-var bcrypt = require('bcrypt');
+var bcrypt = require('bcrypt-nodejs');
 
 var db = require('../db');
 
@@ -14,7 +14,7 @@ exports.add = function(userData, next) {
 	async.waterfall([
 		function(cb) {
 			// hash the password before storing it
-			bcrypt.hash(userData.password, 10, cb);
+			bcrypt.hash(userData.password, null, null, cb);
 		},
 		function(hash, cb) {
 			userObj.password = hash;

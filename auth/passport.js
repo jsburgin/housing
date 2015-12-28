@@ -1,6 +1,6 @@
 var passport = require('passport');
 var passportLocal = require('passport-local');
-var bcrypt = require('bcrypt');
+var bcrypt = require('bcrypt-nodejs');
 var async = require('async');
 
 var Admin = require('../models/admin');
