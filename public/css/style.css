@@ -136,7 +136,7 @@ textarea {
 
 .checkbox-field label {
 	float: left;
-	margin-left: 10px;
+	margin-left: 1px;
 }
 
 .post-checkbox-button {
@@ -197,6 +197,8 @@ a.active-link {
 	padding: 10px 10px 0 10px;
 	background: #f5f5f5;
 	border: 1px solid #CCCCCC;
+	margin-bottom: 15px;
+	padding: 2%;
 }
 
 .hide-table {
@@ -205,4 +207,33 @@ a.active-link {
 
 .dataTables_paginate a {
 	margin-right: 5px;
+}
+
+.toggle-container {
+
+}
+
+.link-sim {
+	clear: both;
+	color: #AB2D4E;
+	cursor: pointer;
+	display: inline-block;
+	font-size: 14px;
+	float: none;
+	width: auto;
+	margin-bottom: 5px;
+}
+
+.add-instance-button {
+	margin-right: 10px;
+}
+
+.remove-instance {
+	float: right;
+	color: #CCCCCC !important;
+	cursor: pointer;
+}
+
+.event-description-input {
+	min-height: 100px;
 }

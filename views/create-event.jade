@@ -1,7 +1,8 @@
 extends layout
 
 block content
-    div(class="small-10 columns")
+    div(class="small-12 columns")
+        h3 Add Event
         form(class="event-creation-form")
             label(for="name") Name
             input(type="text", name="name", class="event-name-input")
@@ -9,8 +10,8 @@ block content
             input(type="date", name="date", class="event-date-input")
             label(for="description") Description
             textarea(name="description", class="event-description-input")
-            div(class="radius small button add-building-instance") Set For Buildings
-            div(class="radius small button add-group-instance") Set For Groups
+            div(class="add-instance-button radius small button add-building-instance") Set For Buildings
+            div(class="add-instance-button radius small button add-group-instance") Set For Groups
             div(class="instance-block")
             input(type="submit", value="Add Event", class="button small radius")
 

@@ -158,11 +158,12 @@ function HousingManager(settings) {
 
 		var instances = [];
 		var instanceCount = 1;
+		var checkboxCount = 1;
 
 		function generateSelector(selectorType) {
 			var selector = '';
 			selector += '<div class="event-checkbox-collection ' + selectorType + '-selection">';
-			selector += '<a class="toggle-all" href="#">Toggle All</a>';
+			selector += '<div href="#"><p class="link-sim toggle-all" >Toggle All</p></div>';
 			var tempCollectionList;
 			switch(selectorType) {
 				case 'position':
@@ -180,16 +181,18 @@ function HousingManager(settings) {
 
 			for (var i = 0; i < tempCollectionList.length; i++) {
 				selector += '<div class="checkbox-selection">';
-				selector += '<input type="checkbox" class="checkbox ' + selectorType + '-checkbox" value="' + tempCollectionList[i].id + '" />';
-				selector += '<label>' + tempCollectionList[i].name + '</label>';
+				selector += '<input id="checkbox-' + checkboxCount + '" type="checkbox" class="checkbox ' + selectorType + '-checkbox" value="' + tempCollectionList[i].id + '" />';
+				selector += '<label class="checkbox-label" check-selector="checkbox-' + checkboxCount +'">' + tempCollectionList[i].name + '</label>';
 				selector += '</div>';
+				checkboxCount++;
 			}
 			selector += '</div>';
 			return selector; 	
 		}
 
 		function addInstanceBlock(dataType) {
-			$('.instance-block').append('<div class="filter-instance ' + dataType + '-instance instance-' + instanceCount + '" instance-id="' + instanceCount + '"">');
+			$('.instance-block').prepend('<div class="filter-instance ' + dataType + '-instance instance-' + instanceCount + '" instance-id="' + instanceCount + '"">');
+			$('.instance-' + instanceCount).append('<div class="remove-instance"><i class="fa fa-close"></i></div>');
 			$('.instance-' + instanceCount).append('<h6 class="event-instance-header">For Positions:</h6>');
 			$('.instance-' + instanceCount).append(generateSelector('position'));
 			if (dataType == 'building') {
@@ -199,18 +202,21 @@ function HousingManager(settings) {
 				$('.instance-' + instanceCount).append('<h6 class="event-instance-header">in Groups:</h6>');
 				$('.instance-' + instanceCount).append(generateSelector('group'));
 			}
-			$('.instance-' + instanceCount).append('<h6>containing:</h6><input type="radio" name="experience" value="2" checked="checked" /><label>New and Returning Staff</label>');
-			$('.instance-' + instanceCount).append('<input type="radio" class="new-staff-input" name="experience" value="0" /><label>New Staff Only</label>');
-			$('.instance-' + instanceCount).append('<input type="radio" class="returning-staff-input" name="experience" value="1" /><label>Returning Staff Only</label>');
+			$('.instance-' + instanceCount).append('<h6>containing:</h6><input id="checkbox-' + checkboxCount + '" type="radio" name="experience" value="2" checked="checked" /><label class="checkbox-label" check-selector="checkbox-' + checkboxCount++ + '">New and Returning Staff</label>');
+			$('.instance-' + instanceCount).append('<input id="checkbox-' + checkboxCount + '" type="radio" class="new-staff-input" name="experience" value="0" /><label class="checkbox-label" check-selector="checkbox-' + checkboxCount++ + '">New Staff Only</label>');
+			$('.instance-' + instanceCount).append('<input id="checkbox-' + checkboxCount + '" type="radio" class="returning-staff-input" name="experience" value="1" /><label class="checkbox-label" check-selector="checkbox-' + checkboxCount++ + '">Returning Staff Only</label>');
 			$('.instance-' + instanceCount).append('<label>Location:</label><input type="text" name="location", class="event-location-input">');
 			$('.instance-' + instanceCount).append('<label>Start Time:</label><input type="time" name="starttime", class="start-time">');
 			$('.instance-' + instanceCount).append('<label>End Time:</label><input type="time" name="endtime", class="end-time">');
 
+			$('.remove-instance').click(function() {
+				$(this).parents('.filter-instance').remove();
+			})
 
 			$('.toggle-all').click(function() {
 				var checkedCount = 0;
 				var unCheckedCount = 0;
-				$(this).parent('.event-checkbox-collection').find('.checkbox').each(function(index, checkbox) {
+				$(this).parents('.event-checkbox-collection').find('.checkbox').each(function(index, checkbox) {
 					if (checkbox.checked) {
 						checkedCount++;
 					} else {
@@ -218,7 +224,7 @@ function HousingManager(settings) {
 					}
 				});
 
-				$(this).parent('.event-checkbox-collection').find('.checkbox').each(function(index, checkbox) {
+				$(this).parents('.event-checkbox-collection').find('.checkbox').each(function(index, checkbox) {
 					if (checkedCount > unCheckedCount) {
 						checkbox.checked = false;
 					} else {
@@ -226,6 +232,17 @@ function HousingManager(settings) {
 					}
 				});
 
+			});
+
+			$('.checkbox-label').click(function() {
+				var checkboxId = $(this).attr('check-selector');
+				var checkedValue = $('#' + checkboxId).prop('checked');
+				
+				if (checkedValue) {
+					$('#' + checkboxId).prop('checked', false);
+				} else {
+					$('#' + checkboxId).prop('checked', true);
+				}
 			});
 
 			++instanceCount;	
