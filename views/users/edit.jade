@@ -29,13 +29,21 @@ block content
                         option(value=building.id, selected="selected")= building.name
                     else
                         option(value=building.id)= building.name
-            label(for="group") Group
-            select(name="group")
-                each group in groups
-                    if (user.groupid == group.id)
-                        option(value=group.id, selected="selected")= group.name
-                    else
-                        option(value=group.id)= group.name
+            label(for="") Group
+            each group in groups
+                if (user.groups.indexOf(group.id) != -1)
+                    input(type="checkbox", name="groups[]", value=group.id, checked="checked")
+                else
+                    input(type="checkbox", name="groups[]", value=group.id)
+                label(for="groups[]")= group.name
+            label(for="experience") Experience
+            select(name="experience")
+                if (user.experience == 0)
+                    option(value="0", selected="selected") New Staff
+                    option(value="1") Returning Staff
+                else
+                    option(value="0") New Staff
+                    option(value="1", selected="selected") Returning Staff    
             label(for="room") Room Number
             input(type="number", name="room", value="#{user.room}")
             input(type="submit", value="Update User", class="small radius button")

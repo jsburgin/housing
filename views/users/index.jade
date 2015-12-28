@@ -20,7 +20,6 @@ block content
                     th(class='sort-click') Building
                     th(class='sort-click') Room Number
                     th(class='sort-click') Experience
-                    th(class='sort-click') Group
             tbody
                 each user in users
                     tr
@@ -38,10 +37,6 @@ block content
                             td New
                         else
                             td Returning
-                        if user.group
-                            td= user.group
-                        else
-                            td None 
 
 
         div(class="page-links")

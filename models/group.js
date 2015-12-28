@@ -1,4 +1,5 @@
 var db = require('../db');
+var async = require('async');
 
 exports.getAll = function(next) {
 	db.select().from('staffgroup')
@@ -7,11 +8,6 @@ exports.getAll = function(next) {
 			if (err) {
 				return next(err);
 			}
-
-			results.unshift({
-				name: 'None',
-				id: -1
-			});
 
 			next(null, results);
 		});
@@ -58,44 +54,26 @@ function addUser(groupData, next) {
 exports.addUser = addUser;
 
 exports.updateUser = function (groupData, next) {
-	// -1 means 'None' was selected
-	if (groupData.groupid == -1) {
-		db('staffgroupperson')
-			.where('personid', '=', groupData.personid)
+	async.waterfall([
+		function(cb) {
+			db('staffgroupperson')
+			.where('personid', '=', groupData.deleteid)
 			.del().asCallback(function(err) {
 				if (err) {
-					return next(err);
+					return cb(err);
 				}
 
-				next(null);
-			});
-	} else {
-		db('staffgroupperson').select()
-			.where('personid', '=', groupData.personid)
-			.asCallback(function(err, result) {
-				if (err) {
-					return next(err);
-				}
+				cb(null);
+			});	
+		},
+		function(cb) {
+			async.map(groupData.groups, addUser, cb);
+		}
+	], function(err) {
+		if (err) {
+			return next(err);
+		}
 
-				// if group entry already found, update it
-				if (result.length > 0) {
-					updateGroup();
-				} else {
-					addUser(groupData, next);
-				}
-			});
-	}
-
-	function updateGroup() {
-		db('staffgroupperson')
-			.where('personid', '=', groupData.personid)
-			.update({ groupid: groupData.groupid })
-			.asCallback(function(err) {
-				if (err) {
-					return next(err);
-				}
-
-				next(null);
-			});
-	}
+		next(null);
+	});
 }

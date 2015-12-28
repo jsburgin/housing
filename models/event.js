@@ -34,7 +34,7 @@ exports.getForUser = function(userId, next) {
 					{
 						$or: [
 							{ buildings: { $in: [user.buildingid] } },
-							{ groups: { $in: [user.groupid] } }
+							{ groups: { $in: user.groups } }
 						]	
 					},
 					{

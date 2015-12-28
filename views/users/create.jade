@@ -22,10 +22,10 @@ block content
             select(name="building")
                 each building in buildings
                     option(value=building.id)= building.name
-            label(for="group") Group
-            select(name="group")
-                each group in groups
-                    option(value=group.id)= group.name
+            label(for="") Group
+            each group in groups
+                input(type="checkbox", name="groups[]", value=group.id)
+                label(for="groups[]")= group.name
             label(for="experience") Experience
             select(name="experience")
                 option(value="0") New Staff

@@ -12,34 +12,65 @@ function get(userData, next) {
 		delete userData['id'];
 	}
 
-	db.select('person.*', 'building.name as building', 'position.name as position', 'staffgroup.name as group', 'staffgroup.id as groupid').from('person')
-		.join('position', 'person.positionid', '=', 'position.id')
-		.join('building', 'person.buildingid', '=', 'building.id')
-		.leftOuterJoin('staffgroupperson', 'person.id', '=', 'staffgroupperson.personid')
-		.leftOuterJoin('staffgroup', 'staffgroupperson.groupid', '=', 'staffgroup.id')
-		.where(userData)
-		.asCallback(function(err, rows) {
-			if (err) {
-				return next(err);
-			}
+	async.parallel([
+		function(cb) {
+			db.select('person.*', 'building.name as building', 'position.name as position').from('person')
+			.join('position', 'person.positionid', '=', 'position.id')
+			.join('building', 'person.buildingid', '=', 'building.id')
+			.where(userData)
+			.asCallback(function(err, rows) {
+				if (err) {
+					return cb(err);
+				}
 
-			if (rows.length > 0) {
-				// most accurate match
-				return next(null, rows[0])
-			}
+				if (rows.length > 0) {
+					// most accurate match
+					return cb(null, rows[0])
+				}
 
-			next(null, null);
-		});
+				cb(null, null);
+			});	
+		},
+		function(cb) {
+			db.select().from('staffgroupperson')
+				.where({ personid: userData['person.id'] })
+				.asCallback(function(err, rows) {
+					if (err) {
+						return cb(err);
+					}
+
+					cb(null, rows);
+				});
+		}
+	], function(err, results) {
+		if (err) {
+			return next(err);
+		}
+
+		if (results[0]) {
+			var user = results[0];
+			user.groups = [];
+
+			var groups = results[1];
+
+			for (var i = 0; i < groups.length; i++) {
+				user.groups.push(groups[i].groupid);
+			}
+		}
+		
+
+		next(null, user);
+	});
+
+	
 };
 
 exports.get = get;
 
 exports.getAll = function(next) {
-	db.select('person.*', 'building.name as building', 'position.name as position', 'staffgroup.name as group').from('person')
+	db.select('person.*', 'building.name as building', 'position.name as position').from('person')
 		.join('position', 'person.positionid', '=', 'position.id')
 		.join('building', 'person.buildingid', '=', 'building.id')
-		.leftOuterJoin('staffgroupperson', 'person.id', '=', 'staffgroupperson.personid')
-		.leftOuterJoin('staffgroup', 'staffgroupperson.groupid', '=', 'staffgroup.id')
 		.orderBy('lastname')
 		.asCallback(function(err, rows) {
 			if (err) {
@@ -92,18 +123,26 @@ function add(userData, next) {
 				});
 		},
 		function(results, cb) {
-			// attach user to an necessary groups
-			// -1 means 'None' was selected
-			if (userData.group != -1) {
-				Group.addUser({ personid: results[0], groupid: userData.group }, function(err) {
-					if (err) {
-						return cb(err);
-					}
-					cb(null);		
-				});
+			if (results.length == 0) {
+				return cb('Unable to fetch user to add groups.');
 			} else {
-				cb(null);
+				var groupMaps = [];
+
+				for (var i = 0; i < userData.groups.length; i++) {
+					groupMaps.push({
+						personid: results[0],
+						groupid: userData.groups[i]
+					});
+				}
+
+				async.map(groupMaps, Group.addUser, function(err) {
+					if (err) {
+						console.log(err);
+					}
+				});
 			}
+		
+			cb(null);
 		},
 		function(cb) {
 			// send email to new user

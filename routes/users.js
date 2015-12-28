@@ -84,7 +84,7 @@ router.post('/create', restrict, function(req, res, next) {
                 positionid: parseInt(req.body.position),
                 buildingid: parseInt(req.body.building),
                 room: parseInt(req.body.room),
-                group: parseInt(req.body.group),
+                groups: req.body.groups,
                 experience: parseInt(req.body.experience)
             };
 
@@ -150,6 +150,8 @@ router.get('/edit/:id', restrict, function(req, res, next) {
 });
 
 router.post('/edit', restrict, function(req, res, next) {
+	var reqGroups = req.body.groups;
+	delete req.body.groups;
 	var updates = req.body;
 
 
@@ -160,7 +162,6 @@ router.post('/edit', restrict, function(req, res, next) {
 	updates.buildingid = parseInt(updates.building);
 	delete updates.building;
 
-	updates.group = parseInt(updates.group);
 	updates.room = parseInt(updates.room);
 
 	User.update(updates.id, updates, function(err) {
@@ -170,6 +171,24 @@ router.post('/edit', restrict, function(req, res, next) {
 
 		res.redirect('/users');
 	});
+
+	var newGroups = [];
+
+	if (reqGroups) {
+		for (var i = 0; i < reqGroups.length; i++) {
+			newGroups.push({
+				personid: updates.id,
+				groupid: reqGroups[i]
+			});
+		}	
+	}	
+
+	Group.updateUser({ deleteid: updates.id, groups: newGroups }, function(err) {
+		if (err) {
+			console.log(err);
+		}
+	});
+
 });
 
 router.post('/remove', restrict, function(req, res, next) {
