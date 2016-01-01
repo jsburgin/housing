@@ -157,6 +157,7 @@ function HousingManager(settings) {
 		var instances = [];
 		var instanceCount = 1;
 		var checkboxCount = 1;
+		var experienceCount = 1;
 
 		function generateSelector(selectorType) {
 			var selector = '';
@@ -231,16 +232,18 @@ function HousingManager(settings) {
 				$('.instance-' + instanceCount).append('<h6 class="event-instance-header">in Groups:</h6>');
 				$('.instance-' + instanceCount).append(generateSelector('group'));
 			}
-			$('.instance-' + instanceCount).append('<h6>containing:</h6><input id="checkbox-' + checkboxCount + '" type="radio" name="experience" value="2" checked="checked" /><label class="checkbox-label" check-selector="checkbox-' + checkboxCount++ + '">New and Returning Staff</label>');
-			$('.instance-' + instanceCount).append('<input id="checkbox-' + checkboxCount + '" type="radio" class="new-staff-input" name="experience" value="0" /><label class="checkbox-label" check-selector="checkbox-' + checkboxCount++ + '">New Staff Only</label>');
-			$('.instance-' + instanceCount).append('<input id="checkbox-' + checkboxCount + '" type="radio" class="returning-staff-input" name="experience" value="1" /><label class="checkbox-label" check-selector="checkbox-' + checkboxCount++ + '">Returning Staff Only</label>');
+			$('.instance-' + instanceCount).append('<h6>containing:</h6><input id="checkbox-' + checkboxCount + '" type="radio" name="experience-'+ experienceCount + '" value="2" checked="checked" /><label class="checkbox-label" check-selector="checkbox-' + checkboxCount++ + '">New and Returning Staff</label>');
+			$('.instance-' + instanceCount).append('<input id="checkbox-' + checkboxCount + '" type="radio" class="new-staff-input" name="experience-'+ experienceCount + '" value="0" /><label class="checkbox-label" check-selector="checkbox-' + checkboxCount++ + '">New Staff Only</label>');
+			$('.instance-' + instanceCount).append('<input id="checkbox-' + checkboxCount + '" type="radio" class="returning-staff-input" name="experience-' + experienceCount + '" value="1" /><label class="checkbox-label" check-selector="checkbox-' + checkboxCount++ + '">Returning Staff Only</label>');
 			$('.instance-' + instanceCount).append('<label>Location:</label><input type="text" name="location", class="event-location-input">');
 			$('.instance-' + instanceCount).append('<label>Start Time:</label><input type="time" name="starttime", class="start-time">');
 			$('.instance-' + instanceCount).append('<label>End Time:</label><input type="time" name="endtime", class="end-time">');
 
+			experienceCount++;
+			
 			$('.remove-instance').click(function() {
 				$(this).parents('.filter-instance').remove();
-			})
+			});
 
 			$('.toggle-all').click(function() {
 				var checkedCount = 0;
