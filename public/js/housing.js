@@ -221,17 +221,14 @@ function HousingManager(settings) {
 		}
 
 		function addInstanceBlock(dataType) {
-			$('.instance-block').prepend('<div class="filter-instance ' + dataType + '-instance instance-' + instanceCount + '" instance-id="' + instanceCount + '"">');
+			$('.instance-block').prepend('<div class="filter-instance instance-' + instanceCount + '" instance-id="' + instanceCount + '"">');
 			$('.instance-' + instanceCount).append('<div class="remove-instance"><i class="fa fa-close"></i></div>');
 			$('.instance-' + instanceCount).append('<h6 class="event-instance-header">For Positions:</h6>');
 			$('.instance-' + instanceCount).append(generateSelector('position'));
-			if (dataType == 'building') {
-				$('.instance-' + instanceCount).append('<h6 class="event-instance-header">in Buildings:</h6>');
-				$('.instance-' + instanceCount).append(generateSelector('building'));	
-			} else {
-				$('.instance-' + instanceCount).append('<h6 class="event-instance-header">in Groups:</h6>');
-				$('.instance-' + instanceCount).append(generateSelector('group'));
-			}
+			$('.instance-' + instanceCount).append('<h6 class="event-instance-header">that are in Buildings:</h6>');
+			$('.instance-' + instanceCount).append(generateSelector('building'));	
+			$('.instance-' + instanceCount).append('<h6 class="event-instance-header">or that are in Groups:</h6>');
+			$('.instance-' + instanceCount).append(generateSelector('group'));
 			$('.instance-' + instanceCount).append('<h6>containing:</h6><input id="checkbox-' + checkboxCount + '" type="radio" name="experience-'+ experienceCount + '" value="2" checked="checked" /><label class="checkbox-label" check-selector="checkbox-' + checkboxCount++ + '">New and Returning Staff</label>');
 			$('.instance-' + instanceCount).append('<input id="checkbox-' + checkboxCount + '" type="radio" class="new-staff-input" name="experience-'+ experienceCount + '" value="0" /><label class="checkbox-label" check-selector="checkbox-' + checkboxCount++ + '">New Staff Only</label>');
 			$('.instance-' + instanceCount).append('<input id="checkbox-' + checkboxCount + '" type="radio" class="returning-staff-input" name="experience-' + experienceCount + '" value="1" /><label class="checkbox-label" check-selector="checkbox-' + checkboxCount++ + '">Returning Staff Only</label>');
@@ -240,7 +237,7 @@ function HousingManager(settings) {
 			$('.instance-' + instanceCount).append('<label>End Time:</label><input type="time" name="endtime", class="end-time">');
 
 			experienceCount++;
-			
+
 			$('.remove-instance').click(function() {
 				$(this).parents('.filter-instance').remove();
 			});
@@ -280,15 +277,10 @@ function HousingManager(settings) {
 			++instanceCount;	
 		}
 
-		$('.event-creation-form .add-building-instance').click(function() {
-			// add instance for building based identifcation
-			addInstanceBlock('building');
+		$('.event-creation-form .add-main-instance').click(function() {
+			addInstanceBlock('main');
 		});
 
-		$('.event-creation-form .add-group-instance').click(function() {
-			// add instance for group based indentification
-			addInstanceBlock('group');
-		});
 
 		$('.event-creation-form').submit(function(event) {
 			generateEvent(function(eventData) {
@@ -336,21 +328,18 @@ function HousingManager(settings) {
 					}
 				});
 
-				if ($(filter).attr('class').indexOf('building-instance') != -1) {
-					newInstance.buildings = [];
-					$.each($(filter).find('.building-checkbox'), function(index, checkbox) {
-						if (checkbox.checked) {
-							newInstance.buildings.push(parseInt($(checkbox).val()));
-						}
-					});
-					
-				} else {
-					$.each($(filter).find('.group-checkbox'), function(index, checkbox) {
-						if (checkbox.checked) {
-							newInstance.groups.push(parseInt($(checkbox).val()));
-						}
-					});
-				}
+				$.each($(filter).find('.building-checkbox'), function(index, checkbox) {
+					if (checkbox.checked) {
+						newInstance.buildings.push(parseInt($(checkbox).val()));
+					}
+				});
+
+				$.each($(filter).find('.group-checkbox'), function(index, checkbox) {
+					if (checkbox.checked) {
+						newInstance.groups.push(parseInt($(checkbox).val()));
+					}
+				});
+
 			
 				eventData.instances.push(newInstance);
 			});
