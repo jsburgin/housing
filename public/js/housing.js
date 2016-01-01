@@ -185,7 +185,7 @@ function HousingManager(settings) {
 				checkboxCount++;	
 			}
 
-			if (selectorType == 'position') {
+			if (selectorType == 'position' || selectorType == 'group') {
 				for (var i = 0; i < tempCollectionList.length; i++) {
 					addSelector(i);
 				}		
