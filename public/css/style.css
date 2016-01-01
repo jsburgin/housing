@@ -221,6 +221,10 @@ a.active-link {
 
 }
 
+.checkbox-selection {
+	overflow: hidden;
+}
+
 .link-sim {
 	clear: both;
 	color: #AB2D4E;
