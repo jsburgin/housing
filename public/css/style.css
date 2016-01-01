@@ -51,8 +51,11 @@ h1,h2,h3,h4,h5,h6 {
 	margin-top: 30px;
 }
 
-table {
+.emptyCheckbox {
+	min-height: 1px;
+}
 
+table {
 	width: 100%;
 }
 
@@ -190,6 +193,11 @@ a.active-link {
 }
 
 .checkbox-selection {
+	float: left;
+}
+
+.length-checkbox {
+	width: 25%;
 	float: left;
 }
 

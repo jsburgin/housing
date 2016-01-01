@@ -177,13 +177,44 @@ function HousingManager(settings) {
 					return '';			
 			}
 
-			for (var i = 0; i < tempCollectionList.length; i++) {
-				selector += '<div class="checkbox-selection">';
-				selector += '<input id="checkbox-' + checkboxCount + '" type="checkbox" class="checkbox ' + selectorType + '-checkbox" value="' + tempCollectionList[i].id + '" />';
-				selector += '<label class="checkbox-label" check-selector="checkbox-' + checkboxCount +'">' + tempCollectionList[i].name + '</label>';
+			function addSelector(index, grid) {
+				selector += '<div class="checkbox-selection ' + grid + '">';
+				selector += '<input id="checkbox-' + checkboxCount + '" type="checkbox" class="checkbox ' + selectorType + '-checkbox" value="' + tempCollectionList[index].id + '" />';
+				selector += '<label class="checkbox-label" check-selector="checkbox-' + checkboxCount +'">' + tempCollectionList[index].name + '</label>';
 				selector += '</div>';
-				checkboxCount++;
+				checkboxCount++;	
 			}
+
+			if (selectorType == 'position') {
+				for (var i = 0; i < tempCollectionList.length; i++) {
+					addSelector(i);
+				}		
+			} else {
+				var rowCount = Math.floor(tempCollectionList.length / 4);
+
+				if (rowCount % 4 != 0) {
+					rowCount++;
+				}
+				
+				for (var i = 0; i < rowCount; i++) {
+					var grid = 'small-3 columns';
+					function addEmptyCheckbox() {
+						selector += '<div class="small-4 columns"></div>';
+					}
+
+					addSelector(i, grid);
+					for (var j = 1; j < 4; j++) {
+						if (i + rowCount * j < tempCollectionList.length) {
+							addSelector(i + rowCount * j, grid);	
+						} else {
+							addEmptyCheckbox();
+						}
+					}
+
+				}
+			}
+
+			
 			selector += '</div>';
 			return selector; 	
 		}

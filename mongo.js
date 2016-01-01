@@ -59,7 +59,7 @@ exports.eventRetrieve = function(documentParams, collectionString, next) {
 
 		var collection = db.collection(collectionString);
 
-		collection.find(documentParams, { buildings: 0, groups: 0, positions: 0, _id: 0, experience: 0 }).toArray(function(err, results) {
+		collection.find(documentParams, { buildings: 0, groups: 0, positions: 0, _id: 0, experience: 0 }).sort({ startTime: 1, date: 1 }).toArray(function(err, results) {
 			db.close();
 			if (err) {
 				return next(err);
