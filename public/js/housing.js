@@ -159,6 +159,9 @@ function HousingManager(settings) {
 		var checkboxCount = 1;
 		var experienceCount = 1;
 
+		var globalStartTime = "";
+		var globalEndTime = "";
+
 		function generateSelector(selectorType) {
 			var selector = '';
 			selector += '<div class="event-checkbox-collection ' + selectorType + '-selection">';
@@ -225,21 +228,29 @@ function HousingManager(settings) {
 			$('.instance-' + instanceCount).append('<div class="remove-instance"><i class="fa fa-close"></i></div>');
 			$('.instance-' + instanceCount).append('<h6 class="event-instance-header">For Positions:</h6>');
 			$('.instance-' + instanceCount).append(generateSelector('position'));
-			$('.instance-' + instanceCount).append('<h6 class="event-instance-header">that are in Buildings:</h6>');
+			$('.instance-' + instanceCount).append('<h6 class="event-instance-header">that are in Buildings (leave blank for none):</h6>');
 			$('.instance-' + instanceCount).append(generateSelector('building'));	
-			$('.instance-' + instanceCount).append('<h6 class="event-instance-header">or that are in Groups:</h6>');
+			$('.instance-' + instanceCount).append('<h6 class="event-instance-header"><b>or</b> that are in Groups (leave blank for none):</h6>');
 			$('.instance-' + instanceCount).append(generateSelector('group'));
 			$('.instance-' + instanceCount).append('<h6>containing:</h6><input id="checkbox-' + checkboxCount + '" type="radio" name="experience-'+ experienceCount + '" value="2" checked="checked" /><label class="checkbox-label" check-selector="checkbox-' + checkboxCount++ + '">New and Returning Staff</label>');
 			$('.instance-' + instanceCount).append('<input id="checkbox-' + checkboxCount + '" type="radio" class="new-staff-input" name="experience-'+ experienceCount + '" value="0" /><label class="checkbox-label" check-selector="checkbox-' + checkboxCount++ + '">New Staff Only</label>');
 			$('.instance-' + instanceCount).append('<input id="checkbox-' + checkboxCount + '" type="radio" class="returning-staff-input" name="experience-' + experienceCount + '" value="1" /><label class="checkbox-label" check-selector="checkbox-' + checkboxCount++ + '">Returning Staff Only</label>');
 			$('.instance-' + instanceCount).append('<label>Location:</label><input type="text" name="location", class="event-location-input">');
-			$('.instance-' + instanceCount).append('<label>Start Time:</label><input type="time" name="starttime", class="start-time">');
-			$('.instance-' + instanceCount).append('<label>End Time:</label><input type="time" name="endtime", class="end-time">');
+			$('.instance-' + instanceCount).append('<label>Start Time:</label><input type="time" name="starttime" class="start-time" value="' + globalStartTime + '">');
+			$('.instance-' + instanceCount).append('<label>End Time:</label><input type="time" name="endtime" class="end-time" value="' + globalEndTime + '">');
 
 			experienceCount++;
 
 			$('.remove-instance').click(function() {
 				$(this).parents('.filter-instance').remove();
+			});
+
+			$('.start-time').blur(function() {
+				globalStartTime = $(this).val();
+			});
+
+			$('.end-time').blur(function() {
+				globalEndTime = $(this).val();
 			});
 
 			$('.toggle-all').click(function() {
