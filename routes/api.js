@@ -7,17 +7,8 @@ var postOffice = require('../postoffice');
 var User = require('../models/user');
 
 router.get('/events', function(req, res, next) {
-    Event.getAll(function(err, events) {
-    	if (err) {
-    		return res.send('Unable to find any events.');
-    	}
-
-    	res.json(events);
-    });
-});
-
-router.get('/events/?:id', function(req, res, next) {
-	var id = req.param('id');
+	var id = req.query.id;
+	
 	if (id) {
 		Event.getForUser(parseInt(id), function(err, events) {
 			if (err) {
@@ -26,6 +17,14 @@ router.get('/events/?:id', function(req, res, next) {
 
 			return res.json(events);
 		});
+	} else {
+		Event.getAll(function(err, events) {
+	    	if (err) {
+	    		return res.send('Unable to find any events.');
+	    	}
+
+	    	res.json(events);
+    	});	
 	}
 });
 

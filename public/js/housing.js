@@ -90,6 +90,21 @@ function HousingManager(settings) {
 			aspectRatio: 1.7
 		});
 
+		socket.on('eventHeaders', function(eventHeaders) {
+			for (var i = 0; i < eventHeaders.length; i++) {
+				var newEvent = {
+					title: eventHeaders[i].title,
+					start: new Date(eventHeaders[i].date + ' ' + eventHeaders[i].startTime),
+					end: new Date(eventHeaders[i].date + ' ' + eventHeaders[i].endTime),
+					id: eventHeaders[i].linkedId,
+					backgroundColor: '#AB2D4E',
+					borderColor: '#AB2D4E',
+				};
+
+				$('#calendar').fullCalendar('renderEvent', newEvent, true);
+			}
+		});
+
 		$('.fc-day').click(function(event) {
 			var dateSelected = $(event.target).attr('data-date');
 			dayClicked(dateSelected);
@@ -102,6 +117,7 @@ function HousingManager(settings) {
 
 		function dayClicked(date) {
 			// filter dayClicked data
+			window.location.replace('/day?date=' + date);
 		}
 	}
 
@@ -312,6 +328,7 @@ function HousingManager(settings) {
 				title: $('.event-name-input').val(),
 				description: $('.event-description-input').val(),
 				date: $('.event-date-input').val(),
+				staff: $('.event-staff-input').val(),
 				instances: []
 			};
 

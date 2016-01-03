@@ -78,10 +78,7 @@ exports.retrieveSorted = function(documentParams, collectionString, sortBy, next
 
 		var collection = db.collection(collectionString);
 
-		var sortObj = {};
-		sortObj[sortBy.name] = sortBy.order;
-
-		collection.find(documentParams).sort(sortObj).toArray(function(err, results) {
+		collection.find(documentParams).sort(sortBy).toArray(function(err, results) {
 			db.close();
 			if (err) {
 				return next(err);

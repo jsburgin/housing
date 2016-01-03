@@ -255,3 +255,29 @@ a.active-link {
 .event-description-input {
 	min-height: 100px;
 }
+
+.day-header {
+	padding-bottom: 5px;
+	border-bottom: 1px solid #DDDDDD;
+}
+
+.fit-content {
+	width: 1%;
+	white-space: nowrap;
+}
+
+.desc-td {
+	line-height: 22px;
+}
+
+.meal-color {
+	background: #EAF1DC !important;
+}
+
+.long-desc {
+	font-size: 14px;
+}
+
+.day-table {
+	margin-top: 15px;
+}

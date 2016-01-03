@@ -6,7 +6,7 @@ var postOffice = require('../postoffice');
 var User = require('./user');
 
 exports.getAll = function(options, next) {
-	mongo.retrieveSorted({}, 'notifications', { name: 'time', order: -1 }, function(err, notifications) {
+	mongo.retrieveSorted({}, 'notifications', { time: -1 }, function(err, notifications) {
 		if (err) {
 			return next(err);
 		}
