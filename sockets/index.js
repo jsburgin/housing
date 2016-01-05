@@ -2,6 +2,7 @@ var diagnostics = require('../managers/diagnostics');
 var calendar = require('../managers/calendar');
 var notification = require('../managers/notification');
 var eventCreation = require('../managers/eventcreation');
+var Event = require('../models/event');
 
 module.exports = function(io) {
 	io.on('connection', function(socket) {
@@ -41,6 +42,19 @@ module.exports = function(io) {
 				}
 			});
 		});
+
+		
+		socket.on('removeEvent', function(linkingId) {
+			Event.remove({ linkingId: linkingId }, function(err) {
+				if (err) {
+					socket.emit('eventRemoved', false);
+					console.log(err);
+				}
+
+				socket.emit('eventRemoved', true);
+			});
+		});
+		
 
 	});
 }

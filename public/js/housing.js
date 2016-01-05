@@ -50,6 +50,20 @@ function HousingManager(settings) {
 			socket.on('eventPackage', function(eventPackage) {
 				eventEditing(eventPackage);
 			});
+			break;
+		case 'dayView':
+			$('.remove-event-link').click(function() {
+				var linkTableRow = $(this).parents('tr');
+				socket.emit('removeEvent', $(this).attr('linkingId'));
+
+				socket.on('eventRemoved', function(success) {
+					console.log(success);
+					if (success) {
+						linkTableRow.remove();	
+					}
+				});
+			});
+			break;
 	}
 
 	// socket.io events //
