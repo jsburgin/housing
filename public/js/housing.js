@@ -27,7 +27,7 @@ function HousingManager(settings) {
 			socket.emit('notificationEngine', true);
 			loadDataTables('.user-accounts', 'notifications');
 			break;
-		case 'Calendar':
+			case 'Calendar':
 			socket.emit('calendarEngine', true);
 			calendarManager();
 			break;
@@ -105,7 +105,11 @@ function HousingManager(settings) {
 			editable: false,
 			eventLimit: true,
 			fixedWeekCount: false,
-			aspectRatio: 1.7
+			aspectRatio: 1.7,
+			eventClick: function(eventData) {
+				console.log('called');
+				return window.location.replace('/edit?linkingId=' + eventData.id);
+			}
 		});
 
 		socket.on('eventHeaders', function(eventHeaders) {
@@ -114,13 +118,14 @@ function HousingManager(settings) {
 					title: eventHeaders[i].title,
 					start: new Date(eventHeaders[i].date + ' ' + eventHeaders[i].startTime),
 					end: new Date(eventHeaders[i].date + ' ' + eventHeaders[i].endTime),
-					id: eventHeaders[i].linkedId,
+					id: eventHeaders[i].linkingId,
 					backgroundColor: '#AB2D4E',
 					borderColor: '#AB2D4E',
 				};
 
 				$('#calendar').fullCalendar('renderEvent', newEvent, true);
 			}
+			
 		});
 
 		$('.fc-day').click(function(event) {
