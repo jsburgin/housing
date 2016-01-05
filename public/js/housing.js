@@ -42,10 +42,14 @@ function HousingManager(settings) {
 			socket.emit('eventCreation', true);
 			
 			socket.on('eventPackage', function(eventPackage) {
-				eventCreation(eventPackage.positions, eventPackage.buildings, eventPackage.groups);
+				eventCreation(eventPackage.positions, eventPackage.buildings, eventPackage.groups, 0, 0, 0, true);
 			});
-
 			break;
+		case 'eventEditing':
+			socket.emit('eventCreation', true);
+			socket.on('eventPackage', function(eventPackage) {
+				eventEditing(eventPackage);
+			});
 	}
 
 	// socket.io events //
@@ -167,21 +171,32 @@ function HousingManager(settings) {
 		$('.hide-table').css('visibility', 'visible');
 	}
 
-	function eventCreation(positions, buildings, groups) {
-		console.log(buildings);
+	function eventCreation(positions, buildings, groups, startingInstanceCount, startingCheckboxCount, startingExperienceCount, newEvent) {
+
+		var instanceCount = 0;
+		var checkboxCount = 0;
+		var experienceCount = 0;
 
 		var instances = [];
-		var instanceCount = 1;
-		var checkboxCount = 1;
-		var experienceCount = 1;
+		if (startingInstanceCount) {
+			instanceCount = startingInstanceCount;
+		}
 
+		if (startingCheckboxCount) {
+			checkboxCount = startingCheckboxCount;
+		}
+
+		if (startingExperienceCount) {
+			experienceCount = startingExperienceCount;
+		}
+		
 		var globalStartTime = "";
 		var globalEndTime = "";
 
 		function generateSelector(selectorType) {
 			var selector = '';
 			selector += '<div class="event-checkbox-collection ' + selectorType + '-selection">';
-			selector += '<div href="#"><p class="link-sim toggle-all" >Toggle All</p></div>';
+			selector += '<div><p class="link-sim toggle-all" >Toggle All</p></div>';
 			var tempCollectionList;
 			switch(selectorType) {
 				case 'position':
@@ -197,43 +212,17 @@ function HousingManager(settings) {
 					return '';			
 			}
 
-			function addSelector(index, grid) {
-				selector += '<div class="checkbox-selection ' + grid + '">';
+			function addSelector(index) {
+				selector += '<div class="checkbox-selection">';
 				selector += '<input id="checkbox-' + checkboxCount + '" type="checkbox" class="checkbox ' + selectorType + '-checkbox" value="' + tempCollectionList[index].id + '" />';
 				selector += '<label class="checkbox-label" check-selector="checkbox-' + checkboxCount +'">' + tempCollectionList[index].name + '</label>';
 				selector += '</div>';
 				checkboxCount++;	
 			}
 
-			if (selectorType == 'position' || selectorType == 'group') {
-				for (var i = 0; i < tempCollectionList.length; i++) {
-					addSelector(i);
-				}		
-			} else {
-				var rowCount = Math.floor(tempCollectionList.length / 4);
-
-				if (rowCount % 4 != 0) {
-					rowCount++;
-				}
-				
-				for (var i = 0; i < rowCount; i++) {
-					var grid = 'small-3 columns';
-					function addEmptyCheckbox() {
-						selector += '<div class="small-4 columns"></div>';
-					}
-
-					addSelector(i, grid);
-					for (var j = 1; j < 4; j++) {
-						if (i + rowCount * j < tempCollectionList.length) {
-							addSelector(i + rowCount * j, grid);	
-						} else {
-							addEmptyCheckbox();
-						}
-					}
-
-				}
+			for (var i = 0; i < tempCollectionList.length; i++) {
+				addSelector(i);
 			}
-
 			
 			selector += '</div>';
 			return selector; 	
@@ -256,7 +245,45 @@ function HousingManager(settings) {
 			$('.instance-' + instanceCount).append('<label>End Time:</label><input type="time" name="endtime" class="end-time" value="' + globalEndTime + '">');
 
 			experienceCount++;
+			reInitButtons();
+			instanceCount++;	
+		}
 
+		$('.event-creation-form .add-main-instance').click(function() {
+			addInstanceBlock('main');
+		});
+
+		reInitButtons();
+
+		function onEventSubmit() {
+			generateEvent(function(eventData) {
+				socket.emit('newEvent', eventData);
+			});
+
+			socket.on('eventCreated', function() {
+				return window.location.replace('/');
+			});
+
+			
+		}
+
+		if (newEvent) {
+			$('.event-creation-form').submit(function(event) {
+				onEventSubmit();
+				event.preventDefault();
+			});	
+		} else {
+			$('.event-creation-form').submit(function(event) {
+				if (settings.linkingId) {
+					socket.emit('removeEvent', settings.linkingId);
+					onEventSubmit();
+				}
+				
+				event.preventDefault();
+			});		
+		}
+
+		function reInitButtons() {
 			$('.remove-instance').click(function() {
 				$(this).parents('.filter-instance').remove();
 			});
@@ -300,28 +327,7 @@ function HousingManager(settings) {
 					$('#' + checkboxId).prop('checked', true);
 				}
 			});
-
-			++instanceCount;	
 		}
-
-		$('.event-creation-form .add-main-instance').click(function() {
-			addInstanceBlock('main');
-		});
-
-
-		$('.event-creation-form').submit(function(event) {
-			generateEvent(function(eventData) {
-				console.log(eventData);
-				socket.emit('newEvent', eventData);
-				// redirect here
-			});
-
-			socket.on('eventCreated', function() {
-				return window.location.replace('/');
-			});
-
-			event.preventDefault();
-		});
 
 		function generateEvent(next) {
 			var eventData = {
@@ -375,5 +381,20 @@ function HousingManager(settings) {
 			
 			next(eventData);
 		}
+	}
+
+	function eventEditing(eventPackage) {
+		var checkboxLabels = $('.checkbox-label');
+		var checkboxCount = 0;
+		$('.checkbox').each(function(index, item) {
+			$(this).attr('id', 'checkbox-' + index);
+			$(checkboxLabels[index]).attr('check-selector', 'checkbox-' + index);
+			checkboxCount++;
+		});
+
+		
+		var eventCount = $('.filter-instance').length;
+
+		eventCreation(eventPackage.positions, eventPackage.buildings, eventPackage.groups, eventCount, checkboxCount, eventCount, false);
 	}
 }

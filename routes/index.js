@@ -115,6 +115,56 @@ router.get('/day', function(req, res, next) {
 	}
 });
 
+router.get('/edit', function(req, res, next) {
+	var linkingId = req.query.linkingId;
+
+	if (linkingId) {
+		var vm = {
+			title: 'Edit Event',
+			linkingId: linkingId
+		};
+
+		async.parallel([
+			function(cb) {
+				Event.getHeaders({ linkingId: linkingId }, cb);
+			},
+			function(cb) {
+				Event.get({ linkingId: linkingId }, cb);
+			},
+			function(cb) {
+				Position.getAll(cb);
+			},
+			function(cb) {
+				Building.getAll(cb);
+			},
+			function(cb) {
+				Group.getAll(cb);
+			}
+		], function(err, results) {
+			if (err) {
+				console.log(err);
+				return res.redirect('/');
+			}
+
+			if (results[0].length == 0) {
+				return res.redirect('/');
+			}
+
+			vm.eventHeader = results[0][0];
+			vm.events = results[1];
+			vm.positions = results[2];
+			vm.buildings = results[3];
+			vm.groups = results[4];
+
+			return res.render('edit', vm);
+		});
+
+	} else {
+		res.redirect('/');	
+	}
+
+});
+
 function prettifyTime(timeString) {
 	var split = timeString.split(':');
 	var newTimeString = '';

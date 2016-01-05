@@ -132,6 +132,33 @@ exports.getHeaders = function(objectData, next) {
 	});
 }
 
+exports.get = function(objectData, next) {
+	mongo.retrieveSorted(objectData, 'events', { startTime: 1 }, function(err, events) {
+		if (err) {
+			return next(err);
+		}
+
+		next(null, events);
+	});
+};
+
+exports.remove = function(objectData, next) {
+	async.parallel([
+		function(cb) {
+			mongo.remove(objectData, 'events', cb);
+		},
+		function(cb) {
+			mongo.remove(objectData, 'eventHeaders', cb);
+		}
+	], function(err) {
+		if (err) {
+			return next(err);
+		}
+
+		next(null);
+	});
+};
+
 exports.getAll = function(next) {
 	mongo.retrieve({}, 'events', function(err, events) {
 		next(err, events);

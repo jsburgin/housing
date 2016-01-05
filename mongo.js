@@ -106,3 +106,21 @@ exports.aggregate = function(stages, collectionString, next) {
 		});
 	});
 };
+
+exports.remove = function(documentParams, collectionString, next) {
+	getInstance(function(err, db) {
+		if (err) {
+			return next(err);
+		}
+
+		var collection = db.collection(collectionString);
+
+		collection.deleteMany(documentParams, function(err, results) {
+			if (err) {
+				return next(err);
+			}
+
+			next(null);
+		});
+	});
+};

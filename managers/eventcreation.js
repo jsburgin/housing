@@ -42,6 +42,14 @@ exports.listen = function(socket, next) {
 
 	});
 
+	socket.on('removeEvent', function(linkingId) {
+		Event.remove({ linkingId: linkingId }, function(err) {
+			if (err) {
+				console.log(err);
+			}
+		});
+	});
+
 	socket.on('disconnect', function() {
 		return next(null);
 	});
