@@ -1,0 +1,59 @@
+doctype html
+html(class="no-js", lang="en")
+    head
+        meta(charset="utf-8")
+        meta(name="viewport", content="width=device-width, initial-scale=1.0")
+        title= title
+        link(rel="stylesheet", href="/css/foundation.css")
+        link(rel="stylesheet", href="/css/style.css")
+        link(rel="stylesheet", href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css")
+        link(rel="stylesheet", href="/css/fullcalendar.css")
+        link(rel="stylesheet", href="https://cdn.datatables.net/s/zf/dt-1.10.10,r-2.0.0/datatables.min.css")
+        block stylesheets
+        script(src="/js/vendor/modernizr.js")
+    body
+        div(class="row")
+            div(class="small-12 columns")
+                div(class="schedule-header")
+                    div(class="small-12 large-10 columns schedule-user-info")
+                        h5!= "#TEAMHRC2016 - " +  userName + " Spring Traning Schedule"
+                    div(class="small-12 columns centered-content")
+                        h4 SPRING 2016 TRAINING SCHEDULE
+                        h5 WELCOME TO SPRING TRAINING!
+                        div(class="small-12 large-10 columns large-centered")
+                            p This schedule is a comprehensive overview of spring training this year. If at any point you have any questions, ask your supervisor, who will also communicate additional expectations or any last minute changes to the schedule.
+                    div(class="small-10 columns small-centered")
+                        div(class="centered-content")
+                            h6 IMPORTANT DATES
+                        ul
+                            li!= '<strong>DESKS OPEN</strong> Saturday January 9th @8AM'
+                            li!= '<strong>BUILDINGS OPEN</strong> Saturday January 9th @5PM'
+                            li!= '<strong>ON CALL BEGINS</strong> Saturday January 9th @5PM'
+
+                div(class="small-12 columns")        
+                    each day in daySet
+                        div(class="schedule-day-node")
+                            h3(class="day-header")= day[0].prettyDate
+                            table(class="day-table")
+                                thead
+                                    tr
+                                        th(class="fit-content") Start Time
+                                        th(class="fit-content") End Time
+                                        th(class="fit-content") Place
+                                        th Event
+                                tbody
+                                each eventObject in day
+                                    tr(class="#{eventObject.mealColor}")
+                                        td(class="fit-content")= eventObject.startTime
+                                        td(class="fit-content")= eventObject.endTime
+                                        td(class="fit-content")= eventObject.location
+                                        if eventObject.longDescription
+                                            td(class="desc-td")!= '<b>' + eventObject.title + '</b><br />' + 'See below for details...'
+                                        else
+                                            td(class="desc-td")!= '<b>' + eventObject.title + '</b><br />' + eventObject.description.replace(/\n/g, '<br />')
+                            each eventObject in day
+                                if eventObject.longDescription
+                                    div(class="small-12 large-11 columns large-centered")
+                                        p(class="long-desc")!= eventObject.description.replace(/\n/g, '<br />')
+
+

@@ -9,11 +9,12 @@ var Position = require('../models/position');
 var Building = require('../models/building');
 var Group = require('../models/group');
 var Event = require('../models/event');
+var timeFormatter = require('../timeformatter');
 
 var activeLink = 'Calendar';
 
 router.get('/', restrict, function(req, res, next) {
-    res.render('index', { title: 'Housing', activeLink: activeLink });
+    res.render('index', { title: 'Training Dashboard | University of Alabama Housing', activeLink: activeLink });
 });
 
 router.post('/login', passport.authenticate('local', {failureRedirect: '/'}), function(req, res, next) {
@@ -90,8 +91,8 @@ router.get('/day', function(req, res, next) {
 						eventHeaders[i].longDescription = false;
 					}
 
-					eventHeaders[i].startTime = prettifyTime(eventHeaders[i].startTime);
-					eventHeaders[i].endTime = prettifyTime(eventHeaders[i].endTime);
+					eventHeaders[i].startTime = timeFormatter(eventHeaders[i].startTime);
+					eventHeaders[i].endTime = timeFormatter(eventHeaders[i].endTime);
 
 					if (!eventHeaders[i].location) {
 						eventHeaders[i].location = 'N/A';
@@ -99,7 +100,7 @@ router.get('/day', function(req, res, next) {
 				}
 
 				var vm = {
-					title: 'Manage Day',
+					title: 'Manage Day | University of Alabama Housing',
 					header: dateFormat(new Date(date + ' 12:00'), "dddd, mmmm d, yyyy"),
 					date: date,
 					eventHeaders: eventHeaders
@@ -164,21 +165,5 @@ router.get('/edit', function(req, res, next) {
 	}
 
 });
-
-function prettifyTime(timeString) {
-	var split = timeString.split(':');
-	var newTimeString = '';
-	split[0] = parseInt(split[0]);
-	if (split[0] > 11) {
-		if (parseInt(split[0]) != 12) {	
-			split[0] = split[0] - 12;
-		}
-		newTimeString += split[0] + ':' + split[1] + ' P.M.';
-	} else {
-		newTimeString += split[0] + ':' + split[1] + ' A.M.';
-	}
-
-	return newTimeString;
-}
 
 module.exports = router;

@@ -10,7 +10,7 @@ router.get('/events', function(req, res, next) {
 	var id = req.query.id;
 	
 	if (id) {
-		Event.getForUser(parseInt(id), function(err, events) {
+		Event.getForUser({ id: parseInt(id) }, function(err, events) {
 			if (err) {
 				return res.send('Unable to fetch events.');
 			}

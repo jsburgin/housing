@@ -1,12 +1,15 @@
 var express = require('express');
 var router = express.Router();
 var async = require('async');
+var dateFormat = require('dateFormat');
 
 var Building = require('../models/building');
 var Position = require('../models/position');
 var User = require('../models/user');
 var Group = require('../models/group');
+var Event = require('../models/event');
 var restrict = require('../auth/restrict');
+var timeFormatter = require('../timeformatter');
 
 var activeLink = 'Users';
 
@@ -17,7 +20,7 @@ router.get('/', restrict, function(req, res, next) {
         }
 
         var vm = {
-            title: 'Manage Users',
+            title: 'Users | University of Alabama Housing',
             users: users,
             activeLink: activeLink
         };
@@ -43,7 +46,7 @@ router.get('/create', restrict, function(req, res, next) {
         }
 
         var vm = {
-            title: 'Add User',
+            title: 'Add User | University of Alabama Housing',
             buildings: results[0],
             positions: results[1],
             groups: results[2],
@@ -100,8 +103,8 @@ router.post('/create', restrict, function(req, res, next) {
     });
 });
 
-router.get('/edit/:id', restrict, function(req, res, next) {
-	var id = req.params.id;
+router.get('/edit', restrict, function(req, res, next) {
+	var id = req.query.id;
 
 	if (!id) {
 		return res.redirect('/users');
@@ -132,7 +135,7 @@ router.get('/edit/:id', restrict, function(req, res, next) {
 		}
 
 		var vm = {
-			title: 'Edit User',
+			title: 'Edit User | University of Alabama Housing',
 			user: results[0],
 			buildings: results[1],
 			positions: results[2],
@@ -205,6 +208,80 @@ router.post('/remove', restrict, function(req, res, next) {
 
 		res.redirect('/users');
 	});
+});
+
+
+router.get('/schedule', function(req, res, next) {
+	if (req.query.email) {
+		return buildSchedule({ email: req.query.email });
+	}
+
+	if (req.query.id) {
+		return buildSchedule({ id: req.query.id });
+	}
+
+	res.redirect('/users');
+
+	function buildSchedule(userData) {
+		Event.getForUser(userData, function(err, events, userDisplayName) {
+			if (err) {
+				return next(err);
+			}
+
+			var vm = {
+				title: userDisplayName + ' - Training Schedule',
+				daySet: [],
+				userName: userDisplayName
+			};
+
+			if (vm.userName.substring(vm.userName.length - 1) == 's') {
+				vm.userName += '\'';
+			} else {
+				vm.userName += '\'s';
+			}
+
+			var tempEventHolder = [];
+
+			if (events.length > 0) {
+				tempEventHolder.push(processEvent(events[0]));
+			}
+
+			function processEvent(currentEvent) {
+				var title = currentEvent.title.toLowerCase();
+				currentEvent.prettyDate = dateFormat(new Date(currentEvent.date + ' 12:00'), "dddd, mmmm d, yyyy");
+				currentEvent.startTime = timeFormatter(currentEvent.startTime);
+				currentEvent.endTime = timeFormatter(currentEvent.endTime);	
+				
+				
+
+				if (title.indexOf('dinner') != -1 || title.indexOf('lunch') != -1) {
+					currentEvent.mealColor = "meal-color";
+				} else {
+					currentEvent.mealColor = "";
+				}
+
+				if (currentEvent.description.length > 99) {
+					currentEvent.longDescription = true;
+				} else {
+					currentEvent.longDescription = false;
+				}
+
+				return currentEvent;
+			}
+
+			for (var i = 1; i < events.length; i++) {
+				if (events[i].date != tempEventHolder[0].date) {
+					vm.daySet.push(tempEventHolder);
+					tempEventHolder = [];
+				}
+
+				tempEventHolder.push(processEvent(events[i]));
+			}
+			vm.daySet.push(tempEventHolder);
+
+			return res.render('users/schedule-view', vm);
+		});
+	}
 });
 
 module.exports = router;

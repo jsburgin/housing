@@ -14,7 +14,7 @@ var colors = require('colors');
  * Get port from environment and store in Express.
  */
 
-var port = normalizePort(process.env.PORT || '3000');
+var port = normalizePort(process.env.PORT || '80');
 app.set('port', port);
 
 /**
@@ -37,7 +37,7 @@ server.on('listening', onListening);
 
 rollTide();
 console.log('Startup Sucessful'.green);
-console.log(('University of Alabama Housing App now running on port ' + port).green + '\nBrowse to http://localhost:' + port);
+console.log(('University of Alabama Housing Training App now running on port ' + port).green + '\nBrowse to http://localhost:' + port);
 
 /**
  * Normalize a port into a number, string, or false.

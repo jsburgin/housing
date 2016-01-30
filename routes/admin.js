@@ -27,7 +27,7 @@ router.get('/', restrict, function(req, res, next) {
 		}
 
 		var vm = {
-			title: 'Admin Panel',
+			title: 'Admin Dashboard | University of Alabama Housing',
 			buildings: results[0],
 			positions: results[1],
 			groups: results[2],
@@ -40,7 +40,7 @@ router.get('/', restrict, function(req, res, next) {
 
 router.get('/add/building', restrict, function(req, res, next) {
 	var vm = {
-		title: 'Add Building',
+		title: 'Add Building | University of Alabama Housing',
 		activeLink: activeLink
 	};
 
@@ -85,7 +85,7 @@ router.post('/add/building', restrict, function(req, res, next) {
 
 router.get('/add/position', restrict, function(req, res, next) {
 	var vm = {
-		title: 'Add Position',
+		title: 'Add Position | University of Alabama Housing',
 		activeLink: activeLink
 	};
 
@@ -135,7 +135,7 @@ function capitalize(toCap) {
 
 router.get('/add/group', restrict, function(req, res, next) {
 	var vm = {
-		title: 'Add Group',
+		title: 'Add Group | University of Alabama Housing',
 		activeLink: activeLink
 	};
 

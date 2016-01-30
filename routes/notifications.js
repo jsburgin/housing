@@ -13,7 +13,7 @@ var activeLink = 'Notifications';
 router.get('/', restrict, function(req, res, next) {
 	Notification.getAll({ abbr: true },function(err, notifications) {
 		var vm = {
-			title: 'Manage Push Notifications',
+			title: 'Push Notifications | University of Alabama Housing',
 			activeLink: activeLink
 		};
 
@@ -33,7 +33,7 @@ router.get('/', restrict, function(req, res, next) {
 
 router.get('/create', restrict, function(req, res, next) {
 	var vm = {
-		title: 'Send Push Notification',
+		title: 'Send Push Notification | University of Alabama Housing',
 		activeLink: activeLink
 	};
 

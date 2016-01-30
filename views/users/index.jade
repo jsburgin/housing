@@ -12,7 +12,8 @@ block content
             thead
                 tr
                     th
-                    th(class='sort-click') Id
+                    th(class='sort-click') Schedule
+                    //th(class='sort-click') Id
                     th(class='sort-click') Last Name
                     th(class='sort-click') First Name
                     th(class='sort-click') Email
@@ -24,9 +25,12 @@ block content
                 each user in users
                     tr
                         td(class="center-links" user="#{user.id}")
-                            a(href="/users/edit/#{user.id}")
+                            a(href="/users/edit?id=#{user.id}")
                                 i(class='fa fa-pencil-square-o')
-                        td= user.id
+                        td(class="center-links")
+                            a(target="_blank", href="/users/schedule?email=#{user.email}")
+                                i(class="fa fa-calendar")
+                        //td= user.id
                         td= user.lastname
                         td= user.firstname
                         td= user.email

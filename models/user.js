@@ -12,7 +12,7 @@ function get(userData, next) {
 		delete userData['id'];
 	}
 
-	async.parallel([
+	async.waterfall([
 		function(cb) {
 			db.select('person.*', 'building.name as building', 'position.name as position').from('person')
 			.join('position', 'person.positionid', '=', 'position.id')
@@ -31,16 +31,20 @@ function get(userData, next) {
 				cb(null, null);
 			});	
 		},
-		function(cb) {
-			db.select().from('staffgroupperson')
-				.where({ personid: userData['person.id'] })
+		function(user, cb) {
+			if (user) {
+				db.select().from('staffgroupperson')
+				.where({ personid: user.id })
 				.asCallback(function(err, rows) {
 					if (err) {
 						return cb(err);
 					}
 
-					cb(null, rows);
-				});
+					cb(null, [user, rows]);
+				});	
+			} else {
+				cb(null, [null, null]);
+			}
 		}
 	], function(err, results) {
 		if (err) {
@@ -82,6 +86,10 @@ exports.getAll = function(next) {
 };
 
 function add(userData, next) {
+
+	if (!userData.groups) {
+		userData.groups = [];
+	}
 
 	var userObj = {
 		firstname: userData.firstName,

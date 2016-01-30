@@ -83,10 +83,13 @@ function add(eventObject, next) {
 
 exports.add = add;
 
-exports.getForUser = function(userId, next) {
+exports.getForUser = function(userData, next) {
+
+	var userDisplayName;
+
 	async.waterfall([
 		function(cb) {
-			User.get({id: userId}, cb);	
+			User.get(userData, cb);	
 		},
 		function(user, cb) {
 
@@ -94,6 +97,8 @@ exports.getForUser = function(userId, next) {
 				return cb('No user with that ID exists.');
 			}
 			
+			userDisplayName = user.firstname + ' ' + user.lastname;
+
 			var query = {
 				$and: [
 					{ positions: { $in: [user.positionid] } },
@@ -118,7 +123,9 @@ exports.getForUser = function(userId, next) {
 			return next(err);
 		}
 
-		next(null, results);
+
+
+		next(null, results, userDisplayName);
 	});
 };
 
