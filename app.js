@@ -36,10 +36,10 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 
 app.use(expressSession({
-	store: new (require('connect-pg-simple')(expressSession))(),
-	secret: process.env.SESSION_SECRET,
-	saveUninitialized: false,
-  	resave: false
+    store: new (require('connect-pg-simple')(expressSession))(),
+    secret: process.env.SESSION_SECRET,
+    saveUninitialized: false,
+    resave: false
 }));
 
 app.use(passport.initialize());

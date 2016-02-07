@@ -103,7 +103,7 @@ form label {
 
 .error {
 	color: red;
-	margin 5px 0;
+	margin: 5px 0;
 }
 
 .create-user-form .button {

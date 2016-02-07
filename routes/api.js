@@ -7,56 +7,56 @@ var postOffice = require('../postoffice');
 var User = require('../models/user');
 
 router.get('/events', function(req, res, next) {
-	var id = req.query.id;
-	
-	if (id) {
-		Event.getForUser({ id: parseInt(id) }, function(err, events) {
-			if (err) {
-				return res.send('Unable to fetch events.');
-			}
+    var id = req.query.id;
 
-			return res.json(events);
-		});
-	} else {
-		Event.getAll(function(err, events) {
-	    	if (err) {
-	    		return res.send('Unable to find any events.');
-	    	}
+    if (id) {
+        Event.getForUser({ id: parseInt(id) }, function(err, events) {
+            if (err) {
+                return res.send('Unable to fetch events.');
+            }
 
-	    	res.json(events);
-    	});	
-	}
+            return res.json(events);
+        });
+    } else {
+        Event.getAll(function(err, events) {
+            if (err) {
+                return res.send('Unable to find any events.');
+            }
+
+            res.json(events);
+        });
+    }
 });
 
 router.get('/emails', function(req, res, next) {
-	postOffice.getEmailLog(function(err, results) {
-		if (err) {
-			console.error(err);
-			return res.send('Unable to retrieve email log.');
-		}
+    postOffice.getEmailLog(function(err, results) {
+        if (err) {
+            console.error(err);
+            return res.send('Unable to retrieve email log.');
+        }
 
-		res.json(results);
-	});
+        res.json(results);
+    });
 });
 
-router.post('/users', function(req, res, next) {
-	var email = req.body.email;
+router.get('/users', function(req, res, next) {
+    var email = req.body.email;
 
-	console.log(email);
+    console.log(email);
 
-	if (email) {
-		User.get({ email: email }, function(err, user) {
-			if (err) {
-				return res.status(400).send('Unable to retrieve user.');
-			}
+    if (email) {
+        User.get({ email: email }, function(err, user) {
+            if (err) {
+                return res.status(400).send('Unable to retrieve user.');
+            }
 
-			console.log(user);
+            console.log(user);
 
-			res.json(user);
-		});
-	} else {
-		res.status(400).send('Unable to retrieve user.');	
-	}
+            res.json(user);
+        });
+    } else {
+        res.status(400).send('Unable to retrieve user.');
+    }
 });
 
 module.exports = router;
