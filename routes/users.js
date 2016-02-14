@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var async = require('async');
-var dateFormat = require('dateFormat');
+var dateFormat = require('dateformat');
 
 var Building = require('../models/building');
 var Position = require('../models/position');
