@@ -7,25 +7,25 @@ var postOffice = require('../postoffice');
 var User = require('../models/user');
 
 router.get('/events', function(req, res, next) {
-    var id = req.query.id;
+    var queryObject = {};
 
-    if (id) {
-        Event.getForUser({ id: parseInt(id) }, function(err, events) {
-            if (err) {
-                return res.send('Unable to fetch events.');
-            }
-
-            return res.json(events);
-        });
+    if (req.query.id) {
+        queryObject.id = req.query.id;
+    } else if (req.query.email) {
+        queryObject.email = req.query.email;
     } else {
-        Event.getAll(function(err, events) {
-            if (err) {
-                return res.send('Unable to find any events.');
-            }
-
-            res.json(events);
-        });
+        return res.end(res.writeHead(400, 'Invalid paraemters for event fetch.'));
     }
+
+
+    Event.getForUser(queryObject, function(err, events) {
+        if (err) {
+            return res.send('Unable to fetch events.');
+        }
+
+        return res.json(events);
+    });
+
 });
 
 router.get('/emails', function(req, res, next) {

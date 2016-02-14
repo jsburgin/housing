@@ -94,7 +94,7 @@ exports.getForUser = function(userData, next) {
         function(user, cb) {
 
             if(!user) {
-                return cb('No user with that ID exists.');
+                return cb('No user matching options exists.');
             }
 
             userDisplayName = user.firstname + ' ' + user.lastname;
