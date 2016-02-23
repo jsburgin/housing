@@ -315,3 +315,37 @@ a.active-link {
     margin: 7px 0;
     height: 1px;
 }
+
+.sidebar-menu {
+    padding-top: 10px;
+}
+
+.sidebar-menu ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.sidebar-menu ul li {
+    margin: 1px 0;
+}
+
+.sidebar-menu ul li a {
+    color: #9A9A9A;
+}
+
+.sidebar-menu ul li a.active {
+    color: #AB2D4E;
+}
+
+.add-instance-button {
+    margin-top: 20px;
+}
+
+.mce-container button:hover {
+    background: none;
+}
+
+.mce-panel {
+    background: #F5F5F5 !important;
+}

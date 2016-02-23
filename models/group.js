@@ -14,14 +14,39 @@ exports.getAll = function(next) {
 };
 
 exports.add = function(groupData, next) {
-    db('staffgroup').insert(groupData)
-        .asCallback(function(err, results) {
-            if (err) {
-                return next(err);
-            }
+    async.waterfall([
+        function(cb) {
+            db.select().from('staffgroup')
+                .where(groupData)
+                .asCallback(function(err, results) {
+                    if (err) {
+                        return next(err);
+                    }
 
-            next(null);
-        });
+                    if (results.length == 0) {
+                        return cb(null);
+                    }
+
+                    return next('Group with that name already exists');
+                });
+        },
+        function(cb) {
+            db('staffgroup').insert(groupData)
+                .asCallback(function(err, results) {
+                    if (err) {
+                        return next(err);
+                    }
+
+                    cb(null);
+                });
+        }
+    ], function(err) {
+        if (err) {
+            return next(err);
+        }
+
+        next(null);
+    });
 };
 
 exports.get = function(groupData, next) {

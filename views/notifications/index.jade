@@ -4,29 +4,37 @@ block stylesheets
     link(rel="stylesheet", href="/css/c3.css")
 
 block content
-    div(class="large-9 columns")
-        h3 Manage Push Notifications
-    div(class="large-3 columns")
-        p(class="header-description") 
-            a(href="/notifications/create", class="add-user") Send Push Notification 
+    div(class="large-2 columns sidebar-menu")
+        h5 Notifications
+        ul
+            li
+                a(href="#", class="active") View Notifications
+            li
+                a(href="#") Send Notification
+    div(class="large-10 columns")
+        div(class="large-9 columns")
+            h3 Manage Push Notifications
+        div(class="large-3 columns")
+            p(class="header-description")
+                a(href="/notifications/create", class="add-user") Send Push Notification
 
-    div(class="large-12 columns")   
-        table(class="user-accounts hide-table")
-            thead
-                tr
-                    th(class='sort-click') Subject
-                    th(class='sort-click') Message
-                    th(class='sort-click') Sent
-            tbody
-                each push in notifications
+        div(class="large-12 columns")
+            table(class="user-accounts hide-table")
+                thead
                     tr
-                        td= push.subject
-                        td= push.message
-                        td(class="notification-time")= push.prettyTime
+                        th(class='sort-click') Subject
+                        th(class='sort-click') Message
+                        th(class='sort-click') Sent
+                tbody
+                    each push in notifications
+                        tr
+                            td= push.subject
+                            td= push.message
+                            td(class="notification-time")= push.prettyTime
 
-        div(class="page-links")
-    div(class="large-12 columns")
-        div(id="notification-chart")
+            div(class="page-links")
+        div(class="large-12 columns")
+            div(id="notification-chart")
 
 
 block scripts
@@ -37,4 +45,4 @@ block scripts
         $(document).ready(function() {
             var hm = new HousingManager({ page: "#{activeLink}" });
         });
-        
+

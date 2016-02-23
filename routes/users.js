@@ -277,7 +277,11 @@ router.get('/schedule', function(req, res, next) {
 
                 tempEventHolder.push(processEvent(events[i]));
             }
-            vm.daySet.push(tempEventHolder);
+
+            if (tempEventHolder.length > 0) {
+                vm.daySet.push(tempEventHolder);
+            }
+
 
             return res.render('users/schedule-view', vm);
         });

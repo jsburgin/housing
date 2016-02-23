@@ -158,7 +158,7 @@ router.post('/add/group', restrict, function(req, res, next) {
         }
     ], function(err, results) {
         if (err) {
-            req.session.createError = 'Unable to create group. Please try again later.';
+            req.session.createError = err;
             return res.redirect('/admin/add/group');
         }
 
