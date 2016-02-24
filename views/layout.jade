@@ -25,14 +25,14 @@ html(class="no-js", lang="en")
                             if activeLink == key
                                 a(class="active-link", href=val)= key
                             else
-                                a(href=val)= key    
+                                a(href=val)= key
             div(class="button-div")
                 a(class="housing-logout-button radius small", href="/logout")
                     i(class="fa fa-sign-out")
                 a(class="housing-add-button button radius small", href="/add") Add Event
-                
 
-    
+
+
         div(class="row content")
             block content
 

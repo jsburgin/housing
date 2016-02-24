@@ -52,6 +52,17 @@ exports.get = function(userParams, next) {
         });
 };
 
+exports.getCount = function(next) {
+    db('admin').select()
+        .asCallback(function(err, results) {
+            if (err) {
+                return next(err);
+            }
+
+            next(null, results.length);
+        });
+};
+
 exports.getAll = function(next) {
     db('admin').select()
         .asCallback(function(err, results) {

@@ -7,34 +7,62 @@ var restrict = require('../auth/restrict');
 var Building = require('../models/building');
 var Position = require('../models/position');
 var Group = require('../models/group');
+var Event = require('../models/event');
+var User = require('../models/user');
+var Notification = require('../models/notification');
+var Admin = require('../models/admin');
 
 var activeLink = 'Admin';
 
 router.get('/', restrict, function(req, res, next) {
     async.parallel([
         function(cb) {
-            Building.getAll(cb);
+            Event.getAll(cb);
         },
         function(cb) {
-            Position.getAll(cb);
+            User.getAll(cb);
         },
         function(cb) {
-            Group.getAll(cb);
+            Notification.getAll({}, cb);
+        },
+        function(cb) {
+            Admin.getAll(cb);
         }
     ], function(err, results) {
         if (err) {
             return next(err);
         }
 
+        for (var i = 0; i < results[3].length; i++) {
+            delete results[3][i].password;
+        }
+
         var vm = {
             title: 'Admin Dashboard | University of Alabama Housing',
-            buildings: results[0],
-            positions: results[1],
-            groups: results[2],
+            eventCount: results[0].length,
+            userCount: results[1].length,
+            notificationCount: results[2].length,
+            adminCount: results[3].length,
+            admins: results[3],
             activeLink: activeLink
         };
 
         res.render('admin/index', vm);
+    });
+});
+
+router.get('/buildings', restrict, function(req, res, next) {
+    Building.getAll(function(err, buildings) {
+
+        var vm = {
+            title: 'Manage Buildings | University of Alabama Housing',
+            data: buildings,
+            headers: 'Manage Buildings',
+            postURL: '/admin/add/building'
+        };
+
+        res.render('admin/table-insert', vm);
+
     });
 });
 
@@ -165,3 +193,31 @@ router.post('/add/group', restrict, function(req, res, next) {
         return res.redirect('/admin');
     });
 });
+
+router.get('edit', restrict, function(req, res, next) {
+    var id = req.query('id');
+
+    var vm = {
+        title: 'Manage Admin | University of Alabama Housing',
+        activeLink: activeLink
+    };
+
+    if (id) {
+        Admin.get({ id: id }, function(err, admin) {
+            if (err) {
+                return next(err);
+            }
+
+            if (!admin) {
+                return res.redirect('/admin');
+            }
+
+            delete admin.password;
+            vm.admin = admin;
+
+            res.render('admin/edit', vm);
+        });
+    } else {
+        res.redirect('/admin');
+    }
+})
