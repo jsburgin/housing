@@ -10,6 +10,7 @@ var Group = require('../models/group');
 var Event = require('../models/event');
 var restrict = require('../auth/restrict');
 var timeFormatter = require('../timeformatter');
+var vmBuilder = require('../vm');
 
 var activeLink = 'Users';
 
@@ -19,11 +20,9 @@ router.get('/', restrict, function(req, res, next) {
             return next(err);
         }
 
-        var vm = {
-            title: 'Users | University of Alabama Housing',
-            users: users,
-            activeLink: activeLink
-        };
+        var vm = vmBuilder(req, 'Users');
+        vm.classes['Users'] += 'active ';
+        vm.users = users;
 
         res.render('users/index', vm);
     });

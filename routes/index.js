@@ -10,19 +10,42 @@ var Building = require('../models/building');
 var Group = require('../models/group');
 var Event = require('../models/event');
 var timeFormatter = require('../timeformatter');
-
-var activeLink = 'Calendar';
+var vmBuilder = require('../vm');
 
 router.get('/', restrict, function(req, res, next) {
-    res.render('index', { title: 'Training Dashboard | University of Alabama Housing', activeLink: activeLink });
+    var viewModel = vmBuilder(req, 'Home');
+
+    viewModel.classes['Calendar'] += 'active opened';
+
+    res.render('index', viewModel);
 });
 
-router.post('/login', passport.authenticate('local', {failureRedirect: '/'}), function(req, res, next) {
-    if (req.session.redirectTo) {
-        return res.redirect(req.session.redirectTo);
-    }
+router.post('/login', function(req, res, next) {
 
-    res.redirect('/');
+    passport.authenticate('local', function(err, user, info) {
+        if (err) {
+            return next(err);
+        }
+
+        if (!user) {
+            return res.json({
+                loginStatus: 'invalid'
+            });
+        }
+
+        req.logIn(user, function(err) {
+            if (err) {
+                return next(err);
+            }
+
+            res.json({
+                loginStatus: 'success',
+                redirectUrl: req.session.redirectTo || '/'
+            });
+
+        });
+
+    })(req, res, next);
 });
 
 router.get('/logout', function(req, res, next) {

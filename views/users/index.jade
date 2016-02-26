@@ -1,53 +1,64 @@
 extends ../layout
 
+block stylesheets
+    link(rel="stylesheet" href="assets/js/datatables/datatables.css")
+    link(rel="stylesheet" href="assets/js/select2/select2-bootstrap.css")
+    link(rel="stylesheet" href="assets/js/select2/select2.css")
+
 block content
-    div(class="large-9 columns")
-        h3 Manage Users
-    div(class="large-3 columns")
-        p(class="header-description") 
-            a(href="/users/create", class="add-user") Add User 
+    ol(class="breadcrumb bc-3")
+        li
+            a(href="/") Home
+        li(class="active")
+            a(href="/users") Users
 
-    div(class="large-12 columns")   
-        table(class="user-accounts hide-table")
-            thead
+    h2 Users
+    br
+
+    table(class="table table-bordered datatable", id="user-table")
+        thead
+            tr
+                td Last Name
+                td First Name
+                td Email
+                td Position
+                td Building
+                td Room Number
+                td Experience
+        tbody
+            each user in users
                 tr
-                    th
-                    th(class='sort-click') Schedule
-                    //th(class='sort-click') Id
-                    th(class='sort-click') Last Name
-                    th(class='sort-click') First Name
-                    th(class='sort-click') Email
-                    th(class='sort-click') Position
-                    th(class='sort-click') Building
-                    th(class='sort-click') Room Number
-                    th(class='sort-click') Experience
-            tbody
-                each user in users
-                    tr
-                        td(class="center-links" user="#{user.id}")
-                            a(href="/users/edit?id=#{user.id}")
-                                i(class='fa fa-pencil-square-o')
-                        td(class="center-links")
-                            a(target="_blank", href="/users/schedule?email=#{user.email}")
-                                i(class="fa fa-calendar")
-                        //td= user.id
-                        td= user.lastname
-                        td= user.firstname
-                        td= user.email
-                        td= user.position
-                        td= user.building
-                        td= user.room
-                        if user.experience == 0
-                            td New
-                        else
-                            td Returning
+                    td= user.lastname
+                    td= user.firstname
+                    td= user.email
+                    td= user.position
+                    td= user.building
+                    td= user.room
+                    td= user.experience
+        tfoot
+            tr
+                td Last Name
+                td First Name
+                td Email
+                td Position
+                td Building
+                td Room Number
+                td Experience
 
 
-        div(class="page-links")
- 
  block scripts
-    script(src="https://cdn.datatables.net/s/zf/dt-1.10.10,r-2.0.0/datatables.min.js")
+    script(src="assets/js/datatables/datatables.js")
+    script(src="assets/js/select2/select2.min.js")
     script.
         $(document).ready(function() {
-            var hm = new HousingManager({ page: "Users" });
+            var userTable = $('#user-table');
+
+            userTable.DataTable( {
+                "aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+                "bStateSave": true
+            });
+
+            userTable.closest( '.dataTables_wrapper' ).find( 'select' ).select2( {
+                minimumResultsForSearch: -1
+            });
         });
