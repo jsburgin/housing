@@ -6,7 +6,6 @@ module.exports = function(req, title, next) {
         title: title + ' | University of Alabama Housing'
     };
 
-
     vm.user = req.user;
     delete vm.user.password;
     vm.user.image = gravatar.url(vm.user.email, { s:200, r: 'pg', d: 'mm'}, true);
@@ -34,12 +33,32 @@ module.exports = function(req, title, next) {
         {
             linkName: 'Notifications',
             url: '/notifications',
-            icon: 'entypo-mail'
+            icon: 'entypo-mail',
+            subMenu: [
+                {
+                    linkName: 'Notification History',
+                    url: '/notifications'
+                },
+                {
+                    linkName: 'Send Notification',
+                    url: '/notifications/send'
+                }
+            ]
         },
         {
-            linkName: 'Users',
-            url: '/users',
-            icon: 'entypo-users'
+            linkName: 'Staff Members',
+            url: '/staff',
+            icon: 'entypo-users',
+            subMenu: [
+                {
+                    linkName: 'Manage Staff',
+                    url: '/staff'
+                },
+                {
+                    linkName: 'Add Staff Member',
+                    url: '/staff/add'
+                }
+            ]
         },
         {
             linkName: 'Settings',

@@ -10,7 +10,7 @@ var expressSession = require('express-session');
 require('dotenv').load();
 
 var routes = require('./routes/index');
-var users = require('./routes/users');
+var staff = require('./routes/staff');
 var api = require('./routes/api');
 var admin = require('./routes/admin');
 var notifications = require('./routes/notifications');
@@ -46,7 +46,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use('/', routes);
-app.use('/users', users);
+app.use('/staff', staff);
 app.use('/api', api);
 app.use('/admin', admin);
 app.use('/notifications', notifications);

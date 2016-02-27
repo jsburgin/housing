@@ -20,15 +20,15 @@ router.get('/', restrict, function(req, res, next) {
             return next(err);
         }
 
-        var vm = vmBuilder(req, 'Users');
-        vm.classes['Users'] += 'active ';
+        var vm = vmBuilder(req, 'Staff');
+        vm.classes['Staff Members'] += 'active opened ';
         vm.users = users;
 
-        res.render('users/index', vm);
+        res.render('staff/index', vm);
     });
 });
 
-router.get('/create', restrict, function(req, res, next) {
+router.get('/add', restrict, function(req, res, next) {
     async.parallel([
         function(cb) {
             Building.getAll(cb);
@@ -44,29 +44,17 @@ router.get('/create', restrict, function(req, res, next) {
             return next(err);
         }
 
-        var vm = {
-            title: 'Add User | University of Alabama Housing',
-            buildings: results[0],
-            positions: results[1],
-            groups: results[2],
-            activeLink: activeLink
-        };
+        var vm = vmBuilder(req, 'Add Staff Member');
+        vm.classes['Staff Members'] += 'active opened ';
+        vm.buildings = results[0];
+        vm.positions = results[1];
+        vm.groups = results[2];
 
-        if (req.session.createError) {
-            vm.error = req.session.createError;
-            delete req.session.createError;
-        }
-
-        if (req.session.cachedUser) {
-            vm.user = req.session.cachedUser;
-            delete req.session.cachedUser;
-        }
-
-        res.render('users/create', vm);
+        res.render('staff/add', vm);
     });
 });
 
-router.post('/create', restrict, function(req, res, next) {
+router.post('/add', restrict, function(req, res, next) {
     async.waterfall([
         function(cb) {
             User.get({ email: req.body.email.toLowerCase() }, cb);
@@ -74,9 +62,7 @@ router.post('/create', restrict, function(req, res, next) {
         function(user, cb) {
 
             if (user) {
-                req.session.createError = 'There is already an account associated with that email address.';
-                req.session.cachedUser = req.body;
-                return res.redirect('/users/create');
+                return res.status(409).send('Staff member with ' + user.email + ' email address already exists.');
             }
 
             var newUser = {
@@ -94,11 +80,12 @@ router.post('/create', restrict, function(req, res, next) {
         }
     ], function(err) {
         if (err) {
-            req.session.createError = 'There was an error creating the new user.';
-            return res.redirect('/users/create');
+            console.log(err);
+
+            return res.status(500).send('Unable to add staff member.');
         }
 
-        res.redirect('/users');
+        res.status(201).send({});
     });
 });
 

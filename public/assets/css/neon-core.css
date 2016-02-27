@@ -1,3 +1,16 @@
+.staff-btn {
+    margin: 5px 0;
+}
+.no-sort::after{
+    display: none !important;
+}
+.no-sort {
+    pointer-events: none !important;
+    cursor: default !important;
+}
+.align-center {
+    text-align: center;
+}
 .form-control:focus {
   border-color: #cbd0d9;
   outline: 0;
@@ -691,7 +704,7 @@ select[multiple].input-lg {
   margin-right: 0;
 }
 lesshat-selector {
-  -lh-property: 0; } 
+  -lh-property: 0; }
 @-webkit-keyframes reloadingAnimation{ 0%{ -webkit-transform: rotate(0deg); } 100%{ -webkit-transform: rotate(360deg); }}}
 @-moz-keyframes reloadingAnimation{ 0%{ -moz-transform: rotate(0deg); } 100%{ -moz-transform: rotate(360deg); }}}
 @-o-keyframes reloadingAnimation{ 0%{ -o-transform: rotate(0deg); } 100%{ -o-transform: rotate(360deg); }}}
@@ -9160,20 +9173,20 @@ div.columns div.dataTables_paginate li.last a:after {
 /*
 .dataTables_wrapper-old {
 	.clearfix;
-	
+
 	table {
 		margin-bottom: 0;
-		
+
 		thead {
-			
+
 			tr {
-				
+
 				th {
 					font-weight: bold;
 					outline: none;
 					cursor: default;
 					.transall;
-				
+
 					&.sorting_asc:before,
 					&.sorting_desc:before {
 						display: block;
@@ -9182,54 +9195,54 @@ div.columns div.dataTables_paginate li.last a:after {
 						font-family: @font_entypo;
 						content: '\e876';
 					}
-						
+
 					&.sorting_desc:before {
 						content: '\e873';
 					}
-					
+
 					&:active {
 						outline: none;
 					}
-					
+
 					&.sorting_asc, &.sorting_desc {
 						color: @main_color;
 					}
 				}
 			}
 		}
-		
+
 		tfoot {
-			
+
 			tr {
-				
+
 				th {
 					font-weight: bold;
 				}
 			}
 		}
-		
+
 		+ .row {
 			margin-bottom: 20px;
 		}
 	}
-	
+
 	> table:first-child {
 		.border-radius(@border_radius @border_radius 0 0);
 	}
-	
+
 	a {
 		cursor: pointer;
 		outline: none;
 	}
-	
+
 	.col-left {
 		padding-right: 0;
 	}
-	
+
 	.col-right {
 		padding-left: 0;
 	}
-	
+
 	// Table Header
 	.dataTables_length, .dataTables_filter {
 		background: #fff;
@@ -9238,17 +9251,17 @@ div.columns div.dataTables_paginate li.last a:after {
 		padding: @base_margin/2 @padding-base-horizontal;
 		height: 58px;
 		.clearfix;
-		
+
 	}
-	
+
 	.dataTables_length {
 		border-right: 0;
 		.border-radius(@border_radius 0 0 0);
-		
+
 		> label {
 			white-space: nowrap;
 			margin-top: -7px;
-			
+
 			.select2-container {
 				display: inline-block;
 				width: auto !important;
@@ -9256,17 +9269,17 @@ div.columns div.dataTables_paginate li.last a:after {
 			}
 		}
 	}
-	
+
 	.dataTables_filter {
 		border-left: 0;
 		padding-top: @base_padding + 3;
 		.border-radius(0 @border_radius 0 0);
-		
+
 		> label {
 			float: right;
 			display: block;
 			white-space: nowrap;
-			
+
 			input {
 				.form-control;
 				display: inline-block;
@@ -9275,28 +9288,28 @@ div.columns div.dataTables_paginate li.last a:after {
 			}
 		}
 	}
-	
+
 	.select2-container {
 		display: inline-block !important;
 		margin-left: @base_padding/2;
 		margin-right: @base_padding/2;
 		@h: 25px;
-		
+
 		.select2-choice {
 			height: @h;
 			line-height: @h - 1;
-			
+
 			.select2-chosen {
 				padding-right: @base_margin/2;
 			}
-			
+
 			.select2-arrow {
 				width: 25px;
 			}
 		}
 	}
-	
-	
+
+
 	// Table Footer
 	.dataTables_info, .dataTables_paginate {
 		padding: @base_padding @padding-base-horizontal;
@@ -9305,27 +9318,27 @@ div.columns div.dataTables_paginate li.last a:after {
 		background: darken(#fff, 2%);
 		height: 47px;
 		.clearfix;
-		
+
 		&.dataTables_info {
 			border-right: 0;
 			.border-radius(0 0 0 @border_radius);
 			line-height: 30px;
 		}
-		
+
 		&.dataTables_paginate {
 			border-left: 0;
 			.border-radius(0 0 @border_radius 0);
 			text-align: right;
-			
+
 			.pagination {
 				margin: 0;
 			}
 		}
 	}
-	
-	
+
+
 	// Table Tools
-	
+
 	.export-data {
 		position: absolute;
 		right: 250px;
@@ -9336,9 +9349,9 @@ div.columns div.dataTables_paginate li.last a:after {
 
 
 .page-body .datatable.table {
-	
+
 	tbody {
-		
+
 		td, th {
 			vertical-align: middle;
 		}
@@ -9347,9 +9360,9 @@ div.columns div.dataTables_paginate li.last a:after {
 
 
 table {
-	
+
 	.replace-inputs {
-		
+
 		input {
 			.form-control;
 		}
@@ -9360,7 +9373,7 @@ table {
 
 // v1.5.2
 .dataTables_wrapper {
-	
+
 	.dataTable {
 		width: 100% !important;
 	}

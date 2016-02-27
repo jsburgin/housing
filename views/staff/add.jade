@@ -1,0 +1,95 @@
+extends ../layout
+
+block stylesheets
+    link(rel="stylesheet" href="/assets/js/select2/select2-bootstrap.css")
+    link(rel="stylesheet" href="/assets/js/select2/select2.css")
+
+block content
+    ol(class="breadcrumb bc-3")
+        li
+            a(href="/") Home
+        li
+            a(href="/staff") Staff Members
+        li(class="active")
+            a(href="/staff/add") Add Staff Member
+
+    h2 Add Staff Member
+    br
+
+    div(class="row")
+        div(class="col-md-8 col-lg-6")
+            div(class="panel panel-primary")
+                div(class="panel-heading")
+                    div(class="panel-title") New Staff Member
+
+                div(class="panel-body")
+                    form(role="form", class="", id="new-staff-form")
+                        div(class="row")
+                            div(class="col-md-6")
+                                div(class="form-group")
+                                    label(class="control-label" for="firstName") First Name
+                                    input(type="text", class="form-control", name="lastName", id="firstName", data-validate="required", autocomplete="off")
+                            div(class="col-md-6")
+                                div(class="form-group")
+                                    label(class="control-label", for="lastName") Last Name
+                                    input(type="text", class="form-control", name="lastName", id="lastName", data-validate="required", autocomplete="off")
+                        div(class="row")
+                            div(class="col-md-8")
+                                div(class="form-group")
+                                    label(class="control-label", for="email") Crimson Email Address
+                                    input(type="text", class="form-control", name="email", id="email", data-validate="required", autocomplete="off")
+                            div(class="col-md-4")
+                                div(class="form-group")
+                                    label(class="control-label", for="room") Room Number
+                                    input(type="text", class="form-control", name="room", id="room", data-validate="required", autocomplete="off")
+                        div(class="row")
+                            div(class="col-md-6")
+                                div(class="form-group")
+                                    label(class="control-label", for="position") Position
+                                    select(name="position", id="position" class="select2", data-allow-clear="true", data-placeholder="Select Position")
+                                        option
+                                        each position in positions
+                                            option(value=position.id)= position.name
+                            div(class="col-md-6")
+                                div(class="form-group")
+                                    label(class="control-label", for="experience") Experience
+                                    select(name="experience", id="experience", class="select2 no-search", data-allow-clear="true", data-placeholder="Select a Position")
+                                        option
+                                        option(value="0") New Staff
+                                        option(value="1") Returning Staff
+                        div(class="row")
+                            div(class="col-md-12")
+                                div(class="form-group")
+                                    label(class="control-label") Building
+                                    select(name="building", id="building", class="select2", data-allow-clear="true", data-placeholder="Select Building")
+                                        option
+                                        each building in buildings
+                                            option(value=building.id)= building.name
+                        div(class="row")
+                            div(class="col-md-12")
+                                div(class="form-group")
+                                    label(class="control-label" for="groups") Groups
+                                    select(name="groups", id="groups", class="select2", multiple)
+                                        each group in groups
+                                            option(value=group.id)= group.name
+                        div(class="row")
+                            div(class="col-md-6")
+                                div(class="form-group")
+                                    button(type="submit", class="staff-btn btn btn-default btn-icon") Add Staff Member
+                                        i(class="entypo-user-add")
+
+
+block scripts
+    script(src="/js/housing.js")
+    script(src="/assets/js/select2/select2.min.js")
+    script.
+        $(document).ready(function() {
+            new HousingManager({
+                newStaff: true
+            });
+        });
+
+
+
+
+

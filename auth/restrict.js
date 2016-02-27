@@ -15,8 +15,8 @@ module.exports = function(req, res, next) {
     }
 
     var vm = {
-        title: 'Please Login'
+        title: 'Login | The University of Alabama Housing'
     };
 
-    res.render('users/login', vm);
+    res.render('login', vm);
 };
