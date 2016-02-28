@@ -1,11 +1,15 @@
 function HousingManager(options) {
     if (options.newStaff) {
-        newStaff();
+        staffFrom('add');
+    }
+
+    if (options.editStaff) {
+        staffForm('edit');
     }
 }
 
-function newStaff() {
-    $('#new-staff-form').validate({
+function staffForm(type) {
+    $('#staff-form').validate({
         rules: {
             firstName: {
                 required: true
@@ -36,20 +40,26 @@ function newStaff() {
             $(element).closest('.input-group').removeClass('validate-has-error');
         },
         submitHandler: function(env) {
+            var data = {
+                firstName: $('input#firstName').val(),
+                lastName: $('input#lastName').val(),
+                email: $('input#email').val(),
+                room: $('input#room').val(),
+                position: $("#position").val(),
+                building: $("#building").val(),
+                experience: $("#experience").val(),
+                groups: $("#groups").val()
+            };
+
+            if (type == 'edit') {
+                data.id = $('#userid').val();
+            }
+
             $.ajax({
-                url: '/staff/add',
+                url: '/staff/' + type,
                 method: 'POST',
                 dataType: 'json',
-                data: {
-                    firstName: $('input#firstName').val(),
-                    lastName: $('input#lastName').val(),
-                    email: $('input#email').val(),
-                    room: $('input#room').val(),
-                    position: $("#position").val(),
-                    building: $("#building").val(),
-                    experience: $("#experience").val(),
-                    groups: $("#groups").val()
-                },
+                data: data,
                 error: function(error) {
                     console.log(error);
                 },

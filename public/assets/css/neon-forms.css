@@ -3052,6 +3052,18 @@ input.typeahead {
   -moz-box-sizing: border-box;
   box-sizing: border-box;
 }
+.lg-typeahead .twitter-typeahead .tt-hint {
+  padding: 6px 15px;
+  color: #dee0e4;
+  line-height: 1.3333333;
+  font-size: 15px;
+  margin: 0;
+  padding-top: 9.5px;
+  width: 100%;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
 .page-body .daterangepicker.dropdown-menu {
   -webkit-background-clip: padding-box;
   -moz-background-clip: padding;

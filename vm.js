@@ -6,9 +6,11 @@ module.exports = function(req, title, next) {
         title: title + ' | University of Alabama Housing'
     };
 
-    vm.user = req.user;
-    delete vm.user.password;
-    vm.user.image = gravatar.url(vm.user.email, { s:200, r: 'pg', d: 'mm'}, true);
+    if (req.user) {
+        vm.user = req.user;
+        delete vm.user.password;
+        vm.user.image = gravatar.url(vm.user.email, { s:200, r: 'pg', d: 'mm'}, true);
+    }
 
     vm.navigation = [
         {
@@ -25,8 +27,8 @@ module.exports = function(req, title, next) {
                     url: '/add'
                 },
                 {
-                    linkName: 'Daily View',
-                    url: '/day'
+                    linkName: 'Schedule Editor',
+                    url: '/schedule'
                 }
             ]
         },

@@ -1,9 +1,12 @@
 extends layout
 
 block content
+    div(class="housing-calendar-wrapper clearfix")
     div(class="calendar-env")
         div(class="calendar-body")
             div(id="calendar")
 
 block scripts
-    scrip(src="/assets/js/neon-calendar.js")
+    script(src="/assets/js/fullcalendar/fullcalendar.min.js")
+    script(src="/assets/js/neon-calendar.js")
+

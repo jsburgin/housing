@@ -11,37 +11,38 @@ block content
         li
             a(href="/staff") Staff Members
         li(class="active")
-            a(href="/staff/add") Add Staff Member
+            a(href="#") Edit Staff Member
 
-    h2 Add Staff Member
+    h2 Edit Staff Member
     br
 
     div(class="row")
         div(class="col-md-8 col-lg-6")
             div(class="panel panel-primary")
                 div(class="panel-heading")
-                    div(class="panel-title") New Staff Member
+                    div(class="panel-title") Edit Staff Member
 
                 div(class="panel-body")
-                    form(role="form", class="", id="new-staff-form")
+                    form(role="form", class="", id="staff-form")
+                        input(type="hidden", name="id", value=userEdit.id, id="userid")
                         div(class="row")
                             div(class="col-md-6")
                                 div(class="form-group")
                                     label(class="control-label" for="firstName") First Name
-                                    input(type="text", class="form-control", name="lastName", id="firstName", data-validate="required", autocomplete="off", value=user.firstname)
+                                    input(type="text", class="form-control", name="lastName", id="firstName", data-validate="required", autocomplete="off", value=userEdit.firstname)
                             div(class="col-md-6")
                                 div(class="form-group")
                                     label(class="control-label", for="lastName") Last Name
-                                    input(type="text", class="form-control", name="lastName", id="lastName", data-validate="required", autocomplete="off", value=user.lastname)
+                                    input(type="text", class="form-control", name="lastName", id="lastName", data-validate="required", autocomplete="off", value=userEdit.lastname)
                         div(class="row")
                             div(class="col-md-8")
                                 div(class="form-group")
                                     label(class="control-label", for="email") Crimson Email Address
-                                    input(type="text", class="form-control", name="email", id="email", data-validate="required", autocomplete="off", value=user.email)
+                                    input(type="text", class="form-control", name="email", id="email", data-validate="required", autocomplete="off", value=userEdit.email)
                             div(class="col-md-4")
                                 div(class="form-group")
                                     label(class="control-label", for="room") Room Number
-                                    input(type="text", class="form-control", name="room", id="room", data-validate="required", autocomplete="off" value=user.room)
+                                    input(type="text", class="form-control", name="room", id="room", data-validate="required", autocomplete="off" value=userEdit.room)
                         div(class="row")
                             div(class="col-md-6")
                                 div(class="form-group")
@@ -49,8 +50,8 @@ block content
                                     select(name="position", id="position" class="select2", data-allow-clear="true", data-placeholder="Select Position")
                                         option
                                         each position in positions
-                                            if user.postions.indexOf(postion.id) != -1
-                                                option(value=position.id, selected)= position.name
+                                            if userEdit.positionid == position.id
+                                                option(value=position.id, selected="selected")= position.name
                                             else
                                                 option(value=position.id)= position.name
                             div(class="col-md-6")
@@ -58,8 +59,12 @@ block content
                                     label(class="control-label", for="experience") Experience
                                     select(name="experience", id="experience", class="select2 no-search", data-allow-clear="true", data-placeholder="Select a Position")
                                         option
-                                        option(value="0") New Staff
-                                        option(value="1") Returning Staff
+                                        if userEdit.experience == 0
+                                            option(value="0", selected="selected") New Staff
+                                            option(value="1") Returning Staff
+                                        else
+                                            option(value="0") New Staff
+                                            option(value="1", selected="selected") Returning Staff
                         div(class="row")
                             div(class="col-md-12")
                                 div(class="form-group")
@@ -67,18 +72,24 @@ block content
                                     select(name="building", id="building", class="select2", data-allow-clear="true", data-placeholder="Select Building")
                                         option
                                         each building in buildings
-                                            option(value=building.id)= building.name
+                                            if userEdit.buildingid == building.id
+                                                option(value=building.id, selected="selected")= building.name
+                                            else
+                                                option(value=building.id)= building.name
                         div(class="row")
                             div(class="col-md-12")
                                 div(class="form-group")
                                     label(class="control-label" for="groups") Groups
                                     select(name="groups", id="groups", class="select2", multiple)
                                         each group in groups
-                                            option(value=group.id)= group.name
+                                            if userEdit.groups.indexOf(group.id) != -1
+                                                option(value=group.id, selected="selected")= group.name
+                                            else
+                                                option(value=group.id)= group.name
                         div(class="row")
                             div(class="col-md-6")
                                 div(class="form-group")
-                                    button(type="submit", class="staff-btn btn btn-default btn-icon") Add Staff Member
+                                    button(type="submit", class="staff-btn btn btn-default btn-icon") Edit Staff Member
                                         i(class="entypo-user-add")
 
 
@@ -88,7 +99,7 @@ block scripts
     script.
         $(document).ready(function() {
             new HousingManager({
-                newStaff: true
+                editStaff: true
             });
         });
 

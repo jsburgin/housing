@@ -4250,8 +4250,14 @@ hr + .calendar-env {
 .calendar-env .calendar-sidebar .events-list li a.color-orange:hover {
   background: #ffa416;
 }
+.housing-calendar-wrapper {
+    width: 99%;
+    display: block;
+    margin: 0 auto;
+    overflow: auto;
+}
 .calendar-env .calendar-body {
-  width: 78%;
+  width: 100%;
   float: right;
 }
 .calendar-env .calendar-body .fc-header {
@@ -4596,8 +4602,8 @@ fieldset[disabled] .calendar-env .calendar-body .fc-header .fc-button.focus {
 }
 .calendar-env .calendar-body .fc-content .fc-view table tbody tr td.fc-day.fc-today .fc-day-number {
   color: #fff;
-  background-color: #21a9e1;
-  border-color: #1c99cd;
+  background-color: #AB2D4E;
+  border-color: #AB2D4E;
   display: inline-block;
   padding: 5px 8px;
   -webkit-border-radius: 3px;

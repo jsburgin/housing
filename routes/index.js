@@ -54,15 +54,6 @@ router.get('/logout', function(req, res, next) {
 });
 
 router.get('/add', function(req, res, next) {
-    var vm = {
-        title: 'Create Event'
-    };
-
-    if (req.session.createError) {
-        vm.error = req.session.createError;
-        delete req.session.createError;
-    }
-
     async.parallel([
         function(cb) {
             Position.getAll(cb);
@@ -78,65 +69,15 @@ router.get('/add', function(req, res, next) {
             return res.redirect('/');
         }
 
+        var vm = vmBuilder(req, 'Add Event');
+        vm.classes['Calendar'] += 'active opened';
         vm.positions = results[0];
         vm.buildings = results[1];
         vm.groups = results[2];
 
-        res.render('create-event', vm);
+        res.render('calendar/add', vm);
     });
 
-});
-
-router.get('/day', function(req, res, next) {
-    if (req.query.date) {
-        return loadDateView(req.query.date);
-    }
-
-    res.send('Error processing event date.');
-    function loadDateView(date) {
-        async.waterfall([
-            function(cb) {
-                Event.getHeaders({ date: date }, cb);
-            },
-            function(eventHeaders, cb) {
-
-                for (var i = 0; i < eventHeaders.length; i++) {
-                    var title = eventHeaders[i].title.toLowerCase();
-                    if (title.indexOf('dinner') != -1 || title.indexOf('lunch') != -1) {
-                        eventHeaders[i].mealColor = "meal-color";
-                    } else {
-                        eventHeaders[i].mealColor = "";
-                    }
-
-                    if (eventHeaders[i].description.length > 99) {
-                        eventHeaders[i].longDescription = true;
-                    } else {
-                        eventHeaders[i].longDescription = false;
-                    }
-
-                    eventHeaders[i].startTime = timeFormatter(eventHeaders[i].startTime);
-                    eventHeaders[i].endTime = timeFormatter(eventHeaders[i].endTime);
-
-                    if (!eventHeaders[i].location) {
-                        eventHeaders[i].location = 'N/A';
-                    }
-                }
-
-                var vm = {
-                    title: 'Manage Day | University of Alabama Housing',
-                    header: dateFormat(new Date(date + ' 12:00'), "dddd, mmmm d, yyyy"),
-                    date: date,
-                    eventHeaders: eventHeaders
-                };
-
-                return res.render('day', vm);
-            }
-        ], function(err) {
-            if (err) {
-                return next(err);
-            }
-        });
-    }
 });
 
 router.get('/edit', function(req, res, next) {

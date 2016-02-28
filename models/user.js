@@ -183,7 +183,6 @@ function add(userData, next) {
 
 exports.add = add;
 
-
 exports.update = function(id, updates, next) {
     var group = updates.group;
     delete updates.group;

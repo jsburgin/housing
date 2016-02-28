@@ -1,3 +1,16 @@
+ul.checkbox-list {
+    list-style: none;
+    padding: 0 !important;
+}
+ul.checkbox-list > li {
+    text-indent: 0;
+    display: inline-block;
+    width: 50%;
+}
+.form-horizontal .form-group {
+    margin: 0;
+    padding: 0;
+}
 .staff-btn {
     margin: 5px 0;
 }

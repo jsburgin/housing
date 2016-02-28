@@ -35,51 +35,54 @@ block content
             userTable.closest( '.dataTables_wrapper' ).find( 'select' ).select2( {
                 minimumResultsForSearch: -1
             });
+
+            $('.table-toggle').removeClass('hide');
         });
 
-    table(class="table table-bordered datatable", id="user-table")
-        thead
-            tr
-                th(class="no-sort") Edit
-                th(class="no-sort") Schedule
-                th Last Name
-                th First Name
-                th Email
-                th Position
-                th Building
-                th Room Number
-                th Experience
-        tbody
-            each user in users
+    div(class="hide table-toggle")
+        table(class="table table-bordered datatable", id="user-table")
+            thead
                 tr
-                    td(class="align-center")
-                        a(href!="/users/edit?email=" + user.email)
-                            i(class="entypo-pencil")
-                    td(class="align-center")
-                        a(href!="/users/schedule?email=" + user.email)
-                            i(class="entypo-calendar")
-                    td= user.lastname
-                    td= user.firstname
-                    td= user.email
-                    td= user.position
-                    td= user.building
-                    td= user.room
-                    td
-                        if user.experience == 1
-                            != "Returning"
-                        else
-                            != "New"
-        tfoot
-            tr
-                td Edit
-                td Schedule
-                td Last Name
-                td First Name
-                td Email
-                td Position
-                td Building
-                td Room Number
-                td Experience
+                    th(class="no-sort") Edit
+                    th(class="no-sort") Schedule
+                    th Last Name
+                    th First Name
+                    th Email
+                    th Position
+                    th Building
+                    th Room Number
+                    th Experience
+            tbody
+                each user in users
+                    tr
+                        td(class="align-center")
+                            a(href!="/staff/edit?email=" + user.email)
+                                i(class="entypo-pencil")
+                        td(class="align-center")
+                            a(href!="/staff/schedule?email=" + user.email)
+                                i(class="entypo-calendar")
+                        td= user.lastname
+                        td= user.firstname
+                        td= user.email
+                        td= user.position
+                        td= user.building
+                        td= user.room
+                        td
+                            if user.experience == 1
+                                != "Returning"
+                            else
+                                != "New"
+            tfoot
+                tr
+                    td Edit
+                    td Schedule
+                    td Last Name
+                    td First Name
+                    td Email
+                    td Position
+                    td Building
+                    td Room Number
+                    td Experience
 
 
  block scripts

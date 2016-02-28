@@ -90,17 +90,20 @@ router.post('/add', restrict, function(req, res, next) {
 });
 
 router.get('/edit', restrict, function(req, res, next) {
-    var id = req.query.id;
 
-    if (!id) {
-        return res.redirect('/users');
-    }
+    var userQuery = {};
+    if (req.query.email) userQuery.email = req.query.email;
+    if (req.query.id) userQuery.id = req.query.id;
 
     async.parallel([
         function(cb) {
-            User.get({ id: id }, function(err, user) {
-                if (!user || err) {
-                    return cb(err || 'Unable to find user.');
+            User.get(userQuery, function(err, user) {
+                if (err) {
+                    return next(err);
+                }
+
+                if (!user) {
+                    return next('No user.');
                 }
 
                 cb(null, user);
@@ -120,21 +123,13 @@ router.get('/edit', restrict, function(req, res, next) {
             return res.redirect('/users');
         }
 
-        var vm = {
-            title: 'Edit User | University of Alabama Housing',
-            user: results[0],
-            buildings: results[1],
-            positions: results[2],
-            groups: results[3],
-            activeLink: activeLink
-        };
+        var vm = vmBuilder(req, 'Edit Staff');
+        vm.userEdit = results[0];
+        vm.buildings = results[1];
+        vm.positions = results[2];
+        vm.groups = results[3];
 
-        if (req.session.editError) {
-            vm.error = req.session.editError;
-            delete req.session.editError;
-        }
-
-        res.render('users/edit', vm);
+        res.render('staff/edit', vm);
     });
 });
 
@@ -143,6 +138,7 @@ router.post('/edit', restrict, function(req, res, next) {
     delete req.body.groups;
     var updates = req.body;
 
+    console.log(updates);
 
     // refactor postion, building, and room number into integers
     updates.positionid = parseInt(updates.position);
@@ -153,12 +149,18 @@ router.post('/edit', restrict, function(req, res, next) {
 
     updates.room = parseInt(updates.room);
 
+    updates.firstname = updates.firstName;
+    updates.lastname = updates.lastName;
+    delete updates.firstName;
+    delete updates.lastName;
+
     User.update(updates.id, updates, function(err) {
         if (err) {
             console.error(err);
+            return res.status(500).send('Unable to edit staff member.');
         }
 
-        res.redirect('/users');
+        res.status(200).send({});
     });
 
     var newGroups = [];

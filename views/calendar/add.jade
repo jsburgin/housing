@@ -1,0 +1,85 @@
+extends ../layout
+
+block stylesheets
+    link(rel="stylesheet" href="/assets/js/daterangepicker/daterangepicker-bs3.css")
+    link(rel="stylesheet" href="/assets/js/wysihtml5/bootstrap-wysihtml5.css")
+
+block content
+    ol(class="breadcrumb bc-3")
+        li
+            a(href="/") Home
+        li(class="active")
+            a(href="/add") Add Event
+    h2 Add Event
+    br
+
+    form(role="form", class="form-horizontal form-groups-bordered", method="post")
+        div(class="row")
+            div(class="col-md-4")
+                div(class="form-group")
+                    label(class="control-label" for="title") Title
+                    input(type="text", class="form-control input-lg", name="title", id="title")
+            div(class="col-md-3")
+                div(class="form-group")
+                    label(class="control-label" for="date") Date
+                    input(type="text", name="date", id="date" class="form-control input-lg datepicker" data-format="D MM d, yyyy")
+            div(class="col-md-3")
+                div(class="form-group lg-typeahead")
+                    label(class="control-label" for="staff") Staff
+                    input(type="text", name="staff", id="staff", class="form-control input-lg typeahead", data-local="All Staff, All CDs, All FAs, All RAs, New CDs, New RAs, New CDs")
+        div(class="row")
+            div(class="col-sm-12")
+                label(class="control-label" for="staff") Description
+                textarea(class="form-control wysihtml5" rows="10" data-stylesheet-url="/assets/css/wysihtml5-color.css" name="post_content" id="post_content")
+        br
+        div(class="row")
+            div(class="col-sm-12 col-md-6")
+                div(class="panel panel-primary")
+                    div(class="panel-heading")
+                        div(class="panel-title") Schedule for Staff
+                    div(class="panel-body")
+                        div(class="row")
+                            div(class="col-md-6")
+                                div(class="form-group")
+                                    label(class="control-label" for="staff") Location
+                                    input(type="text", class="form-control")
+                                div(class="form-group")
+                                    label(class="control-label" for="staff") Start Time
+                                    input(type="text", class="form-control")
+                                div(class="form-group")
+                                    label(class="control-label" for="staff") End Time
+                                    input(type="text", class="form-control")
+                                div(class="form-group")
+                                    label(class="control-label" for="staff") Staff
+                                    each position in positions
+                                        div(class="form-group")
+                                            div(class="checkbox")
+                                                label
+                                                    input(type="checkbox", value=position.id)
+                                                    !=position.name
+                                div(class="form-group")
+                                    label(class="control-label", for="Groups") Groups (seperate from buildings)
+                                    each group in groups
+                                        div(class="form-group")
+                                            div(class="checkbox")
+                                                label
+                                                    input(type="checkbox", value=group.id)
+                                                    !=group.name
+                            div(class="col-md-6")
+                                div(class="form-group")
+                                    label(class="control-label") Buildings (seperate from groups)
+                                    ul(class="checkbox-list")
+                                        each building in buildings
+                                            div(class="li")
+                                                div(class="checkbox")
+                                                    label
+                                                        input(type="checkbox", value=building.id)
+                                                        !=building.name
+
+
+
+block scripts
+    script(src="/assets/js/bootstrap-datepicker.js")
+    script(src="/assets/js/wysihtml5/wysihtml5-0.4.0pre.min.js")
+    script(src="/assets/js/wysihtml5/bootstrap-wysihtml5.js")
+    script(src="assets/js/typeahead.min.js")
