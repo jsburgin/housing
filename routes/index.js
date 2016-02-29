@@ -144,4 +144,8 @@ router.get('/profile', restrict, demo, function(req, res, next) {
     res.send('Profile Generate...');
 });
 
+router.get('/schedule', restrict, demo, function(req, res, next) {
+    res.send('Schedule Generate...');
+});
+
 module.exports = router;

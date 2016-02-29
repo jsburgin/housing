@@ -1,7 +1,7 @@
 function HousingManager(options) {
 
     if (options.newStaff) {
-        staffFrom('add');
+        staffForm('add');
     }
 
     if (options.editStaff) {
