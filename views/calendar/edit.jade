@@ -1,0 +1,132 @@
+extends ../layout
+
+block stylesheets
+    link(rel="stylesheet" href="/assets/js/daterangepicker/daterangepicker-bs3.css")
+    link(rel="stylesheet" href="/assets/js/wysihtml5/bootstrap-wysihtml5.css")
+
+block content
+    ol(class="breadcrumb bc-3")
+        li
+            a(href="/") Home
+        li(class="active")
+            a(href="#") Modify Event
+    h2 Modify Event
+    br
+
+    form(role="form", class="form-horizontal schedule-form form-groups-bordered", method="post")
+        div(class="row")
+            div(class="col-md-4")
+                div(class="form-group")
+                    label(class="control-label" for="title") Title
+                    input(type="text", class="form-control input-lg", name="title", id="title", value=eventHeader.title)
+            div(class="col-md-3")
+                div(class="form-group")
+                    label(class="control-label" for="date") Date
+                    input(type="text", name="date", id="date" class="form-control input-lg datepicker", value=eventHeader.prettyDate,data-format="D MM d, yyyy")
+            div(class="col-md-3")
+                div(class="form-group lg-typeahead")
+                    label(class="control-label" for="staff") Staff
+                    input(type="text", name="staff", id="staff", class="form-control input-lg typeahead", value=eventHeader.staff, data-local="All Staff, All CDs, All FAs, All RAs, New CDs, New RAs, New CDs")
+            div(class="col-md-2 event-form-submit")
+                div(class="form-group")
+                    label(class="control-label form-done") Done
+                    div(class="btn btn-default btn-icon btn-lg", id="event-form-submit", disabled) Save Event
+                        i(class="entypo-calendar")
+        div(class="row")
+            div(class="col-sm-12")
+                label(class="control-label" for="staff") Description
+                textarea(class="form-control wysihtml5" rows="10" data-stylesheet-url="/assets/css/wysihtml5-color.css" name="description" id="description")= eventHeader.description
+        br
+        div(class="row schedule-block-row")
+            each event, index in events
+                div(class="col-sm-12 col-md-6 schedule-block", id="primary-schedule-block")
+                    div(class="panel panel-primary")
+                        div(class="panel-heading")
+                            div(class="panel-title") Schedule for Staff
+                            div(class="panel-options")
+                                a(href="#" class="no-outline" data-rel="collapse", tabindex="-1")
+                                    i(class="entypo-down-open")
+                        div(class="panel-body")
+                            div(class="row")
+                                div(class="col-md-6")
+                                    div(class="form-group")
+                                        label(class="control-label" for="staff") Location
+                                        input(type="text", class="form-control location", value=event.location)
+                                    div(class="form-group")
+                                        label(class="control-label" for="staff") Start Time
+                                        input(type="text", class="form-control timepicker startTime", data-template="dropdown", data-show-seconds="false" data-default-time="12:00 PM", data-show-meridian="true", data-minute-step="15", name="startTime", value=event.prettyStartTime)
+                                    div(class="form-group")
+                                        label(class="control-label" for="staff") End Time
+                                        input(type="text", class="form-control timepicker endTime", data-template="dropdown", data-show-seconds="false" data-default-time="12:00 PM", data-show-meridian="true", data-minute-step="15", name="startTime", value=event.prettyEndTime)
+                                    div(class="form-group")
+                                        label(class="control-label" for="staff") Staff
+                                            span(class="toggle-link") Toggle All
+                                        each position in positions
+                                            div(class="checkbox")
+                                                label
+                                                    if event.positions.indexOf(position.id) == -1
+                                                        input(class="positions-checkbox event-checkbox", type="checkbox", value=position.id)
+                                                    else
+                                                        input(class="positions-checkbox event-checkbox", type="checkbox", value=position.id, checked)
+                                                    !=position.name
+                                    div(class="form-group")
+                                        label(class="control-label" for="staff") Experience
+                                        div(class="radio")
+                                            label
+                                                if event.experience == 2
+                                                    input(class="exp-radio", type="radio", name!="exp" + index, value="2", checked)
+                                                else
+                                                    input(class="exp-radio", type="radio", name!="exp" + index, value="2")
+                                                != "All Experiences"
+                                        div(class="radio")
+                                            label
+                                                if event.experience == 1
+                                                    input(class="exp-radio returning-staff", type="radio", name!="exp" + index, value="1", checked)
+                                                else
+                                                    input(class="exp-radio returning-staff", type="radio", name!="exp" + index, value="1")
+                                                != "Returning Staff Only"
+                                        div(class="radio")
+                                            label
+                                                if event.experience == 0
+                                                    input(class="exp-radio new-staff", type="radio", name!="exp" + index, value="0", checked)
+                                                else
+                                                    input(class="exp-radio new-staff", type="radio", name!="exp" + index, value="0")
+                                                != "New Staff Only"
+                                    div(class="form-group")
+                                        label(class="control-label", for="Groups") in Groups
+                                            span(class="toggle-link") Toggle All
+                                        each group in groups
+                                            div(class="checkbox")
+                                                label
+                                                    if event.groups.indexOf(group.id) == -1
+                                                        input(class="groups-checkbox event-checkbox", type="checkbox", value=group.id)
+                                                    else
+                                                        input(class="groups-checkbox event-checkbox", type="checkbox", value=group.id, checked)
+                                                    !=group.name
+                                div(class="col-md-6")
+                                    div(class="form-group")
+                                        label(class="control-label") in Buildings
+                                            span(class="toggle-link") Toggle All
+                                        each building in buildings
+                                            div(class="checkbox")
+                                                label
+                                                    if event.buildings.indexOf(building.id) == -1
+                                                        input(class="buildings-checkbox event-checkbox", type="checkbox", value=building.id)
+                                                    else
+                                                        input(class="buildings-checkbox event-checkbox", type="checkbox", value=building.id, checked)
+                                                    !=building.name
+
+
+
+
+block scripts
+    script(src="/assets/js/bootstrap-datepicker.js")
+    script(src="/assets/js/wysihtml5/wysihtml5-0.4.0pre.min.js")
+    script(src="/assets/js/wysihtml5/bootstrap-wysihtml5.js")
+    script(src="/assets/js/bootstrap-timepicker.min.js")
+    script(src="/assets/js/typeahead.min.js")
+    script(src="/js/housing.js")
+    script.
+        $(document).ready(function() {
+            new HousingManager({ eventModify: true, linkingId: "#{eventHeader.linkingId}" });
+        });

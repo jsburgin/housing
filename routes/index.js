@@ -5,6 +5,7 @@ var async = require('async');
 var dateFormat = require('dateformat');
 
 var restrict = require('../auth/restrict');
+var demo = require('../auth/demo');
 var Position = require('../models/position');
 var Building = require('../models/building');
 var Group = require('../models/group');
@@ -91,14 +92,9 @@ router.post('/add', restrict, function(req, res, next) {
 });
 
 router.get('/edit', restrict, function(req, res, next) {
-    var linkingId = req.query.linkingId;
+    var linkingId = req.query.id;
 
     if (linkingId) {
-        var vm = {
-            title: 'Edit Event',
-            linkingId: linkingId
-        };
-
         async.parallel([
             function(cb) {
                 Event.getHeaders({ linkingId: linkingId }, cb);
@@ -117,27 +113,35 @@ router.get('/edit', restrict, function(req, res, next) {
             }
         ], function(err, results) {
             if (err) {
-                console.log(err);
-                return res.redirect('/');
+                return next(err);
             }
 
             if (results[0].length == 0) {
                 return res.redirect('/');
             }
 
+            var vm = vmBuilder(req, 'Modify Event');
+
+            vm.classes['Calendar'] += 'active opened';
+
+            vm.linkingId = linkingId;
             vm.eventHeader = results[0][0];
             vm.events = results[1];
             vm.positions = results[2];
             vm.buildings = results[3];
             vm.groups = results[4];
 
-            return res.render('edit', vm);
+            return res.render('calendar/edit', vm);
         });
 
     } else {
         res.redirect('/');
     }
 
+});
+
+router.get('/profile', restrict, demo, function(req, res, next) {
+    res.send('Profile Generate...');
 });
 
 module.exports = router;

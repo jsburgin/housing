@@ -1,3 +1,6 @@
+.fc-event {
+    cursor: pointer;
+}
 .disabled-anchor {
     cursor: no-drop;
 }

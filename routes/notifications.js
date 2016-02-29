@@ -4,13 +4,14 @@ var passport = require('passport');
 var async = require('async');
 
 var restrict = require('../auth/restrict');
+var demo = require('../auth/demo');
 var Notification = require('../models/notification');
 var Building = require('../models/building');
 var Position = require('../models/position');
 
 var activeLink = 'Notifications';
 
-router.get('/', restrict, function(req, res, next) {
+router.get('/', restrict, demo, function(req, res, next) {
     Notification.getAll({ abbr: true },function(err, notifications) {
         var vm = {
             title: 'Push Notifications | University of Alabama Housing',
@@ -31,7 +32,7 @@ router.get('/', restrict, function(req, res, next) {
 });
 
 
-router.get('/create', restrict, function(req, res, next) {
+router.get('/send', restrict, demo, function(req, res, next) {
     var vm = {
         title: 'Send Push Notification | University of Alabama Housing',
         activeLink: activeLink

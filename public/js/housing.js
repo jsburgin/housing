@@ -162,7 +162,10 @@ function calendar() {
             editable: false,
             eventLimit: true,
             fixedWeekCount: false,
-            height: 600
+            height: 600,
+            eventClick: function(eventData) {
+                return window.location.replace('/edit?id=' + eventData.id);
+            }
         });
 
         for (var i = 0; i < eventHeaders.length; i++) {
