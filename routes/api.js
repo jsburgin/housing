@@ -53,8 +53,6 @@ router.get('/emails', function(req, res, next) {
 router.get('/users', function(req, res, next) {
     var email = req.body.email;
 
-    console.log(email);
-
     if (email) {
         User.get({ email: email }, function(err, user) {
             if (err) {

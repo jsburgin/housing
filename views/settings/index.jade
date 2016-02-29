@@ -1,0 +1,41 @@
+extends ../layout
+
+block content
+    ol(class="breadcrumb bc-3")
+        li
+            a(href="/") Home
+        li
+            a(href="/staff") Settings
+
+    h2 Manage Administrators
+    br
+    div(class="row")
+        div(class="col-md-8")
+            table(class="table table-bordered")
+                thead
+                    tr
+                        th
+                        th
+                        th First Name
+                        th Last Name
+                        th Email Address
+                tbody
+                    each admin in admins
+                        if admin.email == user.email
+                            tr
+                                td(class="align-center")
+                                    a(href="/profile")
+                                        i(class="entypo-pencil")
+                                td(class="align-center")
+                                    a(href="#", class="disabled-anchor")
+                                        i(class="entypo-cancel-circled")
+                                td= admin.firstname
+                                td= admin.lastname
+                                td= admin.email
+                        else
+                            tr
+                                td
+                                td
+                                td= admin.firstname
+                                td= admin.lastname
+                                td= admin.email

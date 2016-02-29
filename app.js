@@ -12,7 +12,7 @@ require('dotenv').load();
 var routes = require('./routes/index');
 var staff = require('./routes/staff');
 var api = require('./routes/api');
-var admin = require('./routes/admin');
+var settings = require('./routes/settings');
 var notifications = require('./routes/notifications');
 
 var app = express();
@@ -48,7 +48,7 @@ app.use(passport.session());
 app.use('/', routes);
 app.use('/staff', staff);
 app.use('/api', api);
-app.use('/admin', admin);
+app.use('/settings', settings);
 app.use('/notifications', notifications);
 
 // catch 404 and forward to error handler

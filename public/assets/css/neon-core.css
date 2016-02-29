@@ -1,3 +1,10 @@
+.disabled-anchor {
+    cursor: no-drop;
+}
+
+.disabled-anchor {
+    color: inherit;
+}
 .event-form-submit .btn {
     width: 100% !important;
 }
