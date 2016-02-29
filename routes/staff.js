@@ -9,6 +9,7 @@ var User = require('../models/user');
 var Group = require('../models/group');
 var Event = require('../models/event');
 var restrict = require('../auth/restrict');
+var demo = require('../auth/demo');
 var timeFormatter = require('../timeformatter');
 var vmBuilder = require('../vm');
 
@@ -199,7 +200,7 @@ router.post('/remove', restrict, function(req, res, next) {
 });
 
 
-router.get('/schedule', function(req, res, next) {
+router.get('/schedule', demo, function(req, res, next) {
     if (req.query.email) {
         return buildSchedule({ email: req.query.email });
     }

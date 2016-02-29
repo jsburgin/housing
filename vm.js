@@ -12,6 +12,13 @@ module.exports = function(req, title, next) {
         vm.user.image = gravatar.url(vm.user.email, { s:200, r: 'pg', d: 'mm'}, true);
     }
 
+    vm.bodyClass = "";
+
+    if (req.session.justLoggedIn) {
+        req.session.justLoggedIn = false;
+        vm.bodyClass += 'page-fade ';
+    }
+
     vm.navigation = [
         {
             linkName: 'Calendar',

@@ -39,6 +39,8 @@ router.post('/login', function(req, res, next) {
                 return next(err);
             }
 
+            req.session.justLoggedIn = true;
+
             res.json({
                 loginStatus: 'success',
                 redirectUrl: req.session.redirectTo || '/'
