@@ -71,6 +71,12 @@ module.exports = function(req, title, next) {
 
     vm.classes = {};
 
+    vm.footer = '';
+
+    if (process.env.BUILD) {
+        vm.footer = process.env.BUILD;
+    }
+
     for(var i = 0; i < vm.navigation.length; i++) {
         var currentLink = vm.navigation[i];
         vm.classes[currentLink.linkName] = '';

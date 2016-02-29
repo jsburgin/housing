@@ -707,7 +707,8 @@ var public_vars = public_vars || {};
 						endDate: attrDefault($this, 'endDate', ''),
 						daysOfWeekDisabled: attrDefault($this, 'disabledDays', ''),
 						startView: attrDefault($this, 'startView', 0),
-						rtl: rtl()
+						rtl: rtl(),
+                        autoclose: true
 					},
 					$n = $this.next(),
 					$p = $this.prev();

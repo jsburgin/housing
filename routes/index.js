@@ -80,7 +80,17 @@ router.get('/add', function(req, res, next) {
 
 });
 
-router.get('/edit', function(req, res, next) {
+router.post('/add', restrict, function(req, res, next) {
+    Event.add(req.body, function(err) {
+        if (err) {
+            return res.status(500).send('Unable to create event');
+        }
+
+        res.status(200).send({});
+    });
+});
+
+router.get('/edit', restrict, function(req, res, next) {
     var linkingId = req.query.linkingId;
 
     if (linkingId) {

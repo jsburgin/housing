@@ -72,7 +72,10 @@ html(lang="en")
                 hr
                 block content
                 footer(class="main")
-                    != "&copy; 2016 &middot; The University of Alabama | Housing & Residential Communities"
+                    span
+                        !="&copy; 2016 &middot; The University of Alabama | Housing & Residential Communities  "
+                        if footer
+                            span(class="text-danger")!= "--" + footer + " Build"
 
 
 

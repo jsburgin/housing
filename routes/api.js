@@ -28,6 +28,17 @@ router.get('/events', function(req, res, next) {
 
 });
 
+router.get('/eventHeaders', restrict, function(req, res, next) {
+    Event.getHeaders({}, function(err, eventHeaders) {
+        if (err) {
+            console.log(err);
+            return res.status(500).send('Unabel to fetch events.');
+        }
+
+        return res.status(200).send(eventHeaders);
+    });
+});
+
 router.get('/emails', function(req, res, next) {
     postOffice.getEmailLog(function(err, results) {
         if (err) {

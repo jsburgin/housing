@@ -1,3 +1,20 @@
+.event-form-submit .btn {
+    width: 100% !important;
+}
+.form-done {
+    visibility: hidden;
+}
+.toggle-link {
+    margin: .5px 0 0 5px;
+    font-size: 10px;
+    cursor: pointer;
+    display: block;
+    float: right;
+    text-decoration: underline;
+}
+.no-outline {
+    outline: none !important;
+}
 ul.checkbox-list {
     list-style: none;
     padding: 0 !important;
@@ -7,7 +24,7 @@ ul.checkbox-list > li {
     display: inline-block;
     width: 50%;
 }
-.form-horizontal .form-group {
+.schedule-form.form-horizontal .form-group {
     margin: 0;
     padding: 0;
 }
