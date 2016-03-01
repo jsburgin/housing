@@ -3,7 +3,7 @@ var dateFormat = require('dateformat');
 
 var mongo = require('../mongo');
 var User = require('./user');
-var timeFormatter = require('../timeFormatter');
+var timeFormatter = require('../timeformatter');
 
 /**
  * Adds new event to database
