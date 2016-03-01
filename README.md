@@ -1,9 +1,9 @@
 ##University of Alabama Housing Training Application
 
-Backend for application that creates schedules and sends notifications to housing staff members. Implements an Web API for client mobile app interactions.
+The University of Alabama Housing Scheduling & Notification Application is primarily developed to simplify communication and event scheduling for university housing-related training and professional development.
 
 ###Installation
-Ensuring succesful database setup, simply run:
+Requires Node.js v4.0.0 or greater, PostgreSQL v9.4 or greater, and MongoDB v3.0.4 or greater. Ensuring succesful database setup, simply run:
 
 ```
-npm install && npm start
+cd ./housing && npm install

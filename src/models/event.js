@@ -3,128 +3,40 @@ var dateFormat = require('dateformat');
 
 var mongo = require('../mongo');
 var User = require('./user');
+var timeFormatter = require('../timeFormatter');
 
-function getTime(timeString) {
-    var format = timeString.slice(-2);
-    var hours = timeString.substring(0, timeString.indexOf(':'));
-
-    timeString = timeString.substr(0, timeString.length - 3);
-
-    if (format == 'AM') {
-        if (hours.length == 1) {
-            timeString = '0' + timeString;
-        } else if (hours == '12') {
-            timeString = timeString.substr(2);
-            timeString = '00' + timeString;
-        }
-    } else {
-        if (hours != "12") {
-            if (hours.length == 1) {
-                timeString = timeString.substring(1);
-            } else {
-                timeString = timeString.substr(2);
-            }
-            hours = parseInt(hours) + 12;
-            timeString = hours + timeString;
-        }
-    }
-
-    return timeString;
-}
-
+/**
+ * Adds new event to database
+ * @param {Object}   eventObject
+ * @param {Function} next
+ */
 function add(eventObject, next) {
-
     var linkingId = User.genAccessCode();
 
     async.waterfall([
         function(cb) {
             mongo.retrieve({ linkingId: linkingId }, 'eventHeaders', cb);
+        },
+        function(eventHeaders, cb) {
+            if (eventHeaders.length == 0) {
+                return next(null);
+            }
+
+            return setTimeout(add, 0, eventObject);
+        },
+        function(cb) {
+            buildEvents(linkingId, eventObject, cb);
         }
-    ], function(err, eventHeaders) {
+    ], function(err, eventHeader, events) {
+
         if (err) {
             return next(err);
         }
 
-        if (eventHeaders.length == 0) {
-            return addEvent();
-        }
-
-        setTimeout(add, 0, eventObject);
+        saveEvents(eventHeader, events);
     });
 
-    function addEvent() {
-        if (!linkingId) {
-            return next('Error generating linkingId.');
-        }
-
-        var date = new Date(eventObject.date);
-
-        var eventHeader = {
-            title: eventObject.title,
-            description: eventObject.description,
-            date: dateFormat(date, "yyyy-mm-dd"),
-            prettyDate: eventObject.date,
-            linkingId: linkingId,
-            startTime: null,
-            endTime: null,
-            staff: eventObject.staff,
-            created: new Date()
-        };
-
-        if (eventObject.instances.length > 0) {
-            eventHeader.startTime = getTime(eventObject.instances[0].startTime);
-            eventHeader.endTime = getTime(eventObject.instances[0].endTime);
-            eventHeader.location = eventObject.instances[0].location;
-        }
-
-        var events = [];
-
-        for (var i = 0; i < eventObject.instances.length; i++) {
-            var currentInstance = eventObject.instances[i];
-
-            currentInstance.prettyStartTime = currentInstance.startTime;
-            currentInstance.prettyEndTime = currentInstance.endTime;
-
-            currentInstance.startTime = getTime(currentInstance.startTime);
-            currentInstance.endTime = getTime(currentInstance.endTime);
-
-            if (currentInstance.startTime < eventHeader.startTime) {
-                eventHeader.startTime = currentInstance.startTime
-            }
-
-            if (currentInstance.endTime > eventHeader.endTime) {
-                eventHeader.endTime = currentInstance.endTime;
-            }
-
-            if (currentInstance.location != eventHeader.location) {
-                eventHeader.location = 'Conditional';
-            }
-
-            currentInstance.title = eventObject.title;
-            currentInstance.description = eventObject.description;
-            currentInstance.date = eventObject.date;
-            currentInstance.linkingId = linkingId;
-            currentInstance.experience = parseInt(currentInstance.experience);
-
-            if (!currentInstance.buildings) {
-                currentInstance.buildings = [];
-            }
-
-            if (!currentInstance.groups) {
-                currentInstance.groups = [];
-            }
-
-            if (!currentInstance.positions) {
-                currentInstance.positions = [];
-            }
-
-            currentInstance.buildings = currentInstance.buildings.map(Number);
-            currentInstance.positions = currentInstance.positions.map(Number);
-            currentInstance.groups = currentInstance.groups.map(Number);
-
-            events.push({ data: currentInstance, collection: 'events' });
-        }
-
+    function saveEvents(eventHeader, events) {
         async.parallel([
             function(cb) {
                 mongo.insert({ data: eventHeader, collection: 'eventHeaders' }, cb);
@@ -132,14 +44,88 @@ function add(eventObject, next) {
             function(cb) {
                 async.map(events, mongo.insert, cb);
             }
-        ], next);
-    }
+        ], function(err) {
+            if (err) {
+                return next(err);
+            }
 
+            next(null);
+        });
+    }
 };
 
-exports.add = add;
+/**
+ * Processes and packages raw event input
+ * @param  {String}   linkingId
+ * @param  {Object}   eventObject
+ * @param  {Function} next
+ */
+function buildEvents(linkingId, eventObject, next) {
+    var eventHeader = {
+        title: eventObject.title,
+        description: eventObject.description,
+        date: dateFormat(new Date(eventObject.date), "yyyy-mm-dd"),
+        prettyDate: eventObject.date,
+        linkingId: linkingId,
+        startTime: null,
+        endTime: null,
+        staff: eventObject.staff,
+        created: new Date()
+    };
 
-exports.getForUser = function(userData, next) {
+    if (eventObject.instances.length > 0) {
+        eventHeader.startTime = timeFormatter.getTimeString(eventObject.instances[0].startTime);
+        eventHeader.endTime = timeFormatter.getTimeString(eventObject.instances[0].endTime);
+        eventHeader.location = eventObject.instances[0].location;
+    }
+
+    var events = [];
+
+    for (var i = 0; i < eventObject.instances.length; i++) {
+        var currentInstance = eventObject.instances[i];
+
+        var event = {
+            title: eventObject.title,
+            description: eventObject.description,
+            date: eventObject.date,
+            linkingId: linkingId,
+            prettyStartTime: currentInstance.startTime,
+            prettyEndTime: currentInstance.endTime,
+            buildings: [],
+            groups: [],
+            positions: []
+        };
+
+        for (key in currentInstance) event[key] = currentInstance[key];
+
+        event.startTime = timeFormatter.getTimeString(event.startTime);
+        event.endTime = timeFormatter.getTimeString(event.endTime);
+
+        if (event.startTime < eventHeader.startTime) {
+            eventHeader.startTime = event.startTime
+        }
+
+        if (event.endTime > eventHeader.endTime) {
+            eventHeader.endTime = event.endTime;
+        }
+
+        if (event.location != eventHeader.location) {
+            eventHeader.location = 'Conditional';
+        }
+
+        // convert all ids to ints
+        event.experience = parseInt(event.experience);
+        event.buildings = event.buildings.map(Number);
+        event.positions = event.positions.map(Number);
+        event.groups = event.groups.map(Number);
+
+        events.push({ data: event, collection: 'events' });
+    }
+
+    return next(null, eventHeader, events);
+}
+
+function getSchedule(userData, next) {
 
     var userDisplayName;
 
@@ -179,13 +165,11 @@ exports.getForUser = function(userData, next) {
             return next(err);
         }
 
-
-
         next(null, results, userDisplayName);
     });
 };
 
-exports.getHeaders = function(objectData, next) {
+function getHeaders(objectData, next) {
     mongo.retrieveSorted(objectData, 'eventHeaders', { date: 1, startTime: 1, created: 1 }, function(err, eventHeaders) {
         if (err) {
             return next(err);
@@ -195,7 +179,7 @@ exports.getHeaders = function(objectData, next) {
     });
 }
 
-exports.get = function(objectData, next) {
+function get(objectData, next) {
     mongo.retrieveSorted(objectData, 'events', { startTime: 1 }, function(err, events) {
         if (err) {
             return next(err);
@@ -205,7 +189,13 @@ exports.get = function(objectData, next) {
     });
 };
 
-exports.remove = function(objectData, next) {
+function getAll(next) {
+    mongo.retrieve({}, 'events', function(err, events) {
+        next(err, events);
+    });
+};
+
+ function remove(objectData, next) {
     async.parallel([
         function(cb) {
             mongo.remove(objectData, 'events', cb);
@@ -222,8 +212,12 @@ exports.remove = function(objectData, next) {
     });
 };
 
-exports.getAll = function(next) {
-    mongo.retrieve({}, 'events', function(err, events) {
-        next(err, events);
-    });
+module.exports = {
+    add: add,
+    buildEvents: buildEvents,
+    getSchedule: getSchedule,
+    getHeaders: getHeaders,
+    get: get,
+    getAll: getAll,
+    remove: remove
 };

@@ -1,13 +1,17 @@
+var http = require('http');
 var express = require('express');
 var path = require('path');
-var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var passport = require('passport');
-var expressSession = require('express-session');
+var session = require('express-session');
+var pgSession = require('connect-pg-simple');
+var debug = require('debug')('housing:server');
+var colors = require('colors');
 
-require('dotenv').load();
+var authConfig = require('./auth/passport');
+var rollTide = require('./rolltide');
 
 var routes = require('./routes/index');
 var staff = require('./routes/staff');
@@ -15,33 +19,37 @@ var api = require('./routes/api');
 var settings = require('./routes/settings');
 var notifications = require('./routes/notifications');
 
+require('dotenv').load();
+
 var app = express();
 
-var passportConfig = require('./auth/passport');
+var port = process.env.PORT || '8080';
+app.set('port', port);
 
-passportConfig();
-
-// view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 app.set('view options', { pretty: false })
 
-// uncomment after placing your favicon in /public
-app.use(favicon(path.join(__dirname, 'public', 'img/favicon.png')));
-//app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-
-app.use(expressSession({
-    store: new (require('connect-pg-simple')(expressSession))(),
+/**
+ * Postgres session initialization
+ */
+app.use(session({
+    store: new (pgSession({session}))(),
     secret: process.env.SESSION_SECRET,
     saveUninitialized: false,
-    resave: false
+    resave: false,
+    cookie: { maxAge: 30 * 24 * 60 * 60 * 1000 }
 }));
 
+/**
+ * Authentification setup
+ */
+authConfig();
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -51,17 +59,18 @@ app.use('/api', api);
 app.use('/settings', settings);
 app.use('/notifications', notifications);
 
-// catch 404 and forward to error handler
+/**
+ * 404 Handler, forward error
+ */
 app.use(function(req, res, next) {
     var err = new Error('Not Found');
     err.status = 404;
     next(err);
 });
 
-// error handlers
-
-// development error handler
-// will print stacktrace
+/**
+ * Development error handler
+ */
 if (app.get('env') === 'development') {
     app.use(function(err, req, res, next) {
         res.status(err.status || 500);
@@ -72,8 +81,9 @@ if (app.get('env') === 'development') {
     });
 }
 
-// production error handler
-// no stacktraces leaked to user
+/**
+ * Production error handler
+ */
 app.use(function(err, req, res, next) {
     res.status(err.status || 500);
     res.render('error', {
@@ -82,5 +92,20 @@ app.use(function(err, req, res, next) {
     });
 });
 
+/**
+ * Server setup
+ */
+var server = http.createServer(app);
+server.listen(port);
 
-module.exports = app;
+server.on('listening', function() {
+    rollTide();
+    console.log('Startup Succesful'.green);
+    console.log('University of Alabama Housing Training now running on port ' + port + '.');
+});
+
+server.on('error', function(error) {
+    if (error.syscall !== 'listen') {
+        throw error;
+    }
+});
