@@ -19,7 +19,7 @@ var api = require('./routes/api');
 var settings = require('./routes/settings');
 var notifications = require('./routes/notifications');
 
-require('dotenv').load();
+require('dotenv').config({silent: true});
 
 var app = express();
 

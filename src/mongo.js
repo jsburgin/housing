@@ -1,7 +1,7 @@
 var MongoClient = require('mongodb').MongoClient;
 var async = require('async');
 
-require('dotenv').load();
+require('dotenv').config({silent: true});
 
 function getInstance(next) {
     MongoClient.connect(process.env.MONGO_URL, function(err, db) {

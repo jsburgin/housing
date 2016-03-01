@@ -1,6 +1,6 @@
 var db = require('../db');
 var async = require('async');
-require('dotenv').load();
+require('dotenv').config({silent: true});
 
 var Group = require('./group');
 var postOffice = require('../postoffice');
