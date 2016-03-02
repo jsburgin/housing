@@ -1,5 +1,7 @@
 ##University of Alabama Housing Training Application
 
+[![Build Status](https://travis-ci.com/jsburgin/housing.svg?token=2mJiqhzs9KLeywNzb84z&branch=master)](https://travis-ci.com/jsburgin/housing)
+
 The University of Alabama Housing Scheduling & Notification Application is primarily developed to simplify communication and event scheduling for university housing-related training and professional development.
 
 ###Installation
