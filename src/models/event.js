@@ -19,7 +19,7 @@ function add(eventObject, next) {
         },
         function(eventHeaders, cb) {
             if (eventHeaders.length == 0) {
-                return next(null);
+                return cb(null);
             }
 
             return setTimeout(add, 0, eventObject);
@@ -170,7 +170,14 @@ function getSchedule(userData, next) {
 };
 
 function getHeaders(objectData, next) {
-    mongo.retrieveSorted(objectData, 'eventHeaders', { date: 1, startTime: 1, created: 1 }, function(err, eventHeaders) {
+
+    var sort = {
+        date: 1,
+        startTime: 1,
+        created: 1
+    };
+
+    mongo.retrieveSorted(objectData, 'eventHeaders', sort, function(err, eventHeaders) {
         if (err) {
             return next(err);
         }

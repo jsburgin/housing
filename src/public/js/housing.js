@@ -9,7 +9,9 @@ function HousingManager(options) {
     }
 
     if (options.eventCreate) {
-        eventForm();
+        eventForm({});
+    } else if (options.eventEdit) {
+        eventForm({ update: true, linkingId: options.linkingId });
     }
 
     if (options.calendar) {
@@ -17,15 +19,18 @@ function HousingManager(options) {
     }
 }
 
-function eventForm() {
+function eventForm(options) {
 
     function setLinkToggles(container) {
+
         $(container).find('.toggle-link').click(function(e) {
             console.log('clicked');
             var parent = $(this).parents('.form-group'),
                 checkboxes = parent.find('.event-checkbox');
 
-            if (parent.attr('checkToggleValues') == 'true') {
+            var checked = parent.find('.event-checkbox:checked').length;
+
+            if (checked > checkboxes.length / 2) {
                 checkboxes.prop('checked', false);
                 parent.attr('checkToggleValues', 'false');
             } else {
@@ -35,13 +40,24 @@ function eventForm() {
 
             e.preventDefault();
         });
+
+        $(container).find('.timepicker').each(initTimePickers);
     }
 
     setLinkToggles('#primary-schedule-block');
 
     var scheduleBlockCount = 2;
 
+    // keep empty clone in memory for easy re-cloning
     var scheduleBlockTemplate = $('#primary-schedule-block').clone();
+
+    if (options.update) {
+        scheduleBlockTemplate.find('input[type="checkbox"]').prop('checked', false);
+        scheduleBlockTemplate.find('.location').val('');
+        scheduleBlockTemplate.find('.startTime').val('12:00 PM');
+        scheduleBlockTemplate.find('.endTime').val('12:00 PM');
+    }
+
     $(scheduleBlockTemplate).find('.exp-radio').removeAttr('name');
     $(scheduleBlockTemplate).removeAttr('id');
     $(scheduleBlockTemplate).find('.panel-options')
@@ -100,12 +116,18 @@ function eventForm() {
                 });
             }
 
-
             event.instances.push(instance);
         });
 
+        var url = '/add';
+
+        if (options.update) {
+            event.linkingId =  options.linkingId;
+            url = '/edit';
+        }
+
         $.ajax({
-            url: '/add',
+            url: url,
             method: 'POST',
             dataType: 'json',
             data: event,
@@ -174,36 +196,10 @@ function calendar() {
             calendar.fullCalendar('renderEvent', eventHeaders[i], false);
         }
     }
-
-
-
 }
 
 function staffForm(type) {
     $('#staff-form').validate({
-        rules: {
-            firstName: {
-                required: true
-            },
-            lastName: {
-                required: true
-            },
-            email: {
-                required: true
-            },
-            room: {
-                required: true
-            },
-            position: {
-                required: true
-            },
-            building: {
-                required: true
-            },
-            experience: {
-                required: true
-            }
-        },
         highlight: function(element) {
             $(element).closest('.input-group').addClass('validate-has-error');
         },
@@ -240,4 +236,20 @@ function staffForm(type) {
             });
         }
     });
+}
+
+function initTimePickers(i, el) {
+    var $this = $(el),
+        opts = {
+            template: attrDefault($this, 'template', false),
+            showSeconds: attrDefault($this, 'showSeconds', false),
+            defaultTime: attrDefault($this, 'defaultTime', 'current'),
+            showMeridian: attrDefault($this, 'showMeridian', true),
+            minuteStep: attrDefault($this, 'minuteStep', 15),
+            secondStep: attrDefault($this, 'secondStep', 15)
+        },
+        $n = $this.next(),
+        $p = $this.prev();
+
+    $this.timepicker(opts);
 }

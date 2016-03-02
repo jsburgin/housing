@@ -30,7 +30,7 @@ block content
             div(class="col-md-2 event-form-submit")
                 div(class="form-group")
                     label(class="control-label form-done") Done
-                    div(class="btn btn-default btn-icon btn-lg", id="event-form-submit", disabled) Save Event
+                    div(class="btn btn-default btn-icon btn-lg", id="event-form-submit") Save Event
                         i(class="entypo-calendar")
         div(class="row")
             div(class="col-sm-12")
@@ -115,6 +115,9 @@ block content
                                                     else
                                                         input(class="buildings-checkbox event-checkbox", type="checkbox", value=building.id, checked)
                                                     !=building.name
+            div(class="col-sm-12 col-md-6")
+                div(class="add-schedule-block btn btn-default btn-icon btn-lg") Add Another Schedule for Staff Block
+                    i(class="entypo-plus")
 
 
 
@@ -128,5 +131,5 @@ block scripts
     script(src="/js/housing.js")
     script.
         $(document).ready(function() {
-            new HousingManager({ eventModify: true, linkingId: "#{eventHeader.linkingId}" });
+            new HousingManager({ eventEdit: true, linkingId: "#{eventHeader.linkingId}" });
         });

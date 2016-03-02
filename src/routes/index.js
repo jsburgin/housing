@@ -22,7 +22,6 @@ router.get('/', restrict, function(req, res, next) {
 });
 
 router.post('/login', function(req, res, next) {
-
     passport.authenticate('local', function(err, user, info) {
         if (err) {
             return next(err);
@@ -119,7 +118,7 @@ router.get('/edit', restrict, function(req, res, next) {
             }
 
             if (results[0].length == 0) {
-                return res.redirect('/');
+                return next();
             }
 
             var vm = vmBuilder(req, 'Modify Event');
@@ -139,7 +138,24 @@ router.get('/edit', restrict, function(req, res, next) {
     } else {
         res.redirect('/');
     }
+});
 
+router.post('/edit', restrict, function(req, res, next) {
+    async.parallel([
+        function(cb) {
+            Event.remove({ linkingId: req.body.linkingId }, cb);
+        },
+        function(cb) {
+            delete req.body.linkingId;
+            Event.add(req.body, cb);
+        }
+    ], function(err) {
+        if (err) {
+            return res.status(500).send('Unable to update event.');
+        }
+
+        return res.status(200).send({});
+    });
 });
 
 router.get('/profile', restrict, demo, function(req, res, next) {
