@@ -1,0 +1,6 @@
+{
+    "db": {
+        "postgres": "DATABASE_URL",
+        "mongo": "MONGO_URL"
+    }
+}

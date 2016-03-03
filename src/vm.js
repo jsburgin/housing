@@ -1,4 +1,5 @@
 var gravatar = require('gravatar');
+var config = require('config');
 
 module.exports = function(req, title, next) {
 
@@ -80,8 +81,8 @@ module.exports = function(req, title, next) {
 
     vm.footer = '';
 
-    if (process.env.BUILD) {
-        vm.footer = process.env.BUILD;
+    if (config.has('build')) {
+        vm.footer = config.get('build');
     }
 
     for(var i = 0; i < vm.navigation.length; i++) {

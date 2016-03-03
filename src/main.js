@@ -10,6 +10,9 @@ var pgSession = require('connect-pg-simple');
 var debug = require('debug')('housing:server');
 var colors = require('colors');
 
+require('dotenv').config({silent: true});
+var config = require('config');
+
 var authConfig = require('./auth/passport');
 var rollTide = require('./rolltide');
 
@@ -18,8 +21,6 @@ var staff = require('./routes/staff');
 var api = require('./routes/api');
 var settings = require('./routes/settings');
 var notifications = require('./routes/notifications');
-
-require('dotenv').config({silent: true});
 
 var app = express();
 
@@ -39,8 +40,8 @@ app.use(express.static(path.join(__dirname, 'public')));
  * Postgres session initialization
  */
 app.use(session({
-    store: new (pgSession({session}))(),
-    secret: process.env.SESSION_SECRET,
+    store: new (pgSession(session))(),
+    secret: config.get('session.secret'),
     saveUninitialized: false,
     resave: false,
     cookie: { maxAge: 30 * 24 * 60 * 60 * 1000 }

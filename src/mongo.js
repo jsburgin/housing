@@ -1,10 +1,9 @@
 var MongoClient = require('mongodb').MongoClient;
 var async = require('async');
-
-require('dotenv').config({silent: true});
+var config = require('config');
 
 function getInstance(next) {
-    MongoClient.connect(process.env.MONGO_URL, function(err, db) {
+    MongoClient.connect(config.get('db.mongo'), function(err, db) {
         if (err) {
             return next(err);
         }

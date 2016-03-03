@@ -1,8 +1,8 @@
-require('dotenv').config({silent: true});
+var config = require('config');
 
 var db = require('knex')({
     client: 'postgresql',
-    connection: process.env.DATABASE_URL
+    connection: config.get('db.postgres')
 });
 
 module.exports = db;

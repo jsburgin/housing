@@ -4616,13 +4616,13 @@ fieldset[disabled] .calendar-env .calendar-body .fc-header .fc-button.focus {
 .calendar-env .calendar-body .fc-content .fc-view table tbody tr td.fc-day.fc-today .fc-day-number:focus,
 .calendar-env .calendar-body .fc-content .fc-view table tbody tr td.fc-day.fc-today .fc-day-number.focus {
   color: #fff;
-  background-color: #1988b6;
+  background-color: #AB2D4E;
   border-color: #0c455d;
 }
 .calendar-env .calendar-body .fc-content .fc-view table tbody tr td.fc-day.fc-today .fc-day-number:hover {
   color: #fff;
-  background-color: #1988b6;
-  border-color: #147197;
+  background-color: #AB2D4E !important;
+  border-color: #AB2D4E;
 }
 .calendar-env .calendar-body .fc-content .fc-view table tbody tr td.fc-day.fc-today .fc-day-number:active,
 .calendar-env .calendar-body .fc-content .fc-view table tbody tr td.fc-day.fc-today .fc-day-number.active,

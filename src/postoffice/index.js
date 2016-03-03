@@ -17,12 +17,19 @@ exports.sendMail = function(email, next) {
         html: email.html
     };
 
+    if (config.get('sendMail') == false) {
+        return next(null);
+    }
+
     transporter.sendMail(mailOptions, function(err, info) {
-        console.log('mail sent...');
+        if (err) {
+            return next(err);
+        }
+
         info.body = mailOptions;
         logMail(info);
 
-        return next(err);
+        return next(null);
     });
 };
 
