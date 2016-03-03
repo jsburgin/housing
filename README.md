@@ -10,6 +10,7 @@ Requires Node.js v4.0.0 or greater, PostgreSQL v9.4 or greater, and MongoDB v3.0
 ```
 $ git clone https://github.com/jsburgin/housing.git
 $ cd ./housing && npm install
+```
 
 Create a new .env file to overwrite database url settings:
 
