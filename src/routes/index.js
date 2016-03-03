@@ -158,6 +158,22 @@ router.post('/edit', restrict, function(req, res, next) {
     });
 });
 
+router.get('/remove', restrict, function(req, res, next) {
+    var linkingId = req.query.id;
+
+    if (!linkingId) {
+        return res.redirect('/');
+    }
+
+    Event.remove({ linkingId: linkingId }, function(err) {
+        if (err) {
+            return res.redirect('/edit?id' + linkingId);
+        }
+
+        return res.redirect('/');
+    });
+});
+
 router.get('/profile', restrict, demo, function(req, res, next) {
     res.send('Profile Generate...');
 });

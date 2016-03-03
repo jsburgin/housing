@@ -8,7 +8,7 @@
 .disabled-anchor {
     color: inherit;
 }
-.event-form-submit .btn {
+.event-form-submit .btn, .full-width .btn {
     width: 100% !important;
 }
 .form-done {

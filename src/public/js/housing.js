@@ -191,9 +191,7 @@ function calendar() {
         });
 
         for (var i = 0; i < eventHeaders.length; i++) {
-            console.log(eventHeaders[i].start);
-            console.log(eventHeaders[i].end);
-            calendar.fullCalendar('renderEvent', eventHeaders[i], false);
+            calendar.fullCalendar('renderEvent', eventHeaders[i], true);
         }
     }
 }

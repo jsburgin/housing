@@ -15,7 +15,7 @@ block content
 
     form(role="form", class="form-horizontal schedule-form form-groups-bordered", method="post")
         div(class="row")
-            div(class="col-md-4")
+            div(class="col-md-3")
                 div(class="form-group")
                     label(class="control-label" for="title") Title
                     input(type="text", class="form-control input-lg", name="title", id="title", value=eventHeader.title)
@@ -23,10 +23,15 @@ block content
                 div(class="form-group")
                     label(class="control-label" for="date") Date
                     input(type="text", name="date", id="date" class="form-control input-lg datepicker", value=eventHeader.prettyDate,data-format="D MM d, yyyy")
-            div(class="col-md-3")
+            div(class="col-md-2")
                 div(class="form-group lg-typeahead")
                     label(class="control-label" for="staff") Staff
                     input(type="text", name="staff", id="staff", class="form-control input-lg typeahead", value=eventHeader.staff, data-local="All Staff, All CDs, All FAs, All RAs, New CDs, New FAs, New RAs")
+            div(class="col-md-2 full-width")
+                div(class="form-group")
+                    label(class="control-label form-done") Remove
+                    button(class="btn btn-red btn-icon btn-lg", id="remove-event-button") Remove
+                        i(class="entypo-cancel")
             div(class="col-md-2 event-form-submit")
                 div(class="form-group")
                     label(class="control-label form-done") Done
@@ -46,6 +51,8 @@ block content
                             div(class="panel-options")
                                 a(href="#" class="no-outline" data-rel="collapse", tabindex="-1")
                                     i(class="entypo-down-open")
+                                a(href="#" class="no-outline" data-rel="close" tabindex="-1")
+                                    i(class="entypo-cancel")
                         div(class="panel-body")
                             div(class="row")
                                 div(class="col-md-6")
@@ -120,7 +127,18 @@ block content
                     i(class="entypo-plus")
 
 
-
+block modals
+    div(class="modal fade", id="remove-event-modal")
+        div(class="modal-dialog")
+            div(class="modal-content")
+                div(class="modal-header")
+                    button(type="button" class="close" data-dismiss="modal" aria-hidden="true") &times;
+                    h4(class="modal-title") Remove Event
+                div(class="modal-body")
+                    != "Are you sure you want to remove this event?"
+                div(class="modal-footer")
+                    button(type="button" class="btn btn-default" data-dismiss="modal") Close
+                    a(href!="/remove?id=" + eventHeader.linkingId, class="btn btn-red") Remove
 
 block scripts
     script(src="/assets/js/bootstrap-datepicker.js")
@@ -132,4 +150,8 @@ block scripts
     script.
         $(document).ready(function() {
             new HousingManager({ eventEdit: true, linkingId: "#{eventHeader.linkingId}" });
+            $('#remove-event-button').click(function(e) {
+                $('#remove-event-modal').modal('show');
+                e.preventDefault();
+            });
         });
