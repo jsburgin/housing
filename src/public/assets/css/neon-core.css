@@ -1,3 +1,18 @@
+.notification-send {
+    margin-top: 15px;
+}
+.notification-message {
+    height: 300px !important;
+}
+.housing-calendar-wrapper {
+    display: none;
+}
+.fc-event-title {
+    margin-left: 2px;
+}
+.capitalize {
+    text-transform: capitalize;
+}
 .fc-event {
     cursor: pointer;
 }
@@ -8420,7 +8435,7 @@ img.full-width {
   top: 0;
   bottom: 0;
   width: 0%;
-  background: #ec5956;
+  background: #AD2A4D;
 }
 .neon-loading-bar.progress-is-hidden {
   top: -5px;

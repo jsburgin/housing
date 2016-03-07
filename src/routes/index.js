@@ -178,8 +178,10 @@ router.get('/profile', restrict, demo, function(req, res, next) {
     res.send('Profile Generate...');
 });
 
-router.get('/schedule', restrict, demo, function(req, res, next) {
-    res.send('Schedule Generate...');
+router.get('/schedule', restrict, function(req, res, next) {
+    var vm = vmBuilder(req, 'Schedule Info');
+
+    res.render('calendar/scheduler', vm);
 });
 
 module.exports = router;

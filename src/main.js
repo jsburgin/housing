@@ -103,6 +103,7 @@ server.on('listening', function() {
     rollTide();
     console.log('Startup Succesful'.green);
     console.log('University of Alabama Housing Training now running on port ' + port + '.');
+    require('./models/schedule').cacheSchedules();
 });
 
 server.on('error', function(error) {

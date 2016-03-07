@@ -1,38 +1,81 @@
 extends ../layout
 
 block content
-    div(class="large-12 columns")
-        h3 Send Push Notification
+    ol(class="breadcrumb bc-3")
+        li
+            a(href="/") Home
+        li
+            a(href="/notifications") Notifications
+        li(class="active")
+            a(href="/notifications/send") Send Notification
 
-    div(class="large-8 columns")
-        if error
-            p(class="error")= error   
-        form(class="create-user-form create-push-form notification-form", action="/notifications/create", method="post")
-            label(for="subject") Subject
-            input(type="text", name="subject", class="notification-subject")
-            label(for="message") Message
-            textarea(name="message", class="notification-message")
-            div(class="checkbox-collection")
-                h6 Positions
-                each position in positions
-                    div(class="checkbox-selection")
-                        input(type="checkbox", class="position-checkbox", value="#{position.id}")
-                        label(for="toemail")= position.name
-            div(class="checkbox-collection")
-                h6 Buildings
-                each building in buildings
-                    div(class="checkbox-selection")
-                        input(type="checkbox", class="building-checkbox", value="#{building.id}")
-                        label(for="toemail")= building.name
-            div(class="checkbox-collection")
-                h6 Email
-                input(type="checkbox", name="toemail", class="email-checkbox")
-                label(for="toemail") Send as email too?
-            input(type="submit", value="Send Notification", class="small radius button post-checkbox-button")
-    div(class="large-4 columns")
-
+    h2 Send Notification
+    br
+    div(class="row")
+        div(class="col-sm-12 col-md-10")
+            div(class="panel panel-primary")
+                div(class="panel-heading")
+                    div(class="panel-title") Send New Push Notification
+                    div(class="panel-options")
+                        a(href="#" class="no-outline" data-rel="collapse", tabindex="-1")
+                            i(class="entypo-down-open")
+                div(class="panel-body")
+                    form(class="form-horizontal schedule-form notification-form form-groups-bordered")
+                        div(class="row")
+                            div(class="col-md-7")
+                                div(class="form-group")
+                                    label(class="control-label" for="subject") Subject
+                                    input(type="text", class="form-control", id="subject")
+                                div(class="form-group", for="message")
+                                    label(class="control-label") Message
+                                    textarea(class="form-control notification-message", id="message")
+                                div(class="form-group")
+                                    div(class="btn btn-default btn-icon btn-lg notification-send") Send Notification
+                                        i(class="entypo-paper-plane")
+                            div(class="col-md-5")
+                                div(class="row")
+                                    div(class="col-md-6")
+                                        div(class="form-group")
+                                            label(class="control-label" for="staff") Staff
+                                                span(class="toggle-link") Toggle All
+                                            each position in positions
+                                                div(class="checkbox")
+                                                    label
+                                                        input(class="positions-checkbox notification-checkbox", type="checkbox", value=position.id)
+                                                        !=position.name
+                                        div(class="form-group")
+                                            label(class="control-label" for="staff") Experience
+                                            div(class="radio")
+                                                label
+                                                    input(class="exp-radio", type="radio", name="exp1", value="2", checked)
+                                                    != "All Experiences"
+                                            div(class="radio")
+                                                label
+                                                    input(class="exp-radio returning-staff", type="radio", name="exp1", value="1")
+                                                    != "Returning Staff Only"
+                                            div(class="radio")
+                                                label
+                                                    input(class="exp-radio new-staff", type="radio", name="exp1", value="0")
+                                                    != "New Staff Only"
+                                        div(class="form-group")
+                                            label(class="control-label", for="Groups") in Groups
+                                                span(class="toggle-link") Toggle All
+                                            each group in groups
+                                                div(class="checkbox")
+                                                    label
+                                                        input(class="groups-checkbox notification-checkbox", type="checkbox", value=group.id)
+                                                        !=group.name
+                                    div(class="col-md-6")
+                                        div(class="form-group")
+                                            label(class="control-label") in Buildings
+                                                span(class="toggle-link") Toggle All
+                                            each building in buildings
+                                                div(class="checkbox")
+                                                    label
+                                                        input(class="buildings-checkbox notification-checkbox", type="checkbox", value=building.id)
+                                                        !=building.name
 block scripts
     script.
-        $(document).ready(function() {
-            var hm = new HousingManager({ page: 'NotificationCreation'});
-        });
+            $(document).ready(function() {
+                new HousingManager({ notifications: true });
+            });

@@ -43,7 +43,7 @@ module.exports = function(req, title, next) {
         {
             linkName: 'Notifications',
             url: '/notifications',
-            icon: 'entypo-mail',
+            icon: 'entypo-paper-plane',
             subMenu: [
                 {
                     linkName: 'Notification History',

@@ -50,7 +50,7 @@ exports.retrieve = function(documentParams, collectionString, next) {
     });
 };
 
-exports.eventRetrieve = function(documentParams, collectionString, next) {
+exports.retrieveSortedExclude = function(documentParams, exclude, sortBy, collectionString, next) {
     getInstance(function(err, db) {
         if (err) {
             return next(err);
@@ -58,7 +58,7 @@ exports.eventRetrieve = function(documentParams, collectionString, next) {
 
         var collection = db.collection(collectionString);
 
-        collection.find(documentParams, { buildings: 0, groups: 0, positions: 0, _id: 0, experience: 0 }).sort({ date: 1, startTime: 1}).toArray(function(err, results) {
+        collection.find(documentParams, exclude).sort(sortBy).toArray(function(err, results) {
             db.close();
             if (err) {
                 return next(err);

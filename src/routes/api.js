@@ -5,8 +5,9 @@ var Event = require('../models/event');
 var restrict = require('../auth/restrict');
 var postOffice = require('../postoffice');
 var User = require('../models/user');
+var Schedule = require('../models/schedule');
 
-router.get('/events', function(req, res, next) {
+router.get('/schedule', function(req, res, next) {
     var queryObject = {};
 
     if (req.query.id) {
@@ -18,12 +19,12 @@ router.get('/events', function(req, res, next) {
     }
 
 
-    Event.getForUser(queryObject, function(err, events) {
+    Schedule.get(queryObject, function(err, schedule) {
         if (err) {
-            return res.send('Unable to fetch events.');
+            return res.status(204).send('No schedule found.');
         }
 
-        return res.json(events);
+        return res.json(schedule);
     });
 
 });
