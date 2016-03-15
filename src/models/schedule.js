@@ -3,10 +3,17 @@ var mongo = require('../mongo');
 var db = require('../db');
 var User = require('./user');
 var async = require('async');
+var dateformat = require('dateformat');
 
 var caching = false;
 var cacheWaiting = false;
 var scheduleCache = {};
+
+var scheduleSet = false;
+var startDate = new Date('Jan 1 2000');
+var endDate = new Date('Dec 31 2099');
+var title = 'Housing & Residential Communities Training Schedule';
+var description = '';
 
 /**
  * Retrieves schedule from cache or builds it
@@ -27,6 +34,9 @@ function get(userData, next) {
 
         scheduleCache[schedule.userId] = schedule;
 
+        schedule.title = title;
+        schedule.description = description;
+
         return next(null, schedule);
     });
 }
@@ -41,16 +51,7 @@ function buildSchedule(userData, next) {
         function(cb) {
             User.get(userData, cb);
         },
-        function(cb) {
-            getScheduleInfo(function(err, scheduleInfo) {
-                if (err) {
-                    return cb(err);
-                }
-
-                cb(null, user, scheduleInfo);
-            });
-        },
-        function(user, scheduleInfo, cb) {
+        function(user, cb) {
             if (!user) {
                 return next("Can't generate schedule for user that does not exist.");
             }
@@ -72,8 +73,8 @@ function buildSchedule(userData, next) {
                             { experience: 2 }
                         ]
                     },
-                    { sortDate : { $gte: scheduleInfo.startDate } },
-                    { sortDate : { $lte: scheduleInfo.endDate } }
+                    { sortDate : { $gte: startDate } },
+                    { sortDate : { $lt: endDate } }
                 ]
             };
 
@@ -143,8 +144,29 @@ function cacheSchedules(internalCall) {
     });
 }
 
-function getScheduleInfo() {
+/**
+ * Loads schedule details in to memory
+ * @param {Function} next
+ */
+function loadScheduleInfo(next) {
+    mongo.retrieve({}, 'scheduleInfo', function(err, data) {
+        if (err) {
+            return next(err);
+        }
 
+        if (data.length == 0) {
+            return next(null);
+        }
+
+        scheduleSet = true;
+        startDate = data[0].startDate;
+        endDate = data[0].endDate;
+        title = data[0].title;
+        description = data[0].info;
+
+
+        next(null);
+    });
 }
 
 /**
@@ -159,20 +181,62 @@ function setScheduleInfo(scheduleData, next) {
         },
         function(cb) {
             scheduleData.startDate = new Date(scheduleData.startDate);
+
             scheduleData.endDate = new Date(scheduleData.endDate);
-            mongo.insert(scheduleData, 'scheduleInfo', cb);
+            scheduleData.endDate.setDate(scheduleData.endDate.getDate() + 1);
+
+            mongo.insert({ data: scheduleData, collection: 'scheduleInfo' }, cb);
         }
     ], function(err) {
         if (err) {
             return next(err);
         }
 
+        scheduleSet = true;
+        startDate = scheduleData.startDate;
+        endDate = scheduleData.endDate;
+        title = scheduleData.title;
+        description = scheduleData.description;
+
+        cacheSchedules();
+
         return next(null);
     });
+}
+
+/**
+ * Returns schedule information for updates
+ * @param  {Function} next
+ * @return {[type]}
+ */
+function getScheduleInfo(next) {
+    if (scheduleSet) {
+        var tempEndDate = new Date(endDate.getTime());
+
+        return next(null, {
+            startDate: dateformat(startDate, "mmmm d, yyyy"),
+            endDate: dateformat(tempEndDate.setDate(tempEndDate.getDate() - 1), "mmmm d, yyyy"),
+            title: title,
+            description: description
+        });
+    }
+
+    var now = new Date();
+
+    var templateSchedule = {
+        startDate: dateformat(now, "mmmm d, yyyy"),
+        endDate: dateformat(now.setDate(now.getDate() + 7), "mmmm d, yyyy"),
+        title: '',
+        description: ''
+    };
+
+    next(null, templateSchedule);
 }
 
 module.exports = {
     get: get,
     cacheSchedules: cacheSchedules,
-    setScheduleInfo: setScheduleInfo
+    setScheduleInfo: setScheduleInfo,
+    getScheduleInfo: getScheduleInfo,
+    loadScheduleInfo: loadScheduleInfo
 };

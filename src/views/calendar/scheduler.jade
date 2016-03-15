@@ -20,23 +20,28 @@ block content
                     div(class="panel-title") Set Schedule Information
 
                 div(class="panel-body")
-                    div(class="row")
-                        div(class="col-md-6")
-                            div(class="form-group")
-                                label(class="control-label") Schedule Title
-                                input(type="text", class="form-control input-lg", data-validate="required", autocomplete="off")
-                    div(class="row")
-                        div(class="col-md-6")
-                            div(class="form-group")
-                                label(class="control-label") Start/End Time
-                                div(class="daterange daterange-inline" data-format="MMMM D, YYYY" data-start-date="March 2, 2016" data-end-date="March 10, 2016")
+                    form(id="schedule-update-form" role="form")
+                        div(class="row")
+                            div(class="col-md-6")
+                                div(class="form-group")
+                                    label(class="control-label") Schedule Title
+                                    input(type="text", id="title" class="form-control input-lg", data-validate="required", autocomplete="off", value=schedule.title)
+                        div(class="row")
+                            div(class="col-md-6")
+                                div(class="form-group")
+                                    label(class="control-label") Start/End Time
+                                    div(id="schedule-time" class="daterange daterange-inline" data-format="MMMM D, YYYY" data-start-date=schedule.startDate data-end-date=schedule.endDate)
+                                        i(class="entypo-calendar")
+                                            span(id="housing-date-picker")!= schedule.startDate + " - " + schedule.endDate
+                        div(class="row")
+                            div(class="col-sm-12")
+                                div(class="form-group")
+                                    label(class="control-label") Schedule Header
+                                    textarea(class="form-control wysihtml5" rows="10" data-stylesheet-url="/assets/css/wysihtml5-color.css" name="description" id="description")= schedule.description
+                        div(class="row")
+                            div(class="col-sm-12")
+                                button(type="submit", class="staff-btn btn-lg btn btn-default btn-icon") Update Schedule
                                     i(class="entypo-calendar")
-                                        span!= " March 2, 2016 - March 10, 2016"
-                    div(class="row")
-                        div(class="col-sm-12")
-                            div(class="form-group")
-                                label(class="control-label") Schedule Header
-                                textarea(class="form-control wysihtml5" rows="10" data-stylesheet-url="/assets/css/wysihtml5-color.css" name="description" id="description")
 
 block scripts
     script(src="/assets/js/moment.min.js")
@@ -44,3 +49,5 @@ block scripts
     script(src="/assets/js/daterangepicker/daterangepicker.js")
     script(src="/assets/js/wysihtml5/wysihtml5-0.4.0pre.min.js")
     script(src="/assets/js/wysihtml5/bootstrap-wysihtml5.js")
+    script.
+        new HousingManager().editSchedule();

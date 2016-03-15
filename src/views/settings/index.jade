@@ -39,3 +39,26 @@ block content
                                 td= admin.firstname
                                 td= admin.lastname
                                 td= admin.email
+    div(class="row")
+        div(class="col-sm-12")
+            a(id="remove-events-button" class="staff-btn btn-lg btn btn-default btn-icon") Remove All Events
+                i(class="entypo-calendar")
+
+block modals
+    div(class="modal fade", id="remove-events-modal")
+        div(class="modal-dialog")
+            div(class="modal-content")
+                div(class="modal-header")
+                    button(type="button" class="close" data-dismiss="modal" aria-hidden="true") &times;
+                    h4(class="modal-title") Remove All Events
+                div(class="modal-body")
+                    != "Are you sure you want to remove all events? This action cannot be undone."
+                div(class="modal-footer")
+                    button(type="button" class="btn btn-default" data-dismiss="modal") Close
+                    button(type="button" id="remove-all-button" class="btn btn-red") Remove All
+
+block scripts
+    script.
+        $(document).ready(function() {
+            new HousingManager({ settings: true });
+        });

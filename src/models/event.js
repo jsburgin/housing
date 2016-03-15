@@ -63,6 +63,7 @@ function add(eventObject, next) {
  * @param  {Function} next
  */
 function buildEvents(linkingId, eventObject, next) {
+
     var sortDate = new Date(eventObject.date);
 
     var eventHeader = {
@@ -77,6 +78,8 @@ function buildEvents(linkingId, eventObject, next) {
         staff: eventObject.staff,
         created: new Date()
     };
+
+    console.log(sortDate);
 
     if (eventObject.instances.length > 0) {
         eventHeader.startTime = timeFormatter.getTimeString(eventObject.instances[0].startTime);
@@ -155,15 +158,21 @@ function get(objectData, next) {
 
         next(null, events);
     });
-};
+}
 
 function getAll(next) {
     mongo.retrieve({}, 'events', function(err, events) {
         next(err, events);
     });
-};
+}
 
- function remove(objectData, next) {
+/**
+ * Removes events and eventHeaders matching object
+ * @param  {Object}   objectData remove query
+ * @param  {Function} next
+ * @return {[type]}
+ */
+function remove(objectData, next) {
     async.parallel([
         function(cb) {
             mongo.remove(objectData, 'events', cb);
@@ -177,8 +186,31 @@ function getAll(next) {
         }
 
         next(null);
+        Schedule.cacheSchedules();
     });
 };
+
+/**
+ * Removes all events and eventHeaders
+ * @param  {Function} next
+ */
+function removeAll(next) {
+    async.parallel([
+        function(cb) {
+            mongo.remove({}, 'events', cb);
+        },
+        function(cb) {
+            mongo.remove({}, 'eventHeaders', cb);
+        }
+    ], function(err) {
+        if (err) {
+            return next(err);
+        }
+
+        next(null);
+        Schedule.cacheSchedules();
+    });
+}
 
 module.exports = {
     add: add,
@@ -186,5 +218,6 @@ module.exports = {
     getHeaders: getHeaders,
     get: get,
     getAll: getAll,
-    remove: remove
+    remove: remove,
+    removeAll: removeAll
 };

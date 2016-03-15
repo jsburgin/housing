@@ -15,6 +15,7 @@ var config = require('config');
 
 var authConfig = require('./auth/passport');
 var rollTide = require('./rolltide');
+var Schedule;
 
 var routes = require('./routes/index');
 var staff = require('./routes/staff');
@@ -99,15 +100,18 @@ app.use(function(err, req, res, next) {
 var server = http.createServer(app);
 server.listen(port);
 
-server.on('listening', function() {
+server.on('listening', startUp);
+server.on('error', function(err) {
+    throw err;
+});
+
+function startUp() {
     rollTide();
     console.log('Startup Succesful'.green);
     console.log('University of Alabama Housing Training now running on port ' + port + '.');
-    require('./models/schedule').cacheSchedules();
-});
 
-server.on('error', function(error) {
-    if (error.syscall !== 'listen') {
-        throw error;
-    }
-});
+    Schedule = require('./models/schedule');
+    Schedule.loadScheduleInfo(function() {
+        Schedule.cacheSchedules();
+    });
+}

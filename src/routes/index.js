@@ -10,6 +10,7 @@ var Position = require('../models/position');
 var Building = require('../models/building');
 var Group = require('../models/group');
 var Event = require('../models/event');
+var Schedule = require('../models/schedule');
 var timeFormatter = require('../timeformatter');
 var vmBuilder = require('../vm');
 
@@ -174,14 +175,33 @@ router.get('/remove', restrict, function(req, res, next) {
     });
 });
 
-router.get('/profile', restrict, demo, function(req, res, next) {
+router.get('/profile', restrict, function(req, res, next) {
     res.send('Profile Generate...');
 });
 
 router.get('/schedule', restrict, function(req, res, next) {
-    var vm = vmBuilder(req, 'Schedule Info');
+    Schedule.getScheduleInfo(function(err, schedule) {
+        if (err) {
+            return next(err);
+        }
 
-    res.render('calendar/scheduler', vm);
+        var vm = vmBuilder(req, 'Schedule Info');
+
+        vm.classes['Calendar'] += 'active opened ';
+        vm.schedule = schedule;
+
+        res.render('calendar/scheduler', vm);
+    });
+});
+
+router.post('/schedule', restrict, function(req, res, next) {
+    Schedule.setScheduleInfo(req.body, function(err) {
+        if (err) {
+            return res.status(500).send('Unable to edit schedule information. Please try again later.');
+        }
+
+        res.status(200).send({});
+    });
 });
 
 module.exports = router;

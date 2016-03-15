@@ -18,7 +18,6 @@ router.get('/schedule', function(req, res, next) {
         return res.end(res.writeHead(400, 'Invalid paraemters for event fetch.'));
     }
 
-
     Schedule.get(queryObject, function(err, schedule) {
         if (err) {
             return res.status(204).send('No schedule found.');

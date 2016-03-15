@@ -149,7 +149,7 @@ block scripts
     script(src="/js/housing.js")
     script.
         $(document).ready(function() {
-            new HousingManager({ eventEdit: true, linkingId: "#{eventHeader.linkingId}" });
+            new HousingManager().eventForm({ update: true, linkingId: "#{eventHeader.linkingId}" });
             $('#remove-event-button').click(function(e) {
                 $('#remove-event-modal').modal('show');
                 e.preventDefault();

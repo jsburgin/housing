@@ -8,6 +8,7 @@ var Position = require('../models/position');
 var User = require('../models/user');
 var Group = require('../models/group');
 var Event = require('../models/event');
+var Schedule = require('../models/schedule');
 var restrict = require('../auth/restrict');
 var demo = require('../auth/demo');
 var timeFormatter = require('../timeformatter');
@@ -168,6 +169,16 @@ router.post('/remove', restrict, function(req, res, next) {
         }
 
         res.redirect('/users');
+    });
+});
+
+router.get('/schedule', function(req, res, next) {
+    Schedule.get(req.query, function(err, schedule) {
+        if (err) {
+            return next(err);
+        }
+
+        res.render('staff/schedule', { title: 'Housing', schedule: schedule });
     });
 });
 
