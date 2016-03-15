@@ -13,7 +13,7 @@ var Group = require('../models/group');
 
 var activeLink = 'Notifications';
 
-router.get('/', restrict, demo, function(req, res, next) {
+router.get('/', restrict, function(req, res, next) {
     Notification.getAll({ abbr: true },function(err, notifications) {
         var vm = vmBuilder(req, 'Notification History');
         vm.classes['Notifications'] += 'active opened ';
@@ -32,7 +32,7 @@ router.get('/', restrict, demo, function(req, res, next) {
 });
 
 
-router.get('/send', restrict, demo, function(req, res, next) {
+router.get('/send', restrict, function(req, res, next) {
     async.parallel([
         function(cb) {
             Building.getAll(cb);
