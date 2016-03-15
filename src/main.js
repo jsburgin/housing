@@ -9,6 +9,7 @@ var session = require('express-session');
 var pgSession = require('connect-pg-simple');
 var debug = require('debug')('housing:server');
 var colors = require('colors');
+var cors = require('cors');
 
 require('dotenv').config({silent: true});
 var config = require('config');
@@ -54,6 +55,8 @@ app.use(session({
 authConfig();
 app.use(passport.initialize());
 app.use(passport.session());
+
+app.use(cors());
 
 app.use('/', routes);
 app.use('/staff', staff);
