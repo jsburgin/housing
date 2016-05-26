@@ -8,6 +8,7 @@ var Position = require('../models/position');
 var User = require('../models/user');
 var Group = require('../models/group');
 var Event = require('../models/event');
+var Schedule = require('../models/schedule');
 var restrict = require('../auth/restrict');
 var demo = require('../auth/demo');
 var timeFormatter = require('../timeformatter');
@@ -67,12 +68,12 @@ router.post('/add', restrict, function(req, res, next) {
             }
 
             var newUser = {
-                firstName: req.body.firstName,
-                lastName: req.body.lastName,
+                firstName: req.body.firstname,
+                lastName: req.body.lastname,
                 email: req.body.email,
                 positionid: parseInt(req.body.position),
                 buildingid: parseInt(req.body.building),
-                room: parseInt(req.body.room),
+                room: req.body.room,
                 groups: req.body.groups,
                 experience: parseInt(req.body.experience)
             };
@@ -135,11 +136,7 @@ router.get('/edit', restrict, function(req, res, next) {
 });
 
 router.post('/edit', restrict, function(req, res, next) {
-    var reqGroups = req.body.groups;
-    delete req.body.groups;
     var updates = req.body;
-
-    console.log(updates);
 
     // refactor postion, building, and room number into integers
     updates.positionid = parseInt(updates.position);
@@ -148,13 +145,6 @@ router.post('/edit', restrict, function(req, res, next) {
     updates.buildingid = parseInt(updates.building);
     delete updates.building;
 
-    updates.room = parseInt(updates.room);
-
-    updates.firstname = updates.firstName;
-    updates.lastname = updates.lastName;
-    delete updates.firstName;
-    delete updates.lastName;
-
     User.update(updates.id, updates, function(err) {
         if (err) {
             console.error(err);
@@ -162,23 +152,6 @@ router.post('/edit', restrict, function(req, res, next) {
         }
 
         res.status(200).send({});
-    });
-
-    var newGroups = [];
-
-    if (reqGroups) {
-        for (var i = 0; i < reqGroups.length; i++) {
-            newGroups.push({
-                personid: updates.id,
-                groupid: reqGroups[i]
-            });
-        }
-    }
-
-    Group.updateUser({ deleteid: updates.id, groups: newGroups }, function(err) {
-        if (err) {
-            console.log(err);
-        }
     });
 
 });
@@ -196,6 +169,16 @@ router.post('/remove', restrict, function(req, res, next) {
         }
 
         res.redirect('/users');
+    });
+});
+
+router.get('/schedule', function(req, res, next) {
+    Schedule.get(req.query, function(err, schedule) {
+        if (err) {
+            return next(err);
+        }
+
+        res.render('staff/schedule', { title: 'Housing', schedule: schedule });
     });
 });
 

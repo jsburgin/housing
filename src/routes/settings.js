@@ -4,6 +4,7 @@ var router = express.Router();
 var restrict = require('../auth/restrict');
 var vmBuilder = require('../vm');
 var Admin = require('../models/admin');
+var Event = require('../models/event');
 
 router.get('/', restrict, function(req, res, next) {
     var vm = vmBuilder(req, 'Settings');
@@ -19,6 +20,16 @@ router.get('/', restrict, function(req, res, next) {
         vm.admins = admins;
 
         res.render('settings/index', vm);
+    });
+});
+
+router.post('/remove/events', restrict, function(req, res, next) {
+    Event.removeAll(function(err) {
+        if (err) {
+            return res.status(500).send(err);
+        }
+
+        return res.status(200).send({});
     });
 });
 

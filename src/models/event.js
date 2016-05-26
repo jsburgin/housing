@@ -4,6 +4,7 @@ var dateFormat = require('dateformat');
 var mongo = require('../mongo');
 var User = require('./user');
 var timeFormatter = require('../timeformatter');
+var Schedule = require('./schedule');
 
 /**
  * Adds new event to database
@@ -49,6 +50,7 @@ function add(eventObject, next) {
                 return next(err);
             }
 
+            Schedule.cacheSchedules();
             next(null);
         });
     }
@@ -61,10 +63,14 @@ function add(eventObject, next) {
  * @param  {Function} next
  */
 function buildEvents(linkingId, eventObject, next) {
+
+    var sortDate = new Date(eventObject.date);
+
     var eventHeader = {
         title: eventObject.title,
         description: eventObject.description,
         date: dateFormat(new Date(eventObject.date), "yyyy-mm-dd"),
+        sortDate: sortDate,
         prettyDate: eventObject.date,
         linkingId: linkingId,
         startTime: null,
@@ -72,6 +78,8 @@ function buildEvents(linkingId, eventObject, next) {
         staff: eventObject.staff,
         created: new Date()
     };
+
+    console.log(sortDate);
 
     if (eventObject.instances.length > 0) {
         eventHeader.startTime = timeFormatter.getTimeString(eventObject.instances[0].startTime);
@@ -87,7 +95,8 @@ function buildEvents(linkingId, eventObject, next) {
         var event = {
             title: eventObject.title,
             description: eventObject.description,
-            date: eventObject.date,
+            date: dateFormat(new Date(eventObject.date), "yyyy-mm-dd"),
+            sortDate: sortDate,
             linkingId: linkingId,
             prettyStartTime: currentInstance.startTime,
             prettyEndTime: currentInstance.endTime,
@@ -125,52 +134,7 @@ function buildEvents(linkingId, eventObject, next) {
     return next(null, eventHeader, events);
 }
 
-function getSchedule(userData, next) {
-
-    var userDisplayName;
-
-    async.waterfall([
-        function(cb) {
-            User.get(userData, cb);
-        },
-        function(user, cb) {
-
-            if(!user) {
-                return cb('No user matching options exists.');
-            }
-
-            userDisplayName = user.firstname + ' ' + user.lastname;
-
-            var query = {
-                $and: [
-                    { positions: { $in: [user.positionid] } },
-                    {
-                        $or: [
-                            { buildings: { $in: [user.buildingid] } },
-                            { groups: { $in: user.groups } }
-                        ]
-                    },
-                    {
-                        $or: [
-                            { experience: user.experience },
-                            { experience: 2 }
-                        ]
-                    }
-                ]
-            };
-            mongo.eventRetrieve(query, 'events', cb);
-        }
-    ], function(err, results) {
-        if (err) {
-            return next(err);
-        }
-
-        next(null, results, userDisplayName);
-    });
-};
-
 function getHeaders(objectData, next) {
-
     var sort = {
         date: 1,
         startTime: 1,
@@ -194,15 +158,21 @@ function get(objectData, next) {
 
         next(null, events);
     });
-};
+}
 
 function getAll(next) {
     mongo.retrieve({}, 'events', function(err, events) {
         next(err, events);
     });
-};
+}
 
- function remove(objectData, next) {
+/**
+ * Removes events and eventHeaders matching object
+ * @param  {Object}   objectData remove query
+ * @param  {Function} next
+ * @return {[type]}
+ */
+function remove(objectData, next) {
     async.parallel([
         function(cb) {
             mongo.remove(objectData, 'events', cb);
@@ -216,15 +186,38 @@ function getAll(next) {
         }
 
         next(null);
+        Schedule.cacheSchedules();
     });
 };
+
+/**
+ * Removes all events and eventHeaders
+ * @param  {Function} next
+ */
+function removeAll(next) {
+    async.parallel([
+        function(cb) {
+            mongo.remove({}, 'events', cb);
+        },
+        function(cb) {
+            mongo.remove({}, 'eventHeaders', cb);
+        }
+    ], function(err) {
+        if (err) {
+            return next(err);
+        }
+
+        next(null);
+        Schedule.cacheSchedules();
+    });
+}
 
 module.exports = {
     add: add,
     buildEvents: buildEvents,
-    getSchedule: getSchedule,
     getHeaders: getHeaders,
     get: get,
     getAll: getAll,
-    remove: remove
+    remove: remove,
+    removeAll: removeAll
 };

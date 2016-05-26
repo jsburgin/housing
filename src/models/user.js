@@ -5,7 +5,6 @@ var Group = require('./group');
 var postOffice = require('../postoffice');
 
 function get(userData, next) {
-
     if (userData['id']) {
         userData['person.id'] = userData['id'];
         delete userData['id'];
@@ -57,15 +56,13 @@ function get(userData, next) {
             var groups = results[1];
 
             for (var i = 0; i < groups.length; i++) {
-                user.groups.push(groups[i].groupid);
+                user.groups.push(groups[i].staffgroupid);
             }
         }
 
 
         next(null, user);
     });
-
-
 };
 
 exports.get = get;
@@ -75,6 +72,17 @@ exports.getAll = function(next) {
         .join('position', 'person.positionid', '=', 'position.id')
         .join('building', 'person.buildingid', '=', 'building.id')
         .orderBy('lastname')
+        .asCallback(function(err, rows) {
+            if (err) {
+                return next(err);
+            }
+
+            next(null, rows);
+        });
+};
+
+exports.getAllIds = function(next) {
+    db.select('person.id').from('person')
         .asCallback(function(err, rows) {
             if (err) {
                 return next(err);
@@ -138,7 +146,7 @@ function add(userData, next) {
                 for (var i = 0; i < userData.groups.length; i++) {
                     groupMaps.push({
                         personid: results[0],
-                        groupid: userData.groups[i]
+                        staffgroupid: userData.groups[i]
                     });
                 }
 
@@ -183,31 +191,51 @@ function add(userData, next) {
 exports.add = add;
 
 exports.update = function(id, updates, next) {
-    var group = updates.group;
-    delete updates.group;
+    var groups = updates.groups;
+
+    if (!updates.groups) {
+        groups = [];
+    }
+
+    delete updates.groups;
 
     async.parallel([
         function(cb) {
             db('person')
                 .where({ id: id })
                 .update(updates)
-                .asCallback(function(err, results) {
-                    if (err) {
-                        return cb(err);
-                    }
-                    cb(null);
-                });
+                .asCallback(cb);
         },
         function(cb) {
-            Group.updateUser({ personid: id, groupid: group }, cb);
+            db('staffgroupperson')
+            .where({ personid: id })
+            .del()
+            .asCallback(cb);
         }
     ], function(err) {
         if (err) {
             return next(err);
         }
 
+        addGroups();
         next(null);
     });
+
+    function addGroups() {
+        var groupMaps = [];
+        for (var i = 0; i < groups.length; i++) {
+            groupMaps.push({
+                personid: id,
+                staffgroupid: groups[i]
+            });
+        }
+
+        async.map(groupMaps, Group.addUser, function(err) {
+            if (err) {
+                console.log(err);
+            }
+        });
+    }
 
 };
 
@@ -224,17 +252,29 @@ exports.remove = function(userData, next) {
         });
 }
 
-exports.getAllByPositionAndBuilding = function(positions, buildings, next) {
-    db('person')
-    .whereIn('positionid', positions)
-    .whereIn('buildingid', buildings)
-    .asCallback(function(err, results) {
+exports.getForNotifications = function(notificationData, next) {
+    if (notificationData.experience == 2) {
+        db('person')
+        .whereIn('positionid', notificationData.positions)
+        .whereIn('buildingid', notificationData.buildings)
+        .orWhereIn('groupid', notificationData.groups)
+        .asCallback(returnUsers);
+    } else{
+        db('person')
+        .whereIn('positionid', notificationData.positions)
+        .whereIn('buildingid', notificationData.buildings)
+        .orWhereIn('groupid', notificationData.groups)
+        .where('experience', notificationData.experience)
+        .asCallback(returnUsers);
+    }
+
+    function returnUsers(err, results) {
         if (err) {
             return next(err);
         }
 
-        next(null, results);
-    });
+        return next(null, results);
+    }
 };
 
 function genAccessCode() {

@@ -1,47 +1,57 @@
 extends ../layout
 
 block stylesheets
-    link(rel="stylesheet", href="/css/c3.css")
+    link(rel="stylesheet" href="/assets/js/datatables/datatables.css")
+    link(rel="stylesheet" href="/assets/js/select2/select2-bootstrap.css")
+    link(rel="stylesheet" href="/assets/js/select2/select2.css")
 
 block content
-    div(class="large-2 columns sidebar-menu")
-        ul
-            li
-                a(href="#", class="active") View Notifications
-            li
-                a(href="#") Send Notification
-    div(class="large-10 columns")
-        div(class="large-9 columns")
-            h3 Manage Push Notifications
-        div(class="large-3 columns")
-            p(class="header-description")
-                a(href="/notifications/create", class="add-user") Send Push Notification
+    ol(class="breadcrumb bc-3")
+        li
+            a(href="/") Home
+        li(class="active")
+            a(href="/notifications") Notifications
 
-        div(class="large-12 columns")
-            table(class="user-accounts hide-table")
-                thead
-                    tr
-                        th(class='sort-click') Subject
-                        th(class='sort-click') Message
-                        th(class='sort-click') Sent
-                tbody
-                    each push in notifications
-                        tr
-                            td= push.subject
-                            td= push.message
-                            td(class="notification-time")= push.prettyTime
+    h2 Notifications
+    br
 
-            div(class="page-links")
-        div(class="large-12 columns")
-            div(id="notification-chart")
-
-
-block scripts
-    script(src="http://d3js.org/d3.v3.min.js")
-    script(src="/js/c3.min.js")
-    script(src="https://cdn.datatables.net/s/zf/dt-1.10.10,r-2.0.0/datatables.min.js")
     script.
-        $(document).ready(function() {
-            var hm = new HousingManager({ page: "#{activeLink}" });
+        jQuery(document).ready(function() {
+            var notificationTable = jQuery('#notification-table');
+
+            notificationTable.DataTable({
+                "aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+                "bStateSave": true,
+                "oLanguage": {
+                    "sLengthMenu": "Show _MENU_",
+                    "sZeroRecords": "No notifications found.",
+                    "sInfo": "Showing _START_ to _END_ of _TOTAL_ total notifications.",
+                    "sInfoFiltered": "",
+                },
+                "order": []
+            });
+
+            notificationTable.closest( '.dataTables_wrapper' ).find( 'select' ).select2( {
+                minimumResultsForSearch: -1
+            });
+
+            $('.table-toggle').removeClass('hide');
         });
 
+    div(class="hide table-toggle")
+        table(class="table table-bordered datatable", id="notification-table")
+            thead
+                tr
+                    th Subject
+                    th Message
+                    th Sent
+            tbody
+                each notification in notifications
+                    tr
+                        td= notification.subject
+                        td= notification.message
+                        td= notification.prettyTime
+
+block scripts
+    script(src="/assets/js/datatables/datatables.js")
+    script(src="/assets/js/select2/select2.min.js")

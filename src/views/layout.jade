@@ -3,7 +3,7 @@ html(lang="en")
     head
         meta(http-equiv="X-UA-Compatible" content="IE=edge")
         meta(charset="utf-8")
-        meta(name="viewport", content="width=device-width, initial-scale=1")
+        meta(name="viewport", content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no")
         meta(name="description", content="University of Alabama Housing")
         title= title
         link(rel="stylesheet", href="/assets/js/jquery-ui/css/no-theme/jquery-ui-1.10.3.custom.min.css")
@@ -32,13 +32,8 @@ html(lang="en")
                     header(class="logo-env")
                         div(class="logo")
                             a(href="/")
-                                img(src="/img/logo.png", width="150", alt="")
-                        div(class="sidebar-collapse")
-                            a(href="#", class="sidebar-collapse-icon")
-                                i(class="entypo-menu")
-                        div(class="sidebar-mobile-menu visible-xs")
-                            a(href="#", class="with-animation")
-                                i(class="entypo-menu")
+                                img(src="/img/logo.png", width="200", alt="")
+
 
                     ul(id="main-menu", class="main-menu")
                         each link in navigation
@@ -62,12 +57,20 @@ html(lang="en")
                                 a(href="/profile")
                                     img(src=user.image, alt="", width="44", class="img-circle")
                                     != user.firstname + " " + user.lastname
+                        ul(class="user-info pull-left pull-right-xs pull-none-xsm")
+                            li(class="notifications dropdown")
+                                a(href="#" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-close-others="true")
+                                    i(class="entypo-attention")
+                                    span(class="badge badge-info") 6
+                                ul(class="dropdown-menu")
+
+
                     div(class="col-md-6 col-sm-4 clearfix hidden-xs")
                         ul(class="list-inline links-list pull-right")
                             li(class="sep")
                             li
                                 a(href="/logout")
-                                    != "Logout"
+                                    != "Log Out"
                                     i(class="entypo-logout right")
                 hr
                 block content
@@ -75,11 +78,9 @@ html(lang="en")
                     span
                         !="&copy; 2016 &middot; The University of Alabama | Housing & Residential Communities  "
                         if footer
-                            span(class="text-danger")!= "--" + footer + " Build"
+                            span(class="text-danger capitalize")!= "--" + footer + " Build"
 
         block modals
-
-
 
     script(src="https://cdn.socket.io/socket.io-1.3.5.js")
     script(src="/assets/js/gsap/TweenMax.min.js")
@@ -89,16 +90,6 @@ html(lang="en")
     script(src="/assets/js/resizeable.js")
     script(src="/assets/js/neon-api.js")
     script(src="/assets/js/jquery.validate.min.js")
-    script(src="/assets/js/neon-login.js")
-
-    script(src="/assets/js/jquery.sparkline.min.js")
-    script(src="/assets/js/rickshaw/vendor/d3.v3.js")
-    script(src="/assets/js/rickshaw/rickshaw.min.js")
-    script(src="/assets/js/raphael-min.js")
-    script(src="/assets/js/morris.min.js")
-    script(src="/assets/js/toastr.js")
-    script(src="/assets/js/neon-chat.js")
-
     script(src="/assets/js/neon-custom.js")
 
     script(src="/js/housing.js")

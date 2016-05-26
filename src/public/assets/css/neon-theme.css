@@ -4601,28 +4601,13 @@ fieldset[disabled] .calendar-env .calendar-body .fc-header .fc-button.focus {
   background-color: rgba(250, 250, 250, 0.68);
 }
 .calendar-env .calendar-body .fc-content .fc-view table tbody tr td.fc-day.fc-today .fc-day-number {
-  color: #fff;
-  background-color: #AB2D4E;
-  border-color: #AB2D4E;
-  display: inline-block;
-  padding: 5px 8px;
-  -webkit-border-radius: 3px;
-  -webkit-background-clip: padding-box;
-  -moz-border-radius: 3px;
-  -moz-background-clip: padding;
-  border-radius: 3px;
-  background-clip: padding-box;
+  color: #AB2D4E;
+  font-weight: bold;
 }
 .calendar-env .calendar-body .fc-content .fc-view table tbody tr td.fc-day.fc-today .fc-day-number:focus,
 .calendar-env .calendar-body .fc-content .fc-view table tbody tr td.fc-day.fc-today .fc-day-number.focus {
-  color: #fff;
-  background-color: #AB2D4E;
-  border-color: #0c455d;
-}
-.calendar-env .calendar-body .fc-content .fc-view table tbody tr td.fc-day.fc-today .fc-day-number:hover {
-  color: #fff;
-  background-color: #AB2D4E !important;
-  border-color: #AB2D4E;
+
+  background-color: #FBFBFB !important;
 }
 .calendar-env .calendar-body .fc-content .fc-view table tbody tr td.fc-day.fc-today .fc-day-number:active,
 .calendar-env .calendar-body .fc-content .fc-view table tbody tr td.fc-day.fc-today .fc-day-number.active,
@@ -4664,11 +4649,6 @@ fieldset[disabled] .calendar-env .calendar-body .fc-content .fc-view table tbody
 .calendar-env .calendar-body .fc-content .fc-view table tbody tr td.fc-day.fc-today .fc-day-number .badge {
   color: #21a9e1;
   background-color: #fff;
-}
-.calendar-env .calendar-body .fc-content .fc-view table tbody tr td.fc-day.fc-today .fc-day-number:hover,
-.calendar-env .calendar-body .fc-content .fc-view table tbody tr td.fc-day.fc-today .fc-day-number:focus,
-.calendar-env .calendar-body .fc-content .fc-view table tbody tr td.fc-day.fc-today .fc-day-number.focus {
-  color: #fff !important;
 }
 .calendar-env .calendar-body .fc-content .fc-view table tbody tr td.fc-day.fc-today .fc-day-number.btn-icon {
   position: relative;
@@ -4748,11 +4728,6 @@ fieldset[disabled] .calendar-env .calendar-body .fc-content .fc-view table tbody
   background-color: #1988b6;
   border-color: #0c455d;
 }
-.calendar-env .calendar-body .fc-content .fc-view table tbody tr td.fc-day.fc-today .fc-day-number:hover {
-  color: #fff;
-  background-color: #1988b6;
-  border-color: #147197;
-}
 .calendar-env .calendar-body .fc-content .fc-view table tbody tr td.fc-day.fc-today .fc-day-number:active,
 .calendar-env .calendar-body .fc-content .fc-view table tbody tr td.fc-day.fc-today .fc-day-number.active,
 .open > .dropdown-toggle.calendar-env .calendar-body .fc-content .fc-view table tbody tr td.fc-day.fc-today .fc-day-number {
@@ -4793,11 +4768,6 @@ fieldset[disabled] .calendar-env .calendar-body .fc-content .fc-view table tbody
 .calendar-env .calendar-body .fc-content .fc-view table tbody tr td.fc-day.fc-today .fc-day-number .badge {
   color: #21a9e1;
   background-color: #fff;
-}
-.calendar-env .calendar-body .fc-content .fc-view table tbody tr td.fc-day.fc-today .fc-day-number:hover,
-.calendar-env .calendar-body .fc-content .fc-view table tbody tr td.fc-day.fc-today .fc-day-number:focus,
-.calendar-env .calendar-body .fc-content .fc-view table tbody tr td.fc-day.fc-today .fc-day-number.focus {
-  color: #fff !important;
 }
 .calendar-env .calendar-body .fc-content .fc-view table tbody tr td.fc-day.fc-today .fc-day-number.btn-icon {
   position: relative;
@@ -5068,7 +5038,7 @@ fieldset[disabled] .calendar-env .calendar-body .fc-content .fc-view table tbody
   font-size: 16px;
 }
 .calendar-env .fc .fc-view-container > .fc-view {
-  border-left: 1px solid #ebebeb;
+
 }
 .calendar-env .fc .fc-view-container .fc-widget-content,
 .calendar-env .fc .fc-view-container .fc-widget-header {
@@ -5101,7 +5071,7 @@ fieldset[disabled] .calendar-env .calendar-body .fc-content .fc-view table tbody
   border-top: 1px solid #ebebeb;
 }
 .calendar-env .fc .fc-view-container .fc-view table tbody .fc-day.fc-state-highlight {
-  background: #fafafa;
+  background: #fff;
   color: #111 !important;
 }
 .calendar-env .fc .fc-view-container .fc-view table tbody .fc-day-number {
@@ -5120,6 +5090,7 @@ fieldset[disabled] .calendar-env .calendar-body .fc-content .fc-view table tbody
   background: #ee4749;
   color: #fff;
   border: 0;
+  font-size: .9em;
 }
 .calendar-env .fc .fc-view-container .fc-view table tbody .fc-event:hover {
   background: #ec3032;

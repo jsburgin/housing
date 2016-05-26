@@ -1,25 +1,40 @@
 function HousingManager(options) {
+    this.options = options;
 
-    if (options.newStaff) {
-        staffForm('add');
+
+    if (options) {
+        if (options.settings) {
+            this.settingsPage();
+        }
     }
 
-    if (options.editStaff) {
-        staffForm('edit');
-    }
+};
 
-    if (options.eventCreate) {
-        eventForm({});
-    } else if (options.eventEdit) {
-        eventForm({ update: true, linkingId: options.linkingId });
-    }
+HousingManager.prototype.settingsPage = function() {
+    $('#remove-events-button').click(function(e) {
+        $('#remove-events-modal').modal('show');
+        e.preventDefault();
+    });
 
-    if (options.calendar) {
-        calendar();
-    }
-}
+    $('#remove-all-button').click(function(e) {
 
-function eventForm(options) {
+        $.ajax({
+            method: 'POST',
+            url: '/settings/remove/events',
+            data: {},
+            failure: function(err) {
+                console.log(err);
+            },
+            success: function(response) {
+                $('#remove-events-modal').modal('hide');
+            }
+        });
+
+        e.preventDefault();
+    });
+};
+
+HousingManager.prototype.eventForm = function eventForm(options) {
 
     function setLinkToggles(container) {
 
@@ -65,6 +80,10 @@ function eventForm(options) {
 
     function getNewScheduleBlock() {
         var newBlock = scheduleBlockTemplate.clone();
+        var primaryTemplate = $('#primary-schedule-block');
+        $(newBlock).find('.startTime').val(primaryTemplate.find('.startTime').val());
+        $(newBlock).find('.endTime').val(primaryTemplate.find('.endTime').val());
+
         $(newBlock).find('.exp-radio').attr('name', 'exp' + scheduleBlockCount);
         setLinkToggles(newBlock);
         scheduleBlockCount++;
@@ -141,9 +160,73 @@ function eventForm(options) {
 
         e.preventDefault();
     }
-}
+};
 
-function calendar() {
+HousingManager.prototype.notifications = function notifications() {
+    $('.notification-form').find('.toggle-link').click(function(e) {
+        var parent = $(this).parents('.form-group'),
+            checkboxes = parent.find('.notification-checkbox');
+
+        var checked = parent.find('.notification-checkbox:checked').length;
+
+        if (checked > checkboxes.length / 2) {
+            checkboxes.prop('checked', false);
+            parent.attr('checkToggleValues', 'false');
+        } else {
+            checkboxes.prop('checked', true);
+            parent.attr('checkToggleValues', 'true');
+        }
+
+        e.preventDefault();
+    });
+
+    $('.notification-send').click(function(e) {
+
+        var message = {
+            subject: $('#subject').val(),
+            message: $('#message').val(),
+            buildings: [],
+            groups: [],
+            positions: [],
+            experience: 2
+        };
+
+        var toFind = ['positions', 'buildings', 'groups'];
+
+        for (var i = 0; i < toFind.length; i++) {
+            var type = toFind[i];
+
+            $.each($('.notification-form').find('.' + type + '-checkbox'), function(index, checkbox) {
+                if (checkbox.checked) {
+                    message[type].push($(checkbox).val());
+                }
+            });
+        }
+
+        if ($('.notification-form').find('.new-staff').is(':checked')) {
+                message.experience = 0;
+            } else if ($('.notification-form').find('.returning-staff').is(':checked')) {
+                message.experience = 1;
+            }
+
+        $.ajax({
+            url: '/notifications/send',
+            method: 'POST',
+            dataType: 'json',
+            data: message,
+            error: function(err) {
+                console.log(err);
+            },
+            success: function(response) {
+                window.location.href = '/notifications';
+            }
+        });
+
+        e.preventDefault();
+    });
+};
+
+HousingManager.prototype.calendar = function calendar() {
     var calendar = $('#calendar');
 
     $.ajax({
@@ -174,29 +257,38 @@ function calendar() {
 
     function renderCalendar(eventHeaders) {
         calendar.fullCalendar({
+            customButtons: {
+                addEvent: {
+                    text: 'add event',
+                    click: function() {
+                        window.location.href = '/add';
+                    }
+                }
+            },
             header: {
                 left: 'title',
-                right: 'month,agendaWeek,agendaDay today prev,next'
+                right: 'addEvent month,agendaWeek,agendaDay prev,next'
             },
             editable: false,
-            firstDay: 1,
             defaultDate: new Date().toString(),
             editable: false,
             eventLimit: true,
-            fixedWeekCount: false,
-            height: 600,
+            aspectRatio: 2,
             eventClick: function(eventData) {
                 return window.location.replace('/edit?id=' + eventData.id);
             }
         });
 
+
+
         for (var i = 0; i < eventHeaders.length; i++) {
             calendar.fullCalendar('renderEvent', eventHeaders[i], true);
         }
-    }
-}
 
-function staffForm(type) {
+    }
+};
+
+HousingManager.prototype.staffForm = function staffForm(type) {
     $('#staff-form').validate({
         highlight: function(element) {
             $(element).closest('.input-group').addClass('validate-has-error');
@@ -206,8 +298,8 @@ function staffForm(type) {
         },
         submitHandler: function(env) {
             var data = {
-                firstName: $('input#firstName').val(),
-                lastName: $('input#lastName').val(),
+                firstname: $('input#firstName').val(),
+                lastname: $('input#lastName').val(),
                 email: $('input#email').val(),
                 room: $('input#room').val(),
                 position: $("#position").val(),
@@ -230,6 +322,36 @@ function staffForm(type) {
                 },
                 success: function(response) {
                     window.location.href = '/staff';
+                }
+            });
+        }
+    });
+};
+
+HousingManager.prototype.editSchedule = function() {
+    $('#schedule-update-form').validate({
+        submitHandler: function(env) {
+
+            var data = {
+                title: $('#title').val(),
+                startDate: $('#housing-date-picker').html().split('-')[0],
+                endDate: $('#housing-date-picker').html().split('-')[1],
+                description: $('#description').val()
+            };
+
+            $.ajax({
+                url: '/schedule',
+                method: 'POST',
+                dataType: 'json',
+                data: data,
+                error: function(error) {
+                    console.log(error);
+                },
+                success: function(response) {
+
+                    console.log('called');
+
+                    window.location.href = '/';
                 }
             });
         }
