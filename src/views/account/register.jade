@@ -1,0 +1,54 @@
+extends ../empty-layout
+
+block content
+    body(class="page-body skin-white login-page login-form-fall" data-url="traning.housing.ua.edu")
+        div(class="login-container")
+
+            div(class="login-header login-caret")
+                div(class="login-content")
+                    a(href="/login", class="logo")
+                        img(src="/img/logo.png", width="250", alt="")
+                    p(class="description") Sign up for an adminstrator account below.
+
+            div(class="login-form")
+                div(class="login-content")
+
+                    div(class="form-register-success")
+                        i(class="entypo-check")
+                        h3 Registration was successful.
+                        p You will receive an email once your new account has been approved.
+
+
+                    form(method="post" role="form" id="form_register")
+
+                        div(class="form-group")
+                            div(class="input-group")
+                                div(class="input-group-addon")
+                                    i(class="entypo-user")
+                                input(type="text" class="form-control" name="name" id="firstname" placeholder="First Name" autocomplete="off")
+
+                        div(class="form-group")
+                            div(class="input-group")
+                                div(class="input-group-addon")
+                                    i(class="entypo-user")
+                                input(type="text" class="form-control" name="name" id="lastname" placeholder="Last Name" autocomplete="off")
+
+                        div(class="form-group")
+                            div(class="input-group")
+                                div(class="input-group-addon")
+                                    i(class="entypo-mail")
+                                input(type="email" class="form-control" name="name" id="name" placeholder="Crimson Email Address" autocomplete="off")
+
+
+                        div(class="form-group")
+                            div(class="input-group")
+                                div(class="input-group-addon")
+                                    i(class="entypo-lock")
+                                input(type="password" class="form-control" name="name" id="name" placeholder="Choose a Password" autocomplete="off")
+
+
+
+
+
+
+

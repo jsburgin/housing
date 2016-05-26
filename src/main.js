@@ -21,6 +21,7 @@ var staff = require('./routes/staff');
 var api = require('./routes/api');
 var settings = require('./routes/settings');
 var notifications = require('./routes/notifications');
+var account = require('./routes/account');
 
 var app = express();
 
@@ -59,6 +60,7 @@ app.use('/staff', staff);
 app.use('/api', api);
 app.use('/settings', settings);
 app.use('/notifications', notifications);
+app.use('/account', account);
 
 /**
  * 404 Handler, forward error
