@@ -6,9 +6,10 @@ var db = require('../db');
 exports.add = function(userData, next) {
 
     var userObj = {
-        firstname: userData.firstName,
-        lastname: userData.lastName,
-        email: userData.email.toLowerCase()
+        firstname: userData.firstname,
+        lastname: userData.lastname,
+        email: userData.email.toLowerCase(),
+        approved: 0
     };
 
     async.waterfall([
@@ -34,6 +35,19 @@ exports.add = function(userData, next) {
             });
     });
 
+};
+
+exports.approve = function(id, next) {
+    db('admin')
+        .where({ id: id })
+        .update({ approved: 1 })
+        .asCallback(function(err, results) {
+            if (err) {
+                return next(err);
+            }
+
+            next(null);
+        });
 };
 
 exports.get = function(userParams, next) {

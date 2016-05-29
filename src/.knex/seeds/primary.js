@@ -7,7 +7,8 @@ exports.seed = function(knex, Promise) {
         firstname: 'Development',
         lastname: 'User',
         email: 'dev@uahousing.burgin.io',
-        password: bcrypt.hashSync('housing2016')
+        password: bcrypt.hashSync('housing2016'),
+        approved: 1
     };
 
     var positions = [
@@ -31,6 +32,7 @@ exports.seed = function(knex, Promise) {
         {  name: 'Presidental Village 2' },
         {  name: 'Ridgecrest East' },
         {  name: 'Ridgecrest West' },
+        {  name: 'Ridgecrest South' },
         {  name: 'Riverside' },
         {  name: 'Somerville' },
         {  name: 'Tutwiler' }

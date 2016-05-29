@@ -25,7 +25,7 @@ module.exports = function() {
                 bcrypt.compare(password, user.password, cb);
             },
             function(result, cb) {
-                if (result) {
+                if (result && userToReturn.approved) {
                     // password matched, return user
                     return next(null, userToReturn);
                 }

@@ -5,13 +5,13 @@ block content
         li
             a(href="/") Home
         li
-            a(href="/staff") Settings
+            a(href="/settings") Settings
 
     h2 Manage Administrators
     br
     div(class="row")
         div(class="col-md-8")
-            table(class="table table-bordered")
+            table(class="table table-bordered register-table")
                 thead
                     tr
                         th
@@ -19,6 +19,7 @@ block content
                         th First Name
                         th Last Name
                         th Email Address
+                        th Approve
                 tbody
                     each admin in admins
                         if admin.email == user.email
@@ -32,6 +33,7 @@ block content
                                 td= admin.firstname
                                 td= admin.lastname
                                 td= admin.email
+                                td Approved
                         else
                             tr
                                 td
@@ -39,6 +41,13 @@ block content
                                 td= admin.firstname
                                 td= admin.lastname
                                 td= admin.email
+                                td(class="approve-tabledata")
+                                    if admin.approved == 1
+                                        != "Approved"
+                                    else
+                                        a(href="#", class="approve-user", admin-id=admin.id)
+                                            i(class="entypo-attention icon-warning")
+                                            !="Approve Now"
     div(class="row")
         div(class="col-sm-12")
             a(id="remove-events-button" class="staff-btn btn-lg btn btn-default btn-icon") Remove All Events

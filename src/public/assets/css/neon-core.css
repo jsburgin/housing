@@ -1,3 +1,9 @@
+.icon-warning {
+    color: #fad839;
+}
+.register-table a {
+    text-decoration: underline;
+}
 .notification-send {
     margin-top: 15px;
 }
@@ -7801,15 +7807,15 @@ canvas + .knob {
   visibility: visible;
 }
 .validate-has-error {
-  border-color: #cc2424;
+  border-color: #AB2C43;
 }
 .validate-has-error:focus {
-  border-color: #cc2424;
+  border-color: #AB2C43;
 }
 .validate-has-error + span.validate-has-error,
 .validate-has-error > span.validate-has-error,
 .input-group + .validate-has-error {
-  color: #cc2424;
+  color: #AB2C43;
   display: inline-block;
   margin-top: 5px;
 }

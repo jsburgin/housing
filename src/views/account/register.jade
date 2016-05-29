@@ -19,32 +19,43 @@ block content
                         p You will receive an email once your new account has been approved.
 
 
-                    form(method="post" role="form" id="form_register")
+                    form(method="post" role="form" id="form_register" action="/account/register")
 
                         div(class="form-group")
                             div(class="input-group")
                                 div(class="input-group-addon")
                                     i(class="entypo-user")
-                                input(type="text" class="form-control" name="name" id="firstname" placeholder="First Name" autocomplete="off")
+                                input(type="text" class="form-control" name="firstname" id="firstname" placeholder="First Name" autocomplete="off")
 
                         div(class="form-group")
                             div(class="input-group")
                                 div(class="input-group-addon")
                                     i(class="entypo-user")
-                                input(type="text" class="form-control" name="name" id="lastname" placeholder="Last Name" autocomplete="off")
+                                input(type="text" class="form-control" name="lastname" id="lastname" placeholder="Last Name" autocomplete="off")
 
                         div(class="form-group")
                             div(class="input-group")
                                 div(class="input-group-addon")
                                     i(class="entypo-mail")
-                                input(type="email" class="form-control" name="name" id="name" placeholder="Crimson Email Address" autocomplete="off")
+                                input(type="email" class="form-control" name="email" id="email" placeholder="Crimson Email Address" autocomplete="off")
 
 
                         div(class="form-group")
                             div(class="input-group")
                                 div(class="input-group-addon")
                                     i(class="entypo-lock")
-                                input(type="password" class="form-control" name="name" id="name" placeholder="Choose a Password" autocomplete="off")
+                                input(type="password" class="form-control" name="password" id="password" placeholder="Choose a Password" autocomplete="off")
+
+                        div(class="form-group")
+                            button(type="submit" id="register-submit" class="btn btn-success btn-block btn-login")
+                                i(class="entypo-right-open-mini")
+                                !="Complete Registration"
+
+block scripts
+    script.
+        $(document).ready(function() {
+            new HousingManager().registerForm();
+        });
 
 
 

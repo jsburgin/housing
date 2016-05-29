@@ -1,7 +1,6 @@
 function HousingManager(options) {
     this.options = options;
 
-
     if (options) {
         if (options.settings) {
             this.settingsPage();
@@ -10,11 +9,88 @@ function HousingManager(options) {
 
 };
 
+HousingManager.prototype.approveUser = function() {
+    $('.approve-user').click(function(e) {
+        let id = $(e.currentTarget).attr('admin-id');
+
+        $.ajax({
+            url: '/account/approve',
+            method: 'POST',
+            dataType: 'json',
+            data: { id: id },
+            success: function() {
+                $(e.currentTarget).parents('.approve-tabledata').html('Approved');
+            },
+            error: function() {
+                console.log('Unable to approve user.');
+            }
+        });
+
+        return false;
+    });
+}
+
+HousingManager.prototype.registerForm = function() {
+
+    var registerForm = $('#form_register');
+
+    registerForm.validate({
+        rules: {
+            firstname: {
+                required: true
+            },
+            lastname: {
+                required: true
+            },
+            email: {
+                required: true
+            },
+            password: {
+                required: true
+            }
+        },
+        messages: {
+            email: {
+                email: 'Invalid email address.'
+            }
+        },
+        highlight: function(element) {
+            $(element).closest('.input-group').addClass('validate-has-error');
+        },
+        unhighlight: function(element) {
+            $(element).closest('.input-group').removeClass('validate-has-error');
+        },
+        submitHandler: function() {
+            $('.login-page').addClass('logging-in');
+
+            $.ajax({
+                url: '/account/register',
+                method: 'POST',
+                dataType: 'json',
+                data: {
+                    firstname: $('input#firstname').val(),
+                    lastname: $('input#lastname').val(),
+                    email: $('input#email').val(),
+                    password: $('input#password').val()
+                },
+                success: function() {
+                    console.log('success');
+                },
+                error: function() {
+                    console.log('error');
+                }
+            });
+        }
+    });
+}
+
 HousingManager.prototype.settingsPage = function() {
     $('#remove-events-button').click(function(e) {
         $('#remove-events-modal').modal('show');
         e.preventDefault();
     });
+
+    this.approveUser();
 
     $('#remove-all-button').click(function(e) {
 
@@ -259,11 +335,17 @@ HousingManager.prototype.calendar = function calendar() {
         calendar.fullCalendar({
             customButtons: {
                 addEvent: {
-                    text: 'add event',
+                    text: 'Add Event',
                     click: function() {
                         window.location.href = '/add';
                     }
                 }
+            },
+            buttonText: {
+                today: 'Today',
+                month: 'Month',
+                day: 'Day',
+                week: 'Week'
             },
             header: {
                 left: 'title',
@@ -278,8 +360,6 @@ HousingManager.prototype.calendar = function calendar() {
                 return window.location.replace('/edit?id=' + eventData.id);
             }
         });
-
-
 
         for (var i = 0; i < eventHeaders.length; i++) {
             calendar.fullCalendar('renderEvent', eventHeaders[i], true);
