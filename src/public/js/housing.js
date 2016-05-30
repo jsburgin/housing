@@ -6,7 +6,6 @@ function HousingManager(options) {
             this.settingsPage();
         }
     }
-
 };
 
 HousingManager.prototype.approveUser = function() {
@@ -332,7 +331,8 @@ HousingManager.prototype.calendar = function calendar() {
     });
 
     function renderCalendar(eventHeaders) {
-        calendar.fullCalendar({
+
+        var calendarInfo = {
             customButtons: {
                 addEvent: {
                     text: 'Add Event',
@@ -358,6 +358,21 @@ HousingManager.prototype.calendar = function calendar() {
             aspectRatio: 2,
             eventClick: function(eventData) {
                 return window.location.replace('/edit?id=' + eventData.id);
+            }
+        };
+
+        if (docCookies.getItem('startDate')) {
+            calendarInfo.defaultDate = moment(docCookies.getItem('startDate'));
+        }
+
+        calendar.fullCalendar(calendarInfo);
+
+        $(document).ready(function() {
+            $('.fc-next-button').click(setStartCookie);
+            $('.fc-prev-button').click(setStartCookie);
+
+            function setStartCookie() {
+                docCookies.setItem('startDate', calendar.fullCalendar('getDate').format('YYYY-MM-DD'));
             }
         });
 
@@ -453,3 +468,4 @@ function initTimePickers(i, el) {
 
     $this.timepicker(opts);
 }
+

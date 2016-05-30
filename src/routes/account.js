@@ -16,7 +16,6 @@ router.get('/register', function(req, res, next) {
 });
 
 router.post('/register', function(req, res, next) {
-
     Admin.add(req.body, function(err) {
         if (err) {
             return next(err);
@@ -26,7 +25,6 @@ router.post('/register', function(req, res, next) {
             registerStatus: 'success'
         });
     });
-
 });
 
 router.post('/approve', restrict, function(req, res, next) {
