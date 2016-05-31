@@ -28,7 +28,7 @@ exports.seed = function(knex, Promise) {
         { name: 'Highlands' },
         { name: 'Lakeside East'},
         { name: 'Lakeside West' },
-        { name: 'Parham' }
+        { name: 'Parham' },
         {  name: 'Paty' },
         {  name: 'Presidental Village 1' },
         {  name: 'Presidental Village 2' },
