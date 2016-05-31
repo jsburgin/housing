@@ -23,19 +23,26 @@ exports.seed = function(knex, Promise) {
         { name: 'Bryce Lawn' },
         { name: 'Burke East' },
         { name: 'Burke West' },
+        { name: 'Friedman' },
         { name: 'Harris' },
         { name: 'Highlands' },
         { name: 'Lakeside East'},
         { name: 'Lakeside West' },
+        { name: 'Parham' }
         {  name: 'Paty' },
         {  name: 'Presidental Village 1' },
         {  name: 'Presidental Village 2' },
         {  name: 'Ridgecrest East' },
-        {  name: 'Ridgecrest West' },
         {  name: 'Ridgecrest South' },
+        {  name: 'Ridgecrest West' },
         {  name: 'Riverside' },
         {  name: 'Somerville' },
         {  name: 'Tutwiler' }
+    ];
+
+    var groups = [
+        { name: 'House Managers' },
+        { name: 'Desk Staff' }
     ];
 
     return Promise.join(
@@ -44,6 +51,7 @@ exports.seed = function(knex, Promise) {
         knex('position').del(),
         knex('position').insert(positions),
         knex('building').del(),
-        knex('building').insert(buildings)
+        knex('building').insert(buildings),
+        knex('staffgroup').insert(groups)
     );
 };
