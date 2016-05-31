@@ -28,6 +28,16 @@ router.get('/schedule', function(req, res, next) {
 
 });
 
+router.get('/webSchedule', function(req, res, next) {
+    Schedule.getWebReadySchedule(req.body, function(err, schedule) {
+        if (err) {
+            return res.status(500).send('Unable to fetch schedule');
+        }
+
+        return res.json(schedule);
+    });
+});
+
 router.get('/eventHeaders', restrict, function(req, res, next) {
     Event.getHeaders({}, function(err, eventHeaders) {
         if (err) {

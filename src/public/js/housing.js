@@ -431,7 +431,7 @@ HousingManager.prototype.editSchedule = function() {
                 title: $('#title').val(),
                 startDate: $('#housing-date-picker').html().split('-')[0],
                 endDate: $('#housing-date-picker').html().split('-')[1],
-                description: $('#description').val()
+                description: $('textarea[name="description"]').val()
             };
 
             $.ajax({

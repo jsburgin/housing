@@ -42,6 +42,57 @@ function get(userData, next) {
 }
 
 /**
+ * Builds schedule and prepares it for web/pdf presentation
+ * @param  {[type]}   userData
+ * @param  {Function} next
+ */
+function getWebReadySchedule(userData, next) {
+    var schedule;
+
+    async.waterfall([
+        function(cb) {
+            buildSchedule(userData, cb);
+        },
+        function(schedule, cb) {
+            schedule.days = [];
+            var currentDate;
+
+            if (schedule.events.length > 0) {
+                currentDate = schedule.events[0].date;
+                schedule.days.push([]);
+            }
+
+            for (var i = 0; i < schedule.events.length; i++) {
+                var currentEvent = schedule.events[i];
+
+                if (currentEvent.date != currentDate) {
+                    currentDate = currentEvent.date;
+                    schedule.days.push([]);
+                }
+
+                schedule.days[schedule.days.length - 1].push({
+                    event: currentEvent,
+                    date: dateformat(currentEvent.sortDate, 'fullDate')
+                });
+            }
+
+            schedule.title = title;
+            schedule.description = description;
+
+            delete schedule.events;
+
+            cb(null, schedule);
+        }
+    ], function(err, schedule) {
+        if (err) {
+            return next(err);
+        }
+
+        return next(null, schedule);
+    });
+}
+
+/**
  * Generates a schedule for a user
  * @param  {Object}   userData
  * @param  {Function} next
@@ -235,6 +286,7 @@ function getScheduleInfo(next) {
 
 module.exports = {
     get: get,
+    getWebReadySchedule: getWebReadySchedule,
     cacheSchedules: cacheSchedules,
     setScheduleInfo: setScheduleInfo,
     getScheduleInfo: getScheduleInfo,

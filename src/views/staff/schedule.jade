@@ -5,9 +5,42 @@ html(class="no-js", lang="en")
         meta(charset="utf-8")
         meta(name="viewport", content="width=device-width, initial-scale=1.0")
         meta(name="description", content="University of Alabama Housing")
+        link(rel="stylesheet", href="/css/normalize.css")
+        link(rel="stylesheet", href="/css/skeleton.css")
+        link(rel="stylesheet", href="/css/schedule.css")
         title= title
     body
-        h2= schedule.title
-        div!= schedule.description
-        each event in schedule.events
-            p= event.title
+        div(class="container")
+            h4(class="schedule-title")= schedule.title
+            div(class="schedule-info-block")!= schedule.description
+
+            each day in schedule.days
+                h3= day[0].date
+                div(class="row")
+                    div(class="twelve columns")
+                        table(class="u-full-width")
+                            thead
+                                tr
+                                    th Start Time
+                                    th End Time
+                                    th Place
+                                    th Staff
+                                    th Event
+                            tbody
+                                each item in day
+                                    tr
+                                        td= item.event.prettyStartTime
+                                        td= item.event.prettyEndTime
+                                        td= item.event.location
+                                        td= item.event.staff
+                                        td
+                                            =item.event.title
+                                            if item.event.description.length < 60
+                                                br
+                                                span.desc
+                                                    =item.event.description
+                        each item in day
+                            if item.event.description.length > 59
+                                p= item.event.description
+
+

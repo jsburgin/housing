@@ -37,7 +37,7 @@ block content
                             div(class="col-sm-12")
                                 div(class="form-group")
                                     label(class="control-label") Schedule Header
-                                    textarea(class="form-control wysihtml5" rows="10" data-stylesheet-url="/assets/css/wysihtml5-color.css" name="description" id="description")= schedule.description
+                                    textarea(class="form-control" rows="10" name="description" id="description")= schedule.description
                         div(class="row")
                             div(class="col-sm-12")
                                 button(type="submit", class="staff-btn btn-lg btn btn-default btn-icon") Update Schedule
@@ -47,7 +47,18 @@ block scripts
     script(src="/assets/js/moment.min.js")
     script(src="/assets/js/bootstrap-datepicker.js")
     script(src="/assets/js/daterangepicker/daterangepicker.js")
-    script(src="/assets/js/wysihtml5/wysihtml5-0.4.0pre.min.js")
-    script(src="/assets/js/wysihtml5/bootstrap-wysihtml5.js")
+    script(src="https://cdn.tinymce.com/4/tinymce.min.js")
     script.
         new HousingManager().editSchedule();
+        $(document).ready(function() {
+            tinymce.init({
+                selector: '#description',
+                elementpath: false,
+                menubar: '',
+                setup: function(editor) {
+                    editor.on('change', function () {
+                        editor.save();
+                    });
+                }
+            });
+        });

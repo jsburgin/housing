@@ -1,0 +1,51 @@
+body {
+    font-family: 'Helvetica', san-serif;
+}
+
+.schedule-title {
+    text-align: center;
+    margin: 30px 0 10px 0;
+    font-size: 16pt;
+    text-transform: uppercase;
+    font-weight: bold;
+
+}
+
+.schedule-info-block {
+    width: 95%;
+    margin: 0 auto;
+}
+
+.schedule-info-block ul ul {
+    margin-top: 3px;
+    margin-bottom: 3px;
+}
+
+.schedule-info-block li {
+    margin: 2px 0;
+}
+
+.schedule-info-block h1,h2,h3 {
+    font-size: 14pt;
+    margin: 10px 0;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.schedule-info-block h4,h5,h6 {
+    font-size: 12pt;
+    margin: 10px 0;
+    font-weight: bold;
+}
+
+/**
+ * Tablet
+ */
+
+@media (min-width: 550px) {
+
+    .schedule-info-block {
+        max-width: 900px;
+    }
+
+}

@@ -173,10 +173,12 @@ router.post('/remove', restrict, function(req, res, next) {
 });
 
 router.get('/schedule', function(req, res, next) {
-    Schedule.get(req.query, function(err, schedule) {
+    Schedule.getWebReadySchedule(req.query, function(err, schedule) {
         if (err) {
             return next(err);
         }
+
+        console.log(schedule);
 
         res.render('staff/schedule', { title: 'Housing', schedule: schedule });
     });

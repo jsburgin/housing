@@ -79,8 +79,6 @@ function buildEvents(linkingId, eventObject, next) {
         created: new Date()
     };
 
-    console.log(sortDate);
-
     if (eventObject.instances.length > 0) {
         eventHeader.startTime = timeFormatter.getTimeString(eventObject.instances[0].startTime);
         eventHeader.endTime = timeFormatter.getTimeString(eventObject.instances[0].endTime);
@@ -95,11 +93,13 @@ function buildEvents(linkingId, eventObject, next) {
         var event = {
             title: eventObject.title,
             description: eventObject.description,
-            date: dateFormat(new Date(eventObject.date), "yyyy-mm-dd"),
+            date: dateFormat(new Date(eventObject.date), 'yyyy-mm-dd'),
+            prettyDate: dateFormat(new Date(eventObject.date), 'fullDate'),
             sortDate: sortDate,
             linkingId: linkingId,
             prettyStartTime: currentInstance.startTime,
             prettyEndTime: currentInstance.endTime,
+            staff: eventObject.staff,
             buildings: [],
             groups: [],
             positions: []
