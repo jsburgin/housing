@@ -76,4 +76,33 @@ router.get('/users', function(req, res, next) {
     }
 });
 
+router.post('/authenticate', function(req, res, next) {
+    if (!req.body.email || !req.body.accesscode) {
+        return res.status(400).send('Please provide an email address and password');
+    }
+
+    User.get({ email: req.body.email }, function(err, user) {
+
+        if (err) {
+            console.log(err);
+            return res.status(500).send('Unable to authenticate user.');
+        }
+
+        if (!user) {
+            return res.status(400).send('Unkown email address.');
+        }
+
+        if (user.accesscode != req.body.accesscode) {
+            return res.status(400).send('Unkown email address and access code combination.');
+        }
+
+        return res.json({
+            email: user.email,
+            authToken: User.genAccessCode(32),
+            position: user.position,
+            building: user.building
+        });
+    });
+});
+
 module.exports = router;
