@@ -255,7 +255,7 @@ exports.setDeviceToken = function(email, deviceToken, next) {
         }, function(result, cb) {
             db('person')
                 .where({ email: email })
-                .update({ devicetoken: devicetoken })
+                .update({ devicetoken: deviceToken })
                 .asCallback(cb);
         }
     ], function(err, results) {
