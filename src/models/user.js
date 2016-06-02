@@ -244,17 +244,40 @@ exports.setDeviceToken = function(email, deviceToken, next) {
         return next('Please provide email and deviceToken combination.');
     }
 
+    deviceToken = formatDeviceToken(deviceToken);
 
-    db('person')
-        .where({ email: email })
-        .update({ devicetoken: deviceToken })
-        .asCallback(function(err, results) {
-            if (err) {
-                return next(err);
-            }
+    async.waterfall([
+        function(cb) {
+            db('person')
+                .where({ devicetoken: devicetoken })
+                .update({ devicetoken: "" })
+                .asCallback(cb);
+        }, function(result, cb) {
+            db('person')
+                .where({ email: email })
+                .update({ devicetoken: devicetoken })
+                .asCallback(cb);
+        }
+    ], function(err, results) {
+        if (err) {
+            return next(err);
+        }
 
-            return next(null);
-        });
+        return next(null);
+    });
+};
+
+function formatDeviceToken(deviceToken) {
+    String.prototype.replaceAll = function(search, replacement) {
+        var target = this;
+        return target.replace(new RegExp(search, 'g'), replacement);
+    };
+
+    deviceToken = deviceToken.replaceAll(" ", "");
+    deviceToken = deviceToken.replaceAll("<", "");
+    deviceToken = deviceToken.replaceAll(">", "");
+
+    return deviceToken;
 }
 
 exports.remove = function(userData, next) {

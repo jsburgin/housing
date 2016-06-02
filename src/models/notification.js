@@ -1,20 +1,15 @@
 var async = require('async');
+var config = require('config');
+var apn = require('apn');
 var dateFormat = require('dateformat');
 
 var mongo = require('../mongo');
 var postOffice = require('../postoffice');
 var User = require('./user');
 
-var apn = require('apn');
-
 var options = {
-    cert: '/Users/josh/Desktop/housingCertificates/cert.pem',
-    key: '/Users/josh/Desktop/housingCertificates/key.pem'
-};
-
-String.prototype.replaceAll = function(search, replacement) {
-    var target = this;
-    return target.replace(new RegExp(search, 'g'), replacement);
+    cert: config.get('pushNotifications.apnCert'),
+    key: config.get('pushNotifications.apnKey')
 };
 
 exports.getAll = function(options, next) {
@@ -65,19 +60,17 @@ exports.add = function(notificationData, next) {
             var apnConnection = new apn.Connection(options);
 
             var note = new apn.Notification();
-            note.expiry = Math.floor(Date.now() / 1000) + 3600; // Expires 1 hour from now.
+            note.expiry = Math.floor(Date.now() / 1000) + 3600;
             note.badge = 1;
             note.sound = "ping.aiff";
             note.alert = notificationData.message;
             note.payload = {};
 
             for (var i = 0; i < users.length; i++) {
-                var deviceToken = users[i].devicetoken.replaceAll(" ", "");
-                deviceToken = deviceToken.replace("<", "");
-                deviceToken = deviceToken.replace(">", "");
-
-                var myDevice = new apn.Device(deviceToken);
-                apnConnection.pushNotification(note, myDevice);
+                if (users[i].devicetoken != null && users[i].devicetoken != "") {
+                    var myDevice = new apn.Device(users[i].deviceToken);
+                    apnConnection.pushNotification(note, myDevice);
+                }
             }
 
             cb(null);

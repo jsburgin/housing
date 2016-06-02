@@ -2,5 +2,9 @@
     "db": {
         "postgres": "DATABASE_URL",
         "mongo": "MONGO_URL"
+    },
+    "pushNotifications": {
+        "apnCert": "APN_CERT_LOCATION",
+        "apnKey": "APN_KEY_LOCATION"
     }
 }

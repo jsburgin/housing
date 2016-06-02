@@ -7,5 +7,9 @@
     "session": {
         "secret": "housing2016"
     },
-    "build": "development"
+    "build": "development",
+    "pushNotifications": {
+        "apnCert": "/path/to/cert.pem",
+        "apnKey": "/path/to/key.pem"
+    }
 }
