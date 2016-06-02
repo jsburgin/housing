@@ -249,8 +249,8 @@ exports.setDeviceToken = function(email, deviceToken, next) {
     async.waterfall([
         function(cb) {
             db('person')
-                .where({ devicetoken: devicetoken })
-                .update({ devicetoken: "" })
+                .where({ devicetoken: deviceToken })
+                .update({ devicetoken: null })
                 .asCallback(cb);
         }, function(result, cb) {
             db('person')
