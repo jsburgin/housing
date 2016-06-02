@@ -105,4 +105,20 @@ router.post('/authenticate', function(req, res, next) {
     });
 });
 
+router.post('/devicetoken', function(req, res, next) {
+
+    if (!req.body.email || !req.body.devicetoken) {
+        return res.status(400).send('Please provide an email address and device token.');
+    }
+
+    User.setDeviceToken(req.body.email, req.body.devicetoken, function(err) {
+        if (err) {
+            return res.status(500).send('Unable to set device token at this time.');
+        }
+
+        return res.status(200).send('Device token for user successfully set.');
+    });
+
+});
+
 module.exports = router;

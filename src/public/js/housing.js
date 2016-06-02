@@ -258,7 +258,6 @@ HousingManager.prototype.notifications = function notifications() {
     $('.notification-send').click(function(e) {
 
         var message = {
-            subject: $('#subject').val(),
             message: $('#message').val(),
             buildings: [],
             groups: [],

@@ -239,6 +239,24 @@ exports.update = function(id, updates, next) {
 
 };
 
+exports.setDeviceToken = function(email, deviceToken, next) {
+    if (!email || !deviceToken) {
+        return next('Please provide email and deviceToken combination.');
+    }
+
+
+    db('person')
+        .where({ email: email })
+        .update({ devicetoken: deviceToken })
+        .asCallback(function(err, results) {
+            if (err) {
+                return next(err);
+            }
+
+            return next(null);
+        });
+}
+
 exports.remove = function(userData, next) {
     db('person')
         .where(userData)
