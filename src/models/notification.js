@@ -68,7 +68,7 @@ exports.add = function(notificationData, next) {
 
             for (var i = 0; i < users.length; i++) {
                 if (users[i].devicetoken != null && users[i].devicetoken != "") {
-                    var myDevice = new apn.Device(users[i].deviceToken);
+                    var myDevice = new apn.Device(users[i].devicetoken);
                     apnConnection.pushNotification(note, myDevice);
                 }
             }
