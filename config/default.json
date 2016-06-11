@@ -17,5 +17,9 @@
         "clientId": "googleClientId",
         "clientSecret": "googleClientSecret",
         "iOSClientId": "iOSClientId"
+    },
+    "gmail": {
+        "email": "baseGmailEmail",
+        "password": "baseGmailPassword"
     }
 }

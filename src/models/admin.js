@@ -1,10 +1,16 @@
+"use strict"
+
 var async = require('async');
 var bcrypt = require('bcrypt-nodejs');
 
 var db = require('../db');
 
-exports.add = function(userData, next) {
-
+/**
+ * Creates a new administrator account, defaults to an unapproved account
+ * @param {Object}   userData new admin options
+ * @param {Function} next     callback
+ */
+function add(userData, next) {
     var userObj = {
         firstname: userData.firstname,
         lastname: userData.lastname,
@@ -37,7 +43,12 @@ exports.add = function(userData, next) {
 
 };
 
-exports.approve = function(id, next) {
+/**
+ * Changes a newly create admin's status to approved, login access granted
+ * @param  {Integer}   id
+ * @param  {Function} next callback
+ */
+function approve(id, next) {
     db('admin')
         .where({ id: id })
         .update({ approved: 1 })
@@ -50,8 +61,13 @@ exports.approve = function(id, next) {
         });
 };
 
-exports.get = function(userParams, next) {
-    db('admin').select()
+/**
+ * Retrieves an administrator
+ * @param  {Object}   userParams admin options
+ * @param  {Function} next       callback
+ */
+function get(userParams, next) {
+    db('admin').select('id', 'firstname', 'lastname', 'email', 'approved')
         .where(userParams)
         .asCallback(function(err, results) {
             if (err) {
@@ -66,19 +82,12 @@ exports.get = function(userParams, next) {
         });
 };
 
-exports.getCount = function(next) {
-    db('admin').select()
-        .asCallback(function(err, results) {
-            if (err) {
-                return next(err);
-            }
-
-            next(null, results.length);
-        });
-};
-
-exports.getAll = function(next) {
-    db('admin').select()
+/**
+ * Retrives all administrators
+ * @param  {Function} next callback
+ */
+function getAll(next) {
+    db('admin').select('id', 'firstname', 'lastname', 'email', 'approved')
         .asCallback(function(err, results) {
             if (err) {
                 return next(err);
@@ -86,6 +95,13 @@ exports.getAll = function(next) {
 
             next(null, results);
         });
+};
+
+module.exports = {
+    add: add,
+    approve: approve,
+    get: get,
+    getAll: getAll
 };
 
 

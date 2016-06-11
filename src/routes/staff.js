@@ -1,3 +1,5 @@
+"use strict"
+
 var express = require('express');
 var router = express.Router();
 var async = require('async');
@@ -10,7 +12,6 @@ var Group = require('../models/group');
 var Event = require('../models/event');
 var Schedule = require('../models/schedule');
 var restrict = require('../auth/restrict');
-var demo = require('../auth/demo');
 var timeFormatter = require('../timeformatter');
 var vmBuilder = require('../vm');
 

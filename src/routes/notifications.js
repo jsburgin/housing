@@ -1,3 +1,5 @@
+"use strict"
+
 var express = require('express');
 var router = express.Router();
 var passport = require('passport');
@@ -5,7 +7,6 @@ var async = require('async');
 
 var restrict = require('../auth/restrict');
 var vmBuilder = require('../vm');
-var demo = require('../auth/demo');
 var Notification = require('../models/notification');
 var Building = require('../models/building');
 var Position = require('../models/position');
@@ -67,7 +68,6 @@ router.post('/send', restrict, function(req, res, next) {
     Notification.add(pushNotification, function(err) {
         if (err) {
             console.log(err);
-
             return res.status(500).send(err);
         }
 

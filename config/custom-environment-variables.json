@@ -12,5 +12,9 @@
         "clientSecret": "GOOGLE_CLIENT_SECRET",
         "iOSClientId": "IOS_GOOGLE_CLIENT_ID"
     },
-    "redirectUrl": "REDIRECT_URL"
+    "redirectUrl": "REDIRECT_URL",
+    "gmail": {
+        "email": "GMAIL_EMAIL",
+        "password": "GMAIL_PASSWORD"
+    }
 }

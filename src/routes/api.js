@@ -40,16 +40,6 @@ router.get('/schedule', function(req, res, next) {
 
 });
 
-router.get('/webSchedule', function(req, res, next) {
-    Schedule.getWebReadySchedule(req.body, function(err, schedule) {
-        if (err) {
-            return res.status(500).send('Unable to fetch schedule');
-        }
-
-        return res.json(schedule);
-    });
-});
-
 router.get('/eventHeaders', restrict, function(req, res, next) {
     Event.getHeaders({}, function(err, eventHeaders) {
         if (err) {
@@ -61,7 +51,7 @@ router.get('/eventHeaders', restrict, function(req, res, next) {
     });
 });
 
-router.get('/emails', function(req, res, next) {
+router.get('/emails', restrict, function(req, res, next) {
     postOffice.getEmailLog(function(err, results) {
         if (err) {
             console.error(err);
@@ -72,89 +62,64 @@ router.get('/emails', function(req, res, next) {
     });
 });
 
-router.get('/users', function(req, res, next) {
-    var email = req.body.email;
-
-    if (email) {
-        User.get({ email: email }, function(err, user) {
-            if (err) {
-                return res.status(400).send('Unable to retrieve user.');
-            }
-
-            res.json(user);
-        });
-    } else {
-        res.status(400).send('Unable to retrieve user.');
-    }
-});
-
 router.post('/authenticate', function(req, res, next) {
-
-    if ((!req.body.email || !req.body.accesscode) && !req.body.idToken) {
-        return res.status(400).send('Please provide valid login credentials');
-    }
-
-    if (req.body.idToken) {
-        if (!req.body.type) {
-            return res.status(400).send('Please provide a valid device type.');
-        }
-
-        return googleAuth();
+    if (!req.body.idToken || !req.body.type) {
+        return res.status(400).send('Please provide valid a valid idToken and device type.');
     }
 
     /**
      * Checks if google authentication was valid, and if successful returns user data and apiKey
      */
-    function googleAuth() {
-        async.waterfall([
-            function(cb) {
-                let clientId = "";
+    async.waterfall([
+        function(cb) {
+            let clientId = "";
 
-                switch(req.body.type) {
-                    case 'ios':
-                        clientId = config.get('google.iOSClientId');
-                        break;
-                    case 'android':
-                        clientId = config.get('google.androidClientId');
-                        break;
-                    default:
-                        return res.status(400).send('Device type provided is not valid.');
+            switch(req.body.type) {
+                case 'ios':
+                    clientId = config.get('google.iOSClientId');
+                    break;
+                case 'android':
+                    clientId = config.get('google.androidClientId');
+                    break;
+                default:
+                    return res.status(400).send('Device type provided is not valid.');
+            }
+
+            oauth2Client.verifyIdToken(req.body.idToken, clientId, function(err, loginTicket) {
+                if (err) {
+                    return res.status(401).send('User verification failed.');
                 }
 
-                oauth2Client.verifyIdToken(req.body.idToken, clientId, function(err, loginTicket) {
-                    if (err) {
-                        return res.status(401).send('User verification failed.');
-                    }
+                // successful google verification, proceed to local verification
+                return cb(null, loginTicket.getPayload());
+            });
+        }, function(googleUserData, cb) {
 
-                    return cb(null, loginTicket.getPayload());
+            console.log(googleUserData.email);
+
+            User.get({ email: googleUserData.email }, function(err, user) {
+                if (err) {
+                    return cb(err);
+                }
+
+                if (!user) {
+                    return res.status(401).send('No staff member with that email address exists.');
+                }
+
+                return res.json({
+                    name: googleUserData.name,
+                    email: user.email,
+                    building: user.building,
+                    position: user.position,
+                    apiKey: User.genAccessCode(32)
                 });
-            }, function(googleUserData, cb) {
+            });
+        }
+    ], function(err) {
+        console.log(err);
+        return res.status(500).send('Unable to verify user at this time.');
+    });
 
-                console.log(googleUserData.email);
-
-                User.get({ email: googleUserData.email }, function(err, user) {
-                    if (err) {
-                        return cb(err);
-                    }
-
-                    if (!user) {
-                        return res.status(401).send('No staff member with that email address exists.');
-                    }
-
-                    return res.json({
-                        name: googleUserData.name,
-                        email: user.email,
-                        building: user.building,
-                        position: user.position,
-                        apiKey: User.genAccessCode(32)
-                    });
-                });
-            }
-        ], function(err) {
-            console.log(err);
-            return res.status(500).send('Unable to verify user at this time.');
-        });
-    }
 });
 
 router.post('/devicetoken', function(req, res, next) {

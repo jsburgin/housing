@@ -1,3 +1,5 @@
+"use strict"
+
 var Event = require('./event');
 var mongo = require('../mongo');
 var db = require('../db');

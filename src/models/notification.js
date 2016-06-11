@@ -1,3 +1,5 @@
+"use strict"
+
 var async = require('async');
 var config = require('config');
 var apn = require('apn');

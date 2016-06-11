@@ -1,11 +1,13 @@
 var nodemailer = require('nodemailer');
+var config = require('config');
+
 var mongo = require('../mongo');
 
 var transporter = nodemailer.createTransport({
     service: 'Gmail',
     auth: {
-        user: 'uahousingtest@gmail.com',
-        pass: 'Ripzeke2015'
+        user: config.get('gmail.email'),
+        pass: config.get('gmail.password')
     }
 });
 

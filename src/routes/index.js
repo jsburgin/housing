@@ -1,3 +1,5 @@
+"use strict"
+
 var express = require('express');
 var router = express.Router();
 var passport = require('passport');
@@ -5,7 +7,6 @@ var async = require('async');
 var dateFormat = require('dateformat');
 
 var restrict = require('../auth/restrict');
-var demo = require('../auth/demo');
 var Position = require('../models/position');
 var Building = require('../models/building');
 var Group = require('../models/group');

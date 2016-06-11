@@ -1,3 +1,5 @@
+"use strict"
+
 var express = require('express');
 var router = express.Router();
 
@@ -24,13 +26,15 @@ router.get('/', restrict, function(req, res, next) {
 });
 
 router.post('/remove/events', restrict, function(req, res, next) {
-    Event.removeAll(function(err) {
+    return res.status(202).send({});
+
+    /*Event.removeAll(function(err) {
         if (err) {
             return res.status(500).send(err);
         }
 
         return res.status(200).send({});
-    });
+    });*/
 });
 
 module.exports = router;
