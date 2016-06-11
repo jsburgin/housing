@@ -6,5 +6,11 @@
     "pushNotifications": {
         "apnCert": "APN_CERT_LOCATION",
         "apnKey": "APN_KEY_LOCATION"
-    }
+    },
+    "google": {
+        "clientId": "GOOGLE_CLIENT_ID",
+        "clientSecret": "GOOGLE_CLIENT_SECRET",
+        "iOSClientId": "IOS_GOOGLE_CLIENT_ID"
+    },
+    "redirectUrl": "REDIRECT_URL"
 }

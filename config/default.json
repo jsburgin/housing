@@ -3,6 +3,7 @@
         "postgres": "postgres://node:password@localhost/housing",
         "mongo": "mongodb://localhost:27017/housing"
     },
+    "redirectUrl": "https://uahousing.burgin.io",
     "sendMail": "false",
     "session": {
         "secret": "housing2016"
@@ -11,5 +12,10 @@
     "pushNotifications": {
         "apnCert": "/path/to/cert.pem",
         "apnKey": "/path/to/key.pem"
+    },
+    "google": {
+        "clientId": "googleClientId",
+        "clientSecret": "googleClientSecret",
+        "iOSClientId": "iOSClientId"
     }
 }

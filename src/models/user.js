@@ -4,6 +4,11 @@ var async = require('async');
 var Group = require('./group');
 var postOffice = require('../postoffice');
 
+/**
+ * Retrives a single user
+ * @param  {Object}   userData user options
+ * @param  {Function} next     callback
+ */
 function get(userData, next) {
     if (userData['id']) {
         userData['person.id'] = userData['id'];
@@ -65,9 +70,11 @@ function get(userData, next) {
     });
 };
 
-exports.get = get;
-
-exports.getAll = function(next) {
+/**
+ * Retrives all users
+ * @param  {Function} next callback
+ */
+function getAll(next) {
     db.select('person.*', 'building.name as building', 'position.name as position').from('person')
         .join('position', 'person.positionid', '=', 'position.id')
         .join('building', 'person.buildingid', '=', 'building.id')
@@ -81,7 +88,11 @@ exports.getAll = function(next) {
         });
 };
 
-exports.getAllIds = function(next) {
+/**
+ * Retrives a complete list of users exposing only the id field
+ * @param  {Function} next callback
+ */
+function getAllIds(next) {
     db.select('person.id').from('person')
         .asCallback(function(err, rows) {
             if (err) {
@@ -92,8 +103,12 @@ exports.getAllIds = function(next) {
         });
 };
 
+/**
+ * Creates a user
+ * @param {Object}   userData
+ * @param {Function} next     callback
+ */
 function add(userData, next) {
-
     if (!userData.groups) {
         userData.groups = [];
     }
@@ -161,21 +176,6 @@ function add(userData, next) {
         },
         function(cb) {
             // send email to new user
-            /*if (process.env.MAIL_ENABLED.toLowerCase() == 'true') {
-                var email = {
-                    to: userObj.email,
-                    subject: 'Your UA Housing Access Code',
-                    html: 'To setup up the UA Housing Application, please use the code below:<br />'
-                        + userObj.accesscode
-                };
-                postOffice.sendMail(email, function(err) {
-                    if (err) {
-                        console.error(err);
-                    }
-                });
-            }*/
-
-
             // immediately call callback to avoid long page load time on add user
             cb(null);
         }
@@ -188,9 +188,14 @@ function add(userData, next) {
     });
 };
 
-exports.add = add;
-
-exports.update = function(id, updates, next) {
+/**
+ * Updates a user's info
+ * @param  {Integer}   id
+ * @param  {Object}   updates the changes to be made
+ * @param  {Function} next    callback
+ * @return {[type]}           [description]
+ */
+function update(id, updates, next) {
     var groups = updates.groups;
 
     if (!updates.groups) {
@@ -239,7 +244,13 @@ exports.update = function(id, updates, next) {
 
 };
 
-exports.setDeviceToken = function(email, deviceToken, next) {
+/**
+ * Saves a user's deviceToken to send push notifications
+ * @param {String}   email
+ * @param {String}   deviceToken unformatted device token
+ * @param  {Function} next    callback
+ */
+function setDeviceToken(email, deviceToken, next) {
     if (!email || !deviceToken) {
         return next('Please provide email and deviceToken combination.');
     }
@@ -267,6 +278,11 @@ exports.setDeviceToken = function(email, deviceToken, next) {
     });
 };
 
+/**
+ * Strips unnecessary tokens from a deviceToken for push notifications
+ * @param  {String} deviceToken
+ * @param  {Function} next    callback
+ */
 function formatDeviceToken(deviceToken) {
     String.prototype.replaceAll = function(search, replacement) {
         var target = this;
@@ -280,7 +296,12 @@ function formatDeviceToken(deviceToken) {
     return deviceToken;
 }
 
-exports.remove = function(userData, next) {
+/**
+ * Removes a user
+ * @param  {Object}   userData user options
+ * @param  {Function} next    callback
+ */
+function remove(userData, next) {
     db('person')
         .where(userData)
         .del()
@@ -293,7 +314,12 @@ exports.remove = function(userData, next) {
         });
 }
 
-exports.getForNotifications = function(notificationData, next) {
+/**
+ * Retrives users that should be sent a notification
+ * @param  {Object}   notificationData the notification the users must qualify for
+ * @param  {Function} next    callback
+ */
+function getForNotifications(notificationData, next) {
     if (notificationData.experience == 2) {
         db('person')
         .whereIn('positionid', notificationData.positions)
@@ -318,6 +344,11 @@ exports.getForNotifications = function(notificationData, next) {
     }
 };
 
+/**
+ * Generates a random token
+ * @param  {Integer} customLength the length of the token to generate
+ * @return {String} generated token
+ */
 function genAccessCode(customLength) {
     var accesscode = '';
 
@@ -325,10 +356,7 @@ function genAccessCode(customLength) {
         var customLength = 12;
     }
 
-    var choices = ["a", "b", "c", "d", "e", "f", "g",
-        "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t",
-        "u", "v", "w", "x", "y", "z", "0", "1", "2", "3", "4", "5", "6",
-        "7", "8", "9"];
+    var choices = 'abcdefghijklmnopqrstuvwxyz0123456789';
 
     for (var i = 0; i < customLength; i++) {
         var index = Math.floor(Math.random() * choices.length);
@@ -339,4 +367,14 @@ function genAccessCode(customLength) {
     return accesscode;
 }
 
-exports.genAccessCode = genAccessCode;
+module.exports = {
+    get: get,
+    getAll: getAll,
+    getAllIds: getAllIds,
+    add: add,
+    update: update,
+    setDeviceToken: setDeviceToken,
+    remove: remove,
+    getForNotifications: getForNotifications,
+    genAccessCode: genAccessCode
+};

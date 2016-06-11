@@ -1,5 +1,17 @@
+"use strict"
+
 var express = require('express');
 var router = express.Router();
+var config = require('config');
+var async = require('async');
+var google = require('googleapis');
+var OAuth2 = google.auth.OAuth2;
+
+var oauth2Client = new OAuth2(
+    config.get('google.clientId'),
+    config.get('google.clientSecret'),
+    config.get('redirectUrl')
+);
 
 var Event = require('../models/event');
 var restrict = require('../auth/restrict');
@@ -77,32 +89,72 @@ router.get('/users', function(req, res, next) {
 });
 
 router.post('/authenticate', function(req, res, next) {
-    if (!req.body.email || !req.body.accesscode) {
-        return res.status(400).send('Please provide an email address and password');
+
+    if ((!req.body.email || !req.body.accesscode) && !req.body.idToken) {
+        return res.status(400).send('Please provide valid login credentials');
     }
 
-    User.get({ email: req.body.email }, function(err, user) {
+    if (req.body.idToken) {
+        if (!req.body.type) {
+            return res.status(400).send('Please provide a valid device type.');
+        }
 
-        if (err) {
+        return googleAuth();
+    }
+
+    /**
+     * Checks if google authentication was valid, and if successful returns user data and apiKey
+     */
+    function googleAuth() {
+        async.waterfall([
+            function(cb) {
+                let clientId = "";
+
+                switch(req.body.type) {
+                    case 'ios':
+                        clientId = config.get('google.iOSClientId');
+                        break;
+                    case 'android':
+                        clientId = config.get('google.androidClientId');
+                        break;
+                    default:
+                        return res.status(400).send('Device type provided is not valid.');
+                }
+
+                oauth2Client.verifyIdToken(req.body.idToken, clientId, function(err, loginTicket) {
+                    if (err) {
+                        return res.status(401).send('User verification failed.');
+                    }
+
+                    return cb(null, loginTicket.getPayload());
+                });
+            }, function(googleUserData, cb) {
+
+                console.log(googleUserData.email);
+
+                User.get({ email: googleUserData.email }, function(err, user) {
+                    if (err) {
+                        return cb(err);
+                    }
+
+                    if (!user) {
+                        return res.status(401).send('No staff member with that email address exists.');
+                    }
+
+                    return res.json({
+                        name: googleUserData.name,
+                        email: user.email,
+                        building: user.building,
+                        position: user.position,
+                        apiKey: User.genAccessCode(32)
+                    });
+                });
+            }
+        ], function(err) {
             console.log(err);
-            return res.status(500).send('Unable to authenticate user.');
-        }
-
-        if (!user) {
-            return res.status(400).send('Unkown email address.');
-        }
-
-        if (user.accesscode != req.body.accesscode) {
-            return res.status(400).send('Unkown email address and access code combination.');
-        }
-
-        return res.json({
-            email: user.email,
-            authToken: User.genAccessCode(32),
-            position: user.position,
-            building: user.building
+            return res.status(500).send('Unable to verify user at this time.');
         });
-    });
+    }
 });
 
 router.post('/devicetoken', function(req, res, next) {
