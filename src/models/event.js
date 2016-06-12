@@ -107,7 +107,7 @@ function buildEvents(linkingId, eventObject, next) {
             positions: []
         };
 
-        for (key in currentInstance) event[key] = currentInstance[key];
+        for (var key in currentInstance) event[key] = currentInstance[key];
 
         event.startTime = timeFormatter.getTimeString(event.startTime);
         event.endTime = timeFormatter.getTimeString(event.endTime);
