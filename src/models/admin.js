@@ -67,7 +67,7 @@ function approve(id, next) {
  * @param  {Function} next       callback
  */
 function get(userParams, next) {
-    db('admin').select('id', 'firstname', 'lastname', 'email', 'approved')
+    db('admin').select()
         .where(userParams)
         .asCallback(function(err, results) {
             if (err) {
