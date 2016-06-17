@@ -102,7 +102,7 @@ function getWebReadySchedule(userData, next) {
 function buildSchedule(userData, next) {
     async.waterfall([
         function(cb) {
-            User.get(userData, cb);
+            User.getOne(userData, cb);
         },
         function(user, cb) {
             if (!user) {
@@ -112,22 +112,41 @@ function buildSchedule(userData, next) {
             var userFullName = user.firstname + ' ' + user.lastname;
 
             var query = {
-                $and: [
-                    { positions: { $in: [user.positionid] } },
+                $or: [
                     {
-                        $or: [
-                            { buildings: { $in: [user.buildingid] } },
-                            { groups: { $in: user.groups } }
+                        $and: [
+                            { positions: { $in: [user.positionid] } },
+                            {
+                                $or: [
+                                    { buildings: { $in: [user.buildingid] } },
+                                    { groups: { $in: user.groups } }
+                                ]
+                            },
+                            {
+                                $or: [
+                                    { experience: user.experience },
+                                    { experience: 2 }
+                                ]
+                            },
+                            { sortDate : { $gte: startDate } },
+                            { sortDate : { $lt: endDate } }
                         ]
                     },
                     {
-                        $or: [
-                            { experience: user.experience },
-                            { experience: 2 }
+                        $and: [
+                            { byCD: 'true' },
+                            { positions: { $in: [user.positionid] } },
+                            { cds: { $in: [user.cdid] }},
+                            {
+                                $or: [
+                                    { experience: user.experience },
+                                    { experience: 2 }
+                                ]
+                            },
+                            { sortDate : { $gte: startDate } },
+                            { sortDate : { $lt: endDate } }
                         ]
-                    },
-                    { sortDate : { $gte: startDate } },
-                    { sortDate : { $lt: endDate } }
+                    }
                 ]
             };
 

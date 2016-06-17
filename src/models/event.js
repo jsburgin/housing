@@ -102,10 +102,15 @@ function buildEvents(linkingId, eventObject, next) {
             prettyStartTime: currentInstance.startTime,
             prettyEndTime: currentInstance.endTime,
             staff: eventObject.staff,
-            buildings: [],
-            groups: [],
             positions: []
         };
+
+        if (currentInstance.byCD) {
+            // event.cds = [];
+        } else {
+            event.buildings = [];
+            event.groups = [];
+        }
 
         for (var key in currentInstance) event[key] = currentInstance[key];
 
@@ -126,9 +131,15 @@ function buildEvents(linkingId, eventObject, next) {
 
         // convert all ids to ints
         event.experience = parseInt(event.experience);
-        event.buildings = event.buildings.map(Number);
         event.positions = event.positions.map(Number);
-        event.groups = event.groups.map(Number);
+
+        if (event.byCD) {
+            event.cds = event.cds.map(Number);
+        } else {
+            event.buildings = event.buildings.map(Number);
+            event.groups = event.groups.map(Number);
+        }
+
 
         events.push({ data: event, collection: 'events' });
     }

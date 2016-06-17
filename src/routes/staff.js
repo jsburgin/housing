@@ -41,7 +41,10 @@ router.get('/add', restrict, function(req, res, next) {
         },
         function(cb) {
             Group.getAll(cb);
-        }
+        },
+        function(cb) {
+            User.get({ positionid: 1 }, cb);
+        },
     ], function(err, results) {
         if (err) {
             return next(err);
@@ -52,6 +55,7 @@ router.get('/add', restrict, function(req, res, next) {
         vm.buildings = results[0];
         vm.positions = results[1];
         vm.groups = results[2];
+        vm.cds = results[3];
 
         res.render('staff/add', vm);
     });
@@ -64,22 +68,11 @@ router.post('/add', restrict, function(req, res, next) {
         },
         function(user, cb) {
 
-            if (user) {
+            if (user[0]) {
                 return res.status(409).send('Staff member with ' + user.email + ' email address already exists.');
             }
 
-            var newUser = {
-                firstName: req.body.firstname,
-                lastName: req.body.lastname,
-                email: req.body.email,
-                positionid: parseInt(req.body.position),
-                buildingid: parseInt(req.body.building),
-                room: req.body.room,
-                groups: req.body.groups,
-                experience: parseInt(req.body.experience)
-            };
-
-            User.add(newUser, cb);
+            User.add(req.body, cb);
         }
     ], function(err) {
         if (err) {
@@ -100,7 +93,7 @@ router.get('/edit', restrict, function(req, res, next) {
 
     async.parallel([
         function(cb) {
-            User.get(userQuery, function(err, user) {
+            User.getOne(userQuery, function(err, user) {
                 if (err) {
                     return next(err);
                 }
@@ -119,6 +112,9 @@ router.get('/edit', restrict, function(req, res, next) {
             Position.getAll(cb);
         }, function(cb) {
             Group.getAll(cb);
+        },
+        function(cb) {
+            User.get({ positionid: 1 }, cb);
         }
     ], function(err, results) {
         if (err) {
@@ -131,6 +127,7 @@ router.get('/edit', restrict, function(req, res, next) {
         vm.buildings = results[1];
         vm.positions = results[2];
         vm.groups = results[3];
+        vm.cds = results[4];
 
         res.render('staff/edit', vm);
     });
@@ -145,6 +142,13 @@ router.post('/edit', restrict, function(req, res, next) {
 
     updates.buildingid = parseInt(updates.building);
     delete updates.building;
+
+    if (updates.positionid != 1) {
+        updates.cdid = parseInt(updates.cd);
+    } else {
+        updates.cdid = null;
+    }
+    delete updates.cd;
 
     User.update(updates.id, updates, function(err) {
         if (err) {

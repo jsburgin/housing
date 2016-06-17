@@ -7,6 +7,7 @@ var async = require('async');
 var dateFormat = require('dateformat');
 
 var restrict = require('../auth/restrict');
+var User = require('../models/user');
 var Position = require('../models/position');
 var Building = require('../models/building');
 var Group = require('../models/group');
@@ -67,6 +68,9 @@ router.get('/add', function(req, res, next) {
         },
         function(cb) {
             Group.getAll(cb);
+        },
+        function(cb) {
+            User.get({ positionid: 1 }, cb);
         }
     ], function(err, results) {
         if (err) {
@@ -78,6 +82,7 @@ router.get('/add', function(req, res, next) {
         vm.positions = results[0];
         vm.buildings = results[1];
         vm.groups = results[2];
+        vm.cds = results[3];
 
         res.render('calendar/add', vm);
     });
@@ -113,6 +118,9 @@ router.get('/edit', restrict, function(req, res, next) {
             },
             function(cb) {
                 Group.getAll(cb);
+            },
+            function(cb) {
+                User.get({ positionid: 1 }, cb);
             }
         ], function(err, results) {
             if (err) {
@@ -133,6 +141,7 @@ router.get('/edit', restrict, function(req, res, next) {
             vm.positions = results[2];
             vm.buildings = results[3];
             vm.groups = results[4];
+            vm.cds = results[5];
 
             return res.render('calendar/edit', vm);
         });

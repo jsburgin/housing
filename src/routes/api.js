@@ -97,7 +97,7 @@ router.post('/authenticate', function(req, res, next) {
 
             console.log(googleUserData.email);
 
-            User.get({ email: googleUserData.email }, function(err, user) {
+            User.getOne({ email: googleUserData.email }, function(err, user) {
                 if (err) {
                     return cb(err);
                 }

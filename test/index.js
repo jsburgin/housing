@@ -31,6 +31,14 @@ describe('Event.buildEvents()', function() {
                 endTime: '12:00 PM',
                 positions: ['0', '1'],
                 buildings: ['12', '15', '2'],
+            },
+            {
+                byCD: true,
+                location: 'Lakeside',
+                startTime: '11:00 AM',
+                endTime: '12: 00 PM',
+                positions: ['1', '2'],
+                cds: ['6', '4']
             }
         ]
     };
@@ -46,12 +54,18 @@ describe('Event.buildEvents()', function() {
             expect(eventHeader.description).to.equal('#TEAMHRC2016');
             expect(eventHeader.staff).to.equal('All Staff');
 
-            expect(events.length).to.equal(1);
+            expect(events.length).to.equal(2);
             expect(events[0].collection).to.equal('events');
             expect(events[0].data.title).to.equal('Lunch');
             expect(events[0].data.buildings).to.eql([12, 15, 2]);
             expect(events[0].data.groups).to.eql([]);
             expect(events[0].data.positions).to.eql([0, 1]);
+
+            expect(events[1].collection).to.equal('events');
+            expect(events[1].data.title).to.equal('Lunch');
+            expect(events[1].data.cds).to.eql([6, 4]);
+            expect(events[1].data.positions).to.eql([1, 2]);
+            expect(events[1].data.byCD).to.eql(true);
         });
 
         rawEventData.instances.push({
@@ -63,15 +77,15 @@ describe('Event.buildEvents()', function() {
         });
 
         Event.buildEvents(linkingId, rawEventData, function(err, eventHeader, events) {
-            expect(events.length).to.equal(2);
+            expect(events.length).to.equal(3);
             expect(eventHeader.startTime).to.equal("09:00");
             expect(eventHeader.endTime).to.equal("12:00");
             expect(eventHeader.location).to.equal('Conditional');
 
             expect(events[0].data.location).to.equal('Lakeside');
-            expect(events[1].data.location).to.equal('Burke');
-            expect(events[1].data.positions).to.eql([3]);
-            expect(events[1].data.buildings).to.eql([]);
+            expect(events[2].data.location).to.equal('Burke');
+            expect(events[2].data.positions).to.eql([3]);
+            expect(events[2].data.buildings).to.eql([]);
         });
     });
 

@@ -3,6 +3,8 @@ extends ../layout
 block stylesheets
     link(rel="stylesheet" href="/assets/js/daterangepicker/daterangepicker-bs3.css")
     link(rel="stylesheet" href="/assets/js/wysihtml5/bootstrap-wysihtml5.css")
+    link(rel="stylesheet" href="/assets/js/select2/select2-bootstrap.css")
+    link(rel="stylesheet" href="/assets/js/select2/select2.css")
 
 block content
     ol(class="breadcrumb bc-3")
@@ -26,7 +28,7 @@ block content
             div(class="col-md-3")
                 div(class="form-group lg-typeahead")
                     label(class="control-label" for="staff") Staff
-                    input(type="text", name="staff", id="staff", class="form-control input-lg typeahead", data-local="All Staff, All CDs, All FAs, All RAs, New CDs, New FAs, New RAs")
+                    input(type="text", name="staff", id="staff", class="form-control input-lg typeahead", data-local="All Staff, CDs, FAs, RAs, New CDs, New FAs, New RAs, Returning CDs, Returning FAs, Returning RAs, FAs and RAs, New FAs and RAs, Returning FAs and RAs")
             div(class="col-md-2 event-form-submit")
                 div(class="form-group")
                     label(class="control-label form-done") Done
@@ -38,10 +40,12 @@ block content
                 textarea(class="form-control wysihtml5" rows="10" data-stylesheet-url="/assets/css/wysihtml5-color.css" name="description" id="description")
         br
         div(class="row schedule-block-row")
-            div(class="col-sm-12 col-md-6 schedule-block", id="primary-schedule-block")
+            div(class="col-sm-12 schedule-block", id="primary-schedule-block")
                 div(class="panel panel-primary")
                     div(class="panel-heading")
-                        div(class="panel-title") Schedule for Staff
+                        div(class="panel-title")
+                            span(class="block-title") Schedule By Building/Group
+                            span(class="event-info")
                         div(class="panel-options")
                             a(href="#" class="no-outline" data-rel="collapse", tabindex="-1")
                                 i(class="entypo-down-open")
@@ -96,9 +100,64 @@ block content
                                             label
                                                 input(class="buildings-checkbox event-checkbox", type="checkbox", value=building.id)
                                                 !=building.name
-            div(class="col-sm-12 col-md-6")
-                div(class="add-schedule-block btn btn-default btn-icon btn-lg") Add Another Schedule for Staff Block
+            div(class="col-sm-12 cd-schedule-block", id="primary-cd-schedule-block")
+                div(class="panel panel-primary")
+                    div(class="panel-heading")
+                        div(class="panel-title")
+                            span(class="block-title") Schedule for Staff by Community Director
+                            span(class="event-info")
+                        div(class="panel-options")
+                            a(href="#" class="no-outline" data-rel="collapse", tabindex="-1")
+                                i(class="entypo-down-open")
+                    div(class="panel-body")
+                        div(class="row")
+                            div(class="col-md-6")
+                                div(class="form-group")
+                                    label(class="control-label" for="staff") Location
+                                    input(type="text", class="form-control location")
+                                div(class="form-group")
+                                    label(class="control-label" for="staff") Start Time
+                                    input(type="text", mousewheel="false", class="form-control timepicker startTime", data-template="dropdown", data-show-seconds="false" data-default-time="12:00 PM", data-show-meridian="true", data-minute-step="15", name="startTime")
+                                div(class="form-group")
+                                    label(class="control-label" for="staff") End Time
+                                    input(type="text", mousewheel="false", class="form-control timepicker endTime", data-template="dropdown", data-show-seconds="false" data-default-time="12:00 PM", data-show-meridian="true", data-minute-step="15", name="startTime")
+                                div(class="form-group")
+                                    label(class="control-label" for="staff") Staff
+                                        span(class="toggle-link") Toggle All
+                                    each position in positions
+                                        if position.name != 'CD'
+                                            div(class="checkbox")
+                                                label
+                                                    input(class="positions-checkbox event-checkbox", type="checkbox", value=position.id)
+                                                    !=position.name
+                                div(class="form-group")
+                                    label(class="control-label" for="staff") Experience
+                                    div(class="radio")
+                                        label
+                                            input(class="exp-radio", type="radio", name="exp2", value="2", checked)
+                                            != "All Experiences"
+                                    div(class="radio")
+                                        label
+                                            input(class="exp-radio returning-staff", type="radio", name="exp2", value="1")
+                                            != "Returning Staff Only"
+                                    div(class="radio")
+                                        label
+                                            input(class="exp-radio new-staff", type="radio", name="exp2", value="0")
+                                            != "New Staff Only"
+                            div(class="col-md-6")
+                                div(class="form-group")
+                                    label(class="control-label") reporting to Community Directors:
+                                    br
+                                    span(class="schedule-instruc") Start typing a Community Director's name to add their staff to this event.
+                                    select(name="cds", class="select2 cd-selector", multiple)
+                                        each cd in cds
+                                            option(value=cd.id)!= cd.firstname + " " + cd.lastname
+            div(class="col-sm-12")
+                div(class="add-schedule-block btn btn-default btn-icon btn-lg") Schedule by Building/Group
                     i(class="entypo-plus")
+                div(class="add-cd-schedule-block btn btn-default btn-icon btn-lg") Schedule by Community Director
+                    i(class="entypo-plus")
+
 
 
 
@@ -108,6 +167,7 @@ block scripts
     script(src="/assets/js/wysihtml5/bootstrap-wysihtml5.js")
     script(src="/assets/js/bootstrap-timepicker.min.js")
     script(src="/assets/js/typeahead.min.js")
+    script(src="/assets/js/select2/select2.min.js")
     script(src="/js/housing.js")
     script.
         $(document).ready(function() {

@@ -1,3 +1,25 @@
+.constant-time-block {
+    margin-bottom: 30px;
+}
+
+.schedule-instruc {
+    font-size: 12px;
+    display: block;
+    margin: 5px 0;
+}
+.add-schedule-block {
+    margin-right: 15px;
+}
+.add-cd-schedule-block, .add-schedule-block {
+    float: left;
+    margin-bottom: 15px;
+}
+.cd-schedule-block .select2-container {
+    margin-top: 5px;
+}
+.schedule-block, .cd-schedule-block {
+    display: none;
+}
 .icon-warning {
     color: #fad839;
 }

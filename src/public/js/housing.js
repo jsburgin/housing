@@ -111,8 +111,131 @@ HousingManager.prototype.settingsPage = function() {
 
 HousingManager.prototype.eventForm = function eventForm(options) {
 
-    function setLinkToggles(container) {
+    // starting index for all new scheduling blocks
+    var blockCount = 3;
 
+    // keep empty scheduling block clones in memory for easy re-cloning
+    var scheduleBlockTemplate = $('#primary-schedule-block').clone();
+    var cdBlockTemplate = $('#primary-cd-schedule-block').clone();
+    $('#primary-schedule-block').remove();
+    $('#primary-cd-schedule-block').remove();
+    scheduleBlockTemplate.css('display', 'block');
+    cdBlockTemplate.css('display', 'block');
+    stripBlocksOfUniqueData(scheduleBlockTemplate);
+    stripBlocksOfUniqueData(cdBlockTemplate);
+
+    $('.schedule-block').css('display', 'block');
+    $('.cd-schedule-block').css('display', 'block');
+    $('.select2').select2();
+
+    // removes ids and names from base scheduling blocks
+    function stripBlocksOfUniqueData(newBlock) {
+        // clears the clone's radio buttons' names as they will become dynamic
+        newBlock.find('.exp-radio').removeAttr('name');
+        // remove the id of the clone
+        newBlock.removeAttr('id');
+        newBlock.find('.panel-options')
+            .append('<a href="#" class="no-outline" data-rel="close" tabindex="-1"><i class="entypo-cancel"></i></a>');
+    }
+
+    // Triggers when a new scheduling block is added, collapses existing blocks and adds informative title
+    // @ [building] from [startTime] to [endTime]
+    function setTitleAndCollapsePanels() {
+        $.each($('.panel'), function(index, panel) {
+            panel = $(panel);
+
+            var body = panel.children('.panel-body, .table');
+
+            body.slideUp('normal');
+            panel.addClass('panel-collapse');
+
+            var infoBlock = panel.find('.event-info');
+            var location = panel.find('.location').val();
+            var startTime = panel.find('.startTime').val();
+            var endTime = panel.find('.endTime').val();
+
+            var info = ' &middot; <span class="bold">'
+                + '@ ' + location
+                + ' from ' + startTime + ' to ' + endTime
+                + '</span>';
+
+            infoBlock.html(info);
+        });
+    }
+
+    // Presets a block's startTime, endTime, and staff when necessary
+    // dependant on global 'Staff' input, and previous block's starting and end times
+    function preloadEvent(newBlock) {
+        var staffType = $('#staff').val();
+
+        switch(staffType) {
+            case 'All Staff':
+                newBlock.find('.positions-checkbox').prop('checked', true);
+                break;
+            case 'New CDs':
+                newBlock.find('.exp-radio[value=0]').prop('checked', true);
+                newBlock.find('.positions-checkbox[value=1]').prop('checked', true);
+                break;
+            case 'New FAs':
+                newBlock.find('.exp-radio[value=0]').prop('checked', true);
+                newBlock.find('.positions-checkbox[value=2]').prop('checked', true);
+                break;
+            case 'New RAs':
+                newBlock.find('.exp-radio[value=0]').prop('checked', true);
+                newBlock.find('.positions-checkbox[value=3]').prop('checked', true);
+                break;
+            case 'CDs':
+                newBlock.find('.positions-checkbox[value=1]').prop('checked', true);
+                break;
+            case 'FAs':
+                newBlock.find('.positions-checkbox[value=2]').prop('checked', true);
+                break;
+            case 'RAs':
+                newBlock.find('.positions-checkbox[value=3]').prop('checked', true);
+                break;
+            case 'FAs and RAs':
+                newBlock.find('.positions-checkbox[value=2]').prop('checked', true);
+                newBlock.find('.positions-checkbox[value=3]').prop('checked', true);
+                break;
+            case 'New FAs and RAs':
+                newBlock.find('.positions-checkbox[value=2]').prop('checked', true);
+                newBlock.find('.positions-checkbox[value=3]').prop('checked', true);
+                newBlock.find('.exp-radio[value=0]').prop('checked', true);
+                break;
+            case 'Returning FAs and RAs':
+                newBlock.find('.positions-checkbox[value=2]').prop('checked', true);
+                newBlock.find('.positions-checkbox[value=3]').prop('checked', true);
+                newBlock.find('.exp-radio[value=1]').prop('checked', true);
+                break;
+            case 'Returning CDs':
+                newBlock.find('.positions-checkbox[value=1]').prop('checked', true);
+                newBlock.find('.exp-radio[value=1]').prop('checked', true);
+                break;
+            case 'Returning FAs':
+                newBlock.find('.positions-checkbox[value=2]').prop('checked', true);
+                newBlock.find('.exp-radio[value=1]').prop('checked', true);
+                break;
+            case 'Returning RAs':
+                newBlock.find('.positions-checkbox[value=3]').prop('checked', true);
+                newBlock.find('.exp-radio[value=1]').prop('checked', true);
+                break;
+        }
+
+        if ($('.panel').length > 0) {
+            var startTime = $('.panel').last().find('.startTime').val();
+            var endTime = $('.panel').last().find('.endTime').val();
+
+            $(newBlock).find('.startTime').val(startTime);
+            $(newBlock).find('.endTime').val(endTime);
+        }
+
+        $(newBlock).find('.exp-radio').attr('name', 'exp' + blockCount);
+        blockCount++;
+        setLinkToggles(newBlock);
+    }
+
+    // Adds functionality to the 'Toggle All' links for staff, buildings, or groups
+    function setLinkToggles(container) {
         $(container).find('.toggle-link').click(function(e) {
             console.log('clicked');
             var parent = $(this).parents('.form-group'),
@@ -134,39 +257,33 @@ HousingManager.prototype.eventForm = function eventForm(options) {
         $(container).find('.timepicker').each(initTimePickers);
     }
 
-    setLinkToggles('#primary-schedule-block');
-
-    var scheduleBlockCount = 2;
-
-    // keep empty clone in memory for easy re-cloning
-    var scheduleBlockTemplate = $('#primary-schedule-block').clone();
-
-    if (options.update) {
-        scheduleBlockTemplate.find('input[type="checkbox"]').prop('checked', false);
-        scheduleBlockTemplate.find('.location').val('');
-        scheduleBlockTemplate.find('.startTime').val('12:00 PM');
-        scheduleBlockTemplate.find('.endTime').val('12:00 PM');
-    }
-
-    $(scheduleBlockTemplate).find('.exp-radio').removeAttr('name');
-    $(scheduleBlockTemplate).removeAttr('id');
-    $(scheduleBlockTemplate).find('.panel-options')
-        .append('<a href="#" class="no-outline" data-rel="close" tabindex="-1"><i class="entypo-cancel"></i></a>');
-
+    // creates a new schedule block
     function getNewScheduleBlock() {
         var newBlock = scheduleBlockTemplate.clone();
-        var primaryTemplate = $('#primary-schedule-block');
-        $(newBlock).find('.startTime').val(primaryTemplate.find('.startTime').val());
-        $(newBlock).find('.endTime').val(primaryTemplate.find('.endTime').val());
 
-        $(newBlock).find('.exp-radio').attr('name', 'exp' + scheduleBlockCount);
-        setLinkToggles(newBlock);
-        scheduleBlockCount++;
+        preloadEvent(newBlock);
+        return newBlock;
+    }
+
+    // creates a new cd schedule block
+    function getNewCDBlock() {
+        var newBlock = cdBlockTemplate.clone();
+        preloadEvent(newBlock);
+
+        newBlock.find('.select2').select2();
         return newBlock;
     }
 
     $('.add-schedule-block').click(function() {
+        setTitleAndCollapsePanels();
         $(this).parent().before(getNewScheduleBlock());
+        $("html, body").animate({ scrollTop: $(document).height() }, 1200);
+    });
+
+    $('.add-cd-schedule-block').click(function() {
+        setTitleAndCollapsePanels();
+        $(this).parent().before(getNewCDBlock());
+        $("html, body").animate({ scrollTop: $(document).height() }, 1200);
     });
 
 
@@ -200,15 +317,44 @@ HousingManager.prototype.eventForm = function eventForm(options) {
 
             var toFind = ['positions', 'buildings', 'groups'];
 
+            // loop over all three types of checkboxes
             for (var i = 0; i < toFind.length; i++) {
                 var type = toFind[i];
 
+                // loop over each checkbox of a type
                 $.each($(block).find('.' + type + '-checkbox'), function(index, checkbox) {
                     if (checkbox.checked) {
                         instance[type].push($(checkbox).val());
                     }
                 });
             }
+
+            event.instances.push(instance);
+        });
+
+        $.each($('.cd-schedule-block'), function(index, block) {
+
+            var instance = {
+                byCD: true,
+                startTime: $(block).find('.startTime').val(),
+                endTime: $(block).find('.endTime').val(),
+                location: $(block).find('.location').val(),
+                experience: 2,
+                positions: [],
+                cds: $(block).find('select.cd-selector').val()
+            }
+
+            if ($(block).find('.new-staff').is(':checked')) {
+                instance.experience = 0;
+            } else if ($(block).find('.returning-staff').is(':checked')) {
+                instance.experience = 1;
+            }
+
+            $.each($(block).find('.positions-checkbox'), function(index, checkbox) {
+                if (checkbox.checked) {
+                    instance.positions.push($(checkbox).val());
+                }
+            });
 
             event.instances.push(instance);
         });
@@ -232,6 +378,8 @@ HousingManager.prototype.eventForm = function eventForm(options) {
                 window.location.href = '/';
             }
         });
+
+        console.log(event);
 
         e.preventDefault();
     }
@@ -383,6 +531,25 @@ HousingManager.prototype.calendar = function calendar() {
 };
 
 HousingManager.prototype.staffForm = function staffForm(type) {
+
+    $('#position').select2().on('change', function(e) {
+        if ($(e.currentTarget).val() == 1) {
+            $('.cd-selector-container').css('display', 'none');
+        } else {
+            $('.cd-selector-container').css('display', 'block');
+        }
+    });
+
+    var selectors = ['#building', '#groups', '#experience', '#cd'];
+
+    for (var i = 0; i < selectors.length; i++) {
+        $(selectors[i]).select2();
+    }
+
+    if ($('#position').val() == 1) {
+        $('.cd-selector-container').css('display', 'none');
+    }
+
     $('#staff-form').validate({
         highlight: function(element) {
             $(element).closest('.input-group').addClass('validate-has-error');
@@ -394,12 +561,13 @@ HousingManager.prototype.staffForm = function staffForm(type) {
             var data = {
                 firstname: $('input#firstName').val(),
                 lastname: $('input#lastName').val(),
-                email: $('input#email').val(),
+                email: $('input#email').val().toLowerCase(),
                 room: $('input#room').val(),
                 position: $("#position").val(),
                 building: $("#building").val(),
                 experience: $("#experience").val(),
-                groups: $("#groups").val()
+                groups: $("#groups").val(),
+                cd: $('#cd').val()
             };
 
             if (type == 'edit') {

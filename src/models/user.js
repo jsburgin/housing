@@ -7,11 +7,28 @@ var Group = require('./group');
 var postOffice = require('../postoffice');
 
 /**
- * Retrives a single user
+ * Retrives user/users
  * @param  {Object}   userData user options
  * @param  {Function} next     callback
  */
 function get(userData, next) {
+    db('person').select()
+        .where(userData)
+        .asCallback(function(err, rows) {
+            if (err) {
+                return next(err);
+            }
+
+            return next(null, rows);
+        });
+}
+
+/**
+ * Retrives a single user
+ * @param  {Object}   userData user options
+ * @param  {Function} next     callback
+ */
+function getOne(userData, next) {
     if (userData['id']) {
         userData['person.id'] = userData['id'];
         delete userData['id'];
@@ -67,7 +84,6 @@ function get(userData, next) {
             }
         }
 
-
         next(null, user);
     });
 };
@@ -116,20 +132,24 @@ function add(userData, next) {
     }
 
     var userObj = {
-        firstname: userData.firstName,
-        lastname: userData.lastName,
-        email: userData.email.toLowerCase(),
-        positionid: userData.positionid,
-        buildingid: userData.buildingid,
+        firstname: userData.firstname,
+        lastname: userData.lastname,
+        email: userData.email,
+        positionid: parseInt(userData.position),
+        buildingid: parseInt(userData.building),
         room: userData.room,
-        experience: userData.experience,
+        experience: parseInt(userData.experience),
         accesscode: genAccessCode()
     };
+
+    if (userObj.positionid != 1) {
+        userObj.cdid = parseInt(userData.cd);
+    }
 
     async.waterfall([
         function(cb) {
             // see if access code already exists
-            get({ accesscode: userObj.accesscode }, cb);
+            getOne({ accesscode: userObj.accesscode }, cb);
         },
         function(user, cb) {
             if (!user) {
@@ -371,6 +391,7 @@ function genAccessCode(customLength) {
 
 module.exports = {
     get: get,
+    getOne: getOne,
     getAll: getAll,
     getAllIds: getAllIds,
     add: add,

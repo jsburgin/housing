@@ -586,7 +586,7 @@ var public_vars = public_vars || {};
 						allowClear: attrDefault($this, 'allowClear', false)
 					};
 
-				$this.select2(opts);
+				//$this.select2(opts);
 				$this.addClass('visible');
 
 				//$this.select2("open");
