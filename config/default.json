@@ -16,7 +16,8 @@
     "google": {
         "clientId": "googleClientId",
         "clientSecret": "googleClientSecret",
-        "iOSClientId": "iOSClientId"
+        "iOSClientId": "iOSClientId",
+	"androidClientId": "androidClientId"
     },
     "gmail": {
         "email": "baseGmailEmail",
