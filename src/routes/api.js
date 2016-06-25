@@ -18,19 +18,14 @@ var restrict = require('../auth/restrict');
 var postOffice = require('../postoffice');
 var User = require('../models/user');
 var Schedule = require('../models/schedule');
+var apiVerify = require('../auth/api-verify');
 
-router.get('/schedule', function(req, res, next) {
-    var queryObject = {};
+router.get('/schedule', apiVerify, function(req, res, next) {
+    var user = {
+        email: req.requester.email
+    };
 
-    if (req.query.id) {
-        queryObject.id = req.query.id;
-    } else if (req.query.email) {
-        queryObject.email = req.query.email;
-    } else {
-        return res.end(res.writeHead(400, 'Invalid paraemters for event fetch.'));
-    }
-
-    Schedule.get(queryObject, function(err, schedule) {
+    Schedule.get(user, function(err, schedule) {
         if (err) {
             return res.status(204).send('No schedule found.');
         }
@@ -95,8 +90,6 @@ router.post('/authenticate', function(req, res, next) {
             });
         }, function(googleUserData, cb) {
 
-            console.log(googleUserData.email);
-
             User.getOne({ email: googleUserData.email }, function(err, user) {
                 if (err) {
                     return cb(err);
@@ -106,18 +99,33 @@ router.post('/authenticate', function(req, res, next) {
                     return res.status(401).send('No staff member with that email address exists.');
                 }
 
-                return res.json({
-                    name: googleUserData.name,
-                    email: user.email,
-                    building: user.building,
-                    position: user.position,
-                    apiKey: User.genAccessCode(32)
-                });
+                return cb(null, user);
+            });
+        }, function(user, cb) {
+            User.createApiKey(user, function(err, key) {
+                if (err) {
+                    return cb(err);
+                }
+
+                user.apiKey = key;
+
+                return cb(null, user);
             });
         }
-    ], function(err) {
-        console.log(err);
-        return res.status(500).send('Unable to verify user at this time.');
+    ], function(err, user) {
+        if (err) {
+            console.log(err);
+            return res.status(500).send('Unable to verify user at this time.');
+        }
+
+        return res.json({
+            name: user.firstname + " " + user.lastname,
+            email: user.email,
+            building: user.building,
+            position: user.position,
+            apiKey: user.apiKey
+        });
+
     });
 
 });
@@ -136,6 +144,12 @@ router.post('/devicetoken', function(req, res, next) {
         return res.status(200).send('Device token for user successfully set.');
     });
 
+});
+
+router.get('/something', apiVerify, function(req, res, next) {
+    console.log(req.requester);
+
+    res.send(req.requester.email);
 });
 
 module.exports = router;

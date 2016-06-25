@@ -2,6 +2,7 @@
 
 var db = require('../db');
 var async = require('async');
+var keygen = require('keygen');
 
 var Group = require('./group');
 var postOffice = require('../postoffice');
@@ -389,6 +390,46 @@ function genAccessCode(customLength) {
     return accesscode;
 }
 
+/**
+ * Creates and saves an api key for a user
+ * @param  {Object}   user the user to create the key for
+ * @param  {Function} next callback
+ */
+function createApiKey(user, next) {
+    var key = keygen.url(30);
+
+    db('apikey')
+        .insert({
+            personid: user.id,
+            key: key
+        })
+        .asCallback(function(err, result) {
+            if (err) {
+                return next(err);
+            }
+
+            return next(null, key);
+        });
+}
+
+function getByApiKey(key, next) {
+    db('person')
+        .select('person.*')
+        .join('apikey', 'person.id', '=', 'apikey.personid')
+        .where({ key: key })
+        .asCallback(function(err, result) {
+            if (err) {
+                return next(err);
+            }
+
+            if (result.length == 0) {
+                return next(null, null);
+            }
+
+            next(null, result[0]);
+        });
+}
+
 module.exports = {
     get: get,
     getOne: getOne,
@@ -399,5 +440,7 @@ module.exports = {
     setDeviceToken: setDeviceToken,
     remove: remove,
     getForNotifications: getForNotifications,
-    genAccessCode: genAccessCode
+    genAccessCode: genAccessCode,
+    createApiKey: createApiKey,
+    getByApiKey: getByApiKey
 };

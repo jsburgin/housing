@@ -24,6 +24,7 @@
     "googleapis": "^8.0.0",
     "gravatar": "^1.4.0",
     "jade": "~1.11.0",
+    "keygen": "^0.2.1",
     "knex": "^0.8.6",
     "mongodb": "^2.0.47",
     "morgan": "~1.6.1",

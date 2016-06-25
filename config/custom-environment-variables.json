@@ -11,7 +11,7 @@
         "clientId": "GOOGLE_CLIENT_ID",
         "clientSecret": "GOOGLE_CLIENT_SECRET",
         "iOSClientId": "IOS_GOOGLE_CLIENT_ID",
-	"androidClientId": "ANDROID_GOOGLE_CLIENT_ID"
+        "androidClientId": "ANDROID_GOOGLE_CLIENT_ID"
     },
     "redirectUrl": "REDIRECT_URL",
     "gmail": {
