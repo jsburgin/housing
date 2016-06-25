@@ -180,10 +180,10 @@ router.post('/remove', restrict, function(req, res, next) {
 router.get('/schedule', function(req, res, next) {
     Schedule.getWebReadySchedule(req.query, function(err, schedule) {
         if (err) {
-            return next(err);
-        }
+            console.log(err);
 
-        console.log(schedule);
+            return res.send(500).message('Unable to grab a schedule for that staff member.');
+        }
 
         res.render('staff/schedule', { title: 'Housing', schedule: schedule });
     });

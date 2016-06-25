@@ -465,8 +465,8 @@ HousingManager.prototype.calendar = function calendar() {
                     start: new Date(response[i].date + ' ' + response[i].startTime),
                     end: new Date(response[i].date + ' ' + response[i].endTime),
                     id: response[i].linkingId,
-                    backgroundColor: '#AB2D4E',
-                    borderColor: '#AB2D4E',
+                    backgroundColor: '#9e1b32',
+                    borderColor: '#9e1b32',
                     allDay: false
                 };
 

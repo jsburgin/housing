@@ -118,8 +118,15 @@ router.post('/authenticate', function(req, res, next) {
             return res.status(500).send('Unable to verify user at this time.');
         }
 
+        if (user.firstname[user.firstname.length - 1] == 's') {
+            user.firstname += '\'';
+        } else {
+            user.firstname += '\'s';
+        }
+
         return res.json({
-            name: user.firstname + " " + user.lastname,
+            fullName: user.firstname + " " + user.lastname,
+            pluralFirstName: user.firstname,
             email: user.email,
             building: user.building,
             position: user.position,
@@ -144,12 +151,6 @@ router.post('/devicetoken', function(req, res, next) {
         return res.status(200).send('Device token for user successfully set.');
     });
 
-});
-
-router.get('/something', apiVerify, function(req, res, next) {
-    console.log(req.requester);
-
-    res.send(req.requester.email);
 });
 
 module.exports = router;
