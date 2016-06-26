@@ -143,12 +143,14 @@ router.post('/edit', restrict, function(req, res, next) {
     updates.buildingid = parseInt(updates.building);
     delete updates.building;
 
-    if (updates.positionid != 1) {
+    if (updates.positionid != 1 && updates.cdid) {
         updates.cdid = parseInt(updates.cd);
     } else {
-        updates.cdid = null;
+        delete updates.cdid;
     }
     delete updates.cd;
+
+
 
     User.update(updates.id, updates, function(err) {
         if (err) {
